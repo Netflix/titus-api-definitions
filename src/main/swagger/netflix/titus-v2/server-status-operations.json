@@ -1,0 +1,28 @@
+{
+  "paths": {
+    "getServerStatus": {
+      "get": {
+        "tags": [
+          "Internal"
+        ],
+        "summary": "Server status information",
+        "description": "Returns various information about a TitusMaster instance",
+        "operationId": "getServerStatus",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Server information returned",
+            "schema": {
+              "$ref": "./server-status-model.json#/definitions/ServerStatusRepresentation"
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    }
+  }
+}

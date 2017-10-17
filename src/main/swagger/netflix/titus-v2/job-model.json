@@ -1,0 +1,549 @@
+{
+  "definitions": {
+    "JobSpec": {
+      "title": "Job description. Some fields are applicable only for batch or service style jobs. This is clearly indicated in a description of each field.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "(Deprecated) Field no longer used in Titus",
+          "type": "string",
+          "default": "myJob"
+        },
+        "applicationName": {
+          "description": "(All) Docker image name",
+          "type": "string",
+          "default": "ubuntu"
+        },
+        "appName": {
+          "description": "(All) A name of an application to which this job belongs to",
+          "type": "string",
+          "default": "myapp"
+        },
+        "user": {
+          "description": "(All) User name",
+          "type": "string",
+          "default": "myuser"
+        },
+        "type": {
+          "description": "(All) Job type (batch or service)",
+          "type": "string"
+        },
+        "labels": {
+          "description": "(All) Arbitrary key/value pairs",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {
+            "source": "swagger IDL"
+          }
+        },
+        "version": {
+          "description": "(All) Docker image version number",
+          "type": "string",
+          "default": "latest"
+        },
+        "inService": {
+          "description": "(Service) Relevant only for service jobs. Set to false, to mark the job as not in service. This value is not used by Titus itself, but some external systems depend on it (Spinnaker, Discovery).",
+          "type": "boolean",
+          "default": true
+        },
+        "entryPoint": {
+          "description": "(All) Executable to run during container startup",
+          "type": "string",
+          "default": "sleep 10"
+        },
+        "instances": {
+          "description": "(Batch) Number of instances for a batch job",
+          "type": "integer",
+          "format": "int32"
+        },
+        "instancesMin": {
+          "description": "(Service) Minimum number of instances for a service job",
+          "type": "integer",
+          "format": "int32"
+        },
+        "instancesMax": {
+          "description": "(Service) Maximum number of instances for a service job",
+          "type": "integer",
+          "format": "int32"
+        },
+        "instancesDesired": {
+          "description": "(Service) The desired number of instances for a service job, must be <= instancesMax and >= instancesMin",
+          "type": "integer",
+          "format": "int32"
+        },
+        "cpu": {
+          "description": "(All) Number of CPUs to allocate",
+          "type": "number",
+          "default": 1
+        },
+        "memory": {
+          "description": "(All) Amount of memory to allocate in MB",
+          "type": "number",
+          "default": 1024
+        },
+        "disk": {
+          "description": "(All) Amount of disk space to allocate in MB",
+          "type": "number",
+          "default": 10000
+        },
+        "efs": {
+          "description": "(All) Attach the specified EFS volume to the container.",
+          "type": "object",
+          "required": [
+            "mountPoint",
+            "efsId"
+          ],
+          "properties": {
+            "mountPerm": {
+              "description": "The mount mode. Valid values are: RW/RO/WO",
+              "enum": [
+                "RW",
+                "RO",
+                "WO"
+              ],
+              "type": "string",
+              "default": "RW"
+            },
+            "mountPoint": {
+              "description": "The mount point within the container.",
+              "type": "string",
+              "default": ""
+            },
+            "efsId": {
+              "description": "The EFS file system ID",
+              "type": "string",
+              "default": ""
+            }
+          }
+        },
+        "networkMbps": {
+          "description": "(All) Amount of networking bandwidth to allocate in Mbps",
+          "type": "number",
+          "default": 128
+        },
+        "gpu": {
+          "description": "(All) Number of GPUs to allocate",
+          "type": "number",
+          "default": 0
+        },
+        "ports": {
+          "description": "(Deprecated) List of server ports accessible on the container",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "default": []
+        },
+        "env": {
+          "description": "(All) OS environment properties to be set for the container",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {
+            "SOURCE": "swagger"
+          }
+        },
+        "retries": {
+          "description": "(Batch) How many times a batch job should be retried in case it terminates with non-zero status code",
+          "type": "integer",
+          "format": "int32"
+        },
+        "restartOnSuccess": {
+          "description": "(Deprecated) Setting this field has no effect",
+          "type": "boolean"
+        },
+        "runtimeLimitSecs": {
+          "description": "(Batch) Maximum amount of time (in seconds) a batch job is allowed to run",
+          "type": "integer",
+          "format": "int64"
+        },
+        "allocateIpAddress": {
+          "description": "(All) If set to true, the container will get its own ENI IP address assigned",
+          "type": "boolean",
+          "default": false
+        },
+        "iamProfile": {
+          "description": "(All) AWS IAM instance profile to assign",
+          "type": "string"
+        },
+        "securityGroups": {
+          "description": "(All) AWS security groups to assign",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "softConstraints": {
+          "description": "(All) Soft constraints of the job",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "hardConstraints": {
+          "description": "(All) Hard constraints of the job",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "jobGroupStack": {
+          "description": "(All) Stack name of the job cluster (set as a value of NETFLIX_STACK environment variable in a container)",
+          "type": "string"
+        },
+        "jobGroupDetail": {
+          "description": "(All) Cluster detail field (include in NETFLIX_AUTO_SCALE_GROUP environment variable in a container)",
+          "type": "string"
+        },
+        "jobGroupSequence": {
+          "description": "(All) Sequence number of the job (include in NETFLIX_AUTO_SCALE_GROUP environment variable in a container)",
+          "type": "string"
+        },
+        "capacityGroup": {
+          "description": "(All) Capacity group name to use (automatically set to appName if unspecified)",
+          "type": "string"
+        }
+      }
+    },
+    "Job": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/JobSpec"
+        },
+        {
+          "title": "Job description",
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "description": "job id uniquely generated by Titus",
+              "type": "string"
+            },
+            "submittedAt": {
+              "description": "The time of job submission",
+              "type": "string",
+              "default": "2016-05-16T20:47:22.341Z"
+            },
+            "tasks": {
+              "description": "List of workers created for the job",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Task"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "JobSubmitResponse": {
+      "title": "Job Submit Response",
+      "type": "object",
+      "properties": {
+        "jobUri": {
+          "description": "URI containing new job id",
+          "type": "string"
+        }
+      }
+    },
+    "Task": {
+      "title": "Task description",
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "description": "Titus task id in a format <job_id>",
+          "type": "string",
+          "default": "myTask"
+        },
+        "jobId": {
+          "description": "Titus job id that owns this task",
+          "type": "string",
+          "default": "myJob"
+        },
+        "state": {
+          "description": "Task state (RUNNING,...)",
+          "type": "string",
+          "default": "RUNNING"
+        },
+        "applicationName": {
+          "description": "",
+          "type": "string",
+          "default": "myApp"
+        },
+        "cpu": {
+          "description": "Number of CPUs to allocate",
+          "type": "number",
+          "default": 1
+        },
+        "memory": {
+          "description": "Amount of memory to allocate in MB",
+          "type": "number",
+          "default": 1024
+        },
+        "disk": {
+          "description": "Amount of disk space to allocate in MB",
+          "type": "number",
+          "default": 10000
+        },
+        "efs": {
+          "description": "Attach the specified EFS volume to the container.",
+          "type": "object",
+          "required": [
+            "mountPoint",
+            "efsId"
+          ],
+          "properties": {
+            "mountPerm": {
+              "description": "The mount mode. Valid values are: RW/RO/WO",
+              "enum": [
+                "RW",
+                "RO",
+                "WO"
+              ],
+              "type": "string",
+              "default": "RW"
+            },
+            "mountPoint": {
+              "description": "The mount point within the container.",
+              "type": "string",
+              "default": ""
+            },
+            "efsId": {
+              "description": "The EFS file system ID",
+              "type": "string",
+              "default": ""
+            }
+          }
+        },
+        "networkMbps": {
+          "description": "Amount of networking bandwidth to allocate in Mbps",
+          "type": "number",
+          "default": 128
+        },
+        "gpu": {
+          "description": "Number of gpus to allocate",
+          "type": "number",
+          "default": 0
+        },
+        "ports": {
+          "description": "List of server ports accessible on the container",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "default": []
+        },
+        "env": {
+          "description": "OS environment properties to be set for the container",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {
+            "SOURCE": "swagger"
+          }
+        },
+        "version": {
+          "description": "Version id",
+          "type": "string",
+          "default": "v1.0"
+        },
+        "entryPoint": {
+          "description": "Executable to run during container startup",
+          "type": "string",
+          "default": "/bin/bash"
+        },
+        "host": {
+          "description": "Titus host server where the container is running",
+          "type": "string",
+          "default": "192.168.0.1"
+        },
+        "submittedAt": {
+          "description": "The time of job submission",
+          "type": "string",
+          "default": "2016-05-16T20:47:22.341Z"
+        },
+        "launchedAt": {
+          "description": "The time when the job was launched",
+          "type": "string",
+          "default": "2016-05-16T30:47:22.341Z"
+        },
+        "startedAt": {
+          "description": "Task start time",
+          "type": "string",
+          "default": "2016-05-16T40:47:22.341Z"
+        },
+        "finishedAt": {
+          "description": "Task execution finished time",
+          "type": "string",
+          "default": "2016-05-16T50:47:22.341Z"
+        },
+        "message": {
+          "description": "Status message",
+          "type": "string",
+          "default": "?"
+        },
+        "data": {
+          "description": "Supplementary information",
+          "type": "object",
+          "properties": {
+            "ipAddresses": {
+              "description": "IP addresses assigned to the container",
+              "type": "object",
+              "default": {}
+            },
+            "NetworkConfiguration": {
+              "description": "Network configuration (vpc) for the container",
+              "type": "object",
+              "properties": {
+                "IsRoutableIP": {
+                  "type": "boolean"
+                },
+                "IPAddress": {
+                  "type": "string"
+                },
+                "EniIPAddress": {
+                  "type": "string"
+                },
+                "EniID": {
+                  "type": "string"
+                },
+                "ResourceID": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {}
+        }
+      }
+    },
+    "JobKillCmd": {
+      "title": "Job kill command",
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "description": "Id of a job affected by this operation",
+          "type": "string"
+        },
+        "user": {
+          "description": "A user id terminating this job",
+          "type": "string",
+          "default": "myUser"
+        }
+      }
+    },
+    "TaskKillCmd": {
+      "title": "Task kill command",
+      "type": "object",
+      "properties": {
+        "user": {
+          "description": "A user id terminating this task",
+          "type": "string",
+          "default": "myUser"
+        },
+        "taskId": {
+          "description": "(Deprecated, use 'taskIds') Id of a task affected by this operation",
+          "type": "string"
+        },
+        "taskIds": {
+          "description": "A collection of task ids to be removed. Tasks can belong to different jobs.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "shrink": {
+          "description": "Set to true, if the job should be shrunk",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "JobSetInstanceCountsCmd": {
+      "title": "Set new instance counts for a job (service jobs only)",
+      "type": "object",
+      "properties": {
+        "user": {
+          "description": "A user name that will be associated with this request",
+          "type": "string",
+          "default": "myUser"
+        },
+        "jobId": {
+          "description": "Id of a job affected by this operation",
+          "type": "string",
+          "default": "Titus-001"
+        },
+        "instancesDesired": {
+          "description": "Desired number of job task workers",
+          "type": "integer",
+          "format": "int32",
+          "default": 2
+        },
+        "instancesMin": {
+          "description": "Minimum number of job task workers",
+          "type": "integer",
+          "format": "int32",
+          "default": 1
+        },
+        "instancesMax": {
+          "description": "Maximum number of job task workers",
+          "type": "integer",
+          "format": "int32",
+          "default": 5
+        }
+      }
+    },
+    "JobSetInServiceCmd": {
+      "title": "Set job's in-service status (service jobs only)",
+      "type": "object",
+      "properties": {
+        "user": {
+          "description": "A user name that will be associated with this request",
+          "type": "string",
+          "default": "myUser"
+        },
+        "jobId": {
+          "description": "Id of a job affected by this operation",
+          "type": "string",
+          "default": "Titus-001"
+        },
+        "inService": {
+          "description": "In-service status",
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "TaskHeartbeatCmd": {
+      "title": "Titus container/task heartbeat command",
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "description": "Id of a job affected by this operation",
+          "type": "string",
+          "default": "Titus-001"
+        },
+        "status": {
+          "description": "Task status",
+          "type": "object",
+          "additionalProperties": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  }
+}

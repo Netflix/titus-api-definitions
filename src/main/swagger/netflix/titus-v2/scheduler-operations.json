@@ -1,0 +1,80 @@
+{
+  "paths": {
+    "getQueues": {
+      "get": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "Get fenzo queue content",
+        "description": "Get fenzo queue content",
+        "operationId": "getQueues",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "state",
+            "description": "Values QUEUED or LAUNCHED",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    },
+    "getTaskFailures": {
+      "get": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "Get task placement evaluations",
+        "description": "Get task placement evaluations",
+        "operationId": "getTaskFailures",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "taskId",
+            "description": "Id of task to check",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    }
+  }
+}

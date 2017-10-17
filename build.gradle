@@ -1,0 +1,42 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath 'com.netflix.nebula:gradle-netflixoss-project-plugin:4.0.0'
+        classpath 'com.netflix.nebula:nebula-ospackage-plugin:3.+'
+    }
+}
+
+apply plugin: 'nebula.netflixoss'
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+sourceSets {
+    main {
+        resources {
+            srcDir 'src/main/proto'
+            srcDir 'src/main/swagger'
+        }
+    }
+}
+
+bintray {
+    pkg {
+        repo = 'maven'
+        userOrg = 'titusoss'
+        version {
+            mavenCentralSync {
+                sync = false
+            }
+        }
+    }
+}
+
+project.tasks.withType(org.jfrog.gradle.plugin.artifactory.task.BuildInfoBaseTask) { Task task ->
+    task.enabled = false
+}

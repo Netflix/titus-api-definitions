@@ -1,0 +1,78 @@
+{
+  "paths": {
+    "getLogs": {
+      "get": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "Get log location information of a given task",
+        "description": "Get log location information of a given task",
+        "operationId": "getLogs",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Log information returned",
+            "schema": {
+              "description": "Map of file names to the corresponding presigned S3 URLs for all the uploaded log files",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    },
+    "downloadLogs": {
+      "get": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "Returns live and S3 storage URLs to container log files.",
+        "description": "Returns live and S3 storage URLs to container log files. The result is a map where a key is a file name (or 'stdout-live' for live stream), and a value log location URL.",
+        "operationId": "downloadLogs",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Log location",
+            "schema": {
+              "description": "A map with single entity containing current log location",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    }
+  }
+}

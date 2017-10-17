@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+// Titus load balancer API specification.
+//
+
+package com.netflix.titus;
+
+import "google/protobuf/empty.proto";
+import "netflix/titus/titus_job_api.proto";
+import "google/protobuf/wrappers.proto";
+
+option java_multiple_files = true;
+option java_package = "com.netflix.titus.grpc.protogen";
+
+/// Message that identifies a single load balancer association.
+// For ALB integration this ID will be the AWS ARN of the IP Target Group,
+// not a load balancer specifically.
+message LoadBalancerId {
+    string id = 1;
+}
+
+/// Adds a load balancer to a Job.
+message AddLoadBalancerRequest {
+    /// Titus Job to associate with load balancer.
+    string jobId = 1;
+
+    /// Load balancer to add.
+    LoadBalancerId loadBalancerId = 2;
+}
+
+/// Removes a load balancer from a Job.
+message RemoveLoadBalancerRequest {
+    /// Titus Job associated with load balancer.
+    string jobId = 1;
+
+    /// Load balancer to remove.
+    LoadBalancerId loadBalancerId = 2;
+}
+
+/// Message that identifies the load balancers associated with a Job.
+message GetLoadBalancerResult {
+    /// Load balancers assocated with a Job.
+    repeated LoadBalancerId loadBalancers = 1;
+}
+
+service LoadBalancerService {
+    /// Returns all load balancers for a Job.
+    rpc GetJobLoadBalancers (JobId) returns (GetLoadBalancerResult) {
+    }
+
+    /// Add a load balancer to a Job.
+    rpc AddLoadBalancer (AddLoadBalancerRequest) returns (LoadBalancerId) {
+    }
+
+    /// Remove a load balancer from a Job.
+    rpc RemoveLoadBalancer (RemoveLoadBalancerRequest) returns (google.protobuf.Empty) {
+    }
+}

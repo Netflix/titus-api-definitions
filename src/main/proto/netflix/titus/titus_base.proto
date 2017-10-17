@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package com.netflix.titus;
+
+import "google/protobuf/any.proto";
+
+option java_multiple_files = true;
+option java_package = "com.netflix.titus.grpc.protogen";
+option java_outer_classname = "TitusBase";
+
+option go_package = "titus";
+
+// ----------------------------------------------------------------------------
+// Supplementary data structures
+
+/// An entity representing single page of a collection.
+message Page {
+    /// Requested page number, starting from 0 (defaults to 0 if not specified).
+    int32 pageNumber = 1;
+
+    /// Requested page size (if not specified, default size is operation specific).
+    int32 pageSize = 2;
+}
+
+/// An entity representing pagination information returned to a client iterating over its elements.
+// It includes current page that the client requested, and the total collection size.
+// As not always pageCount * pageSize == itemCount, the item count is included as well.
+message Pagination {
+    /// Requested page details.
+    Page currentPage = 1;
+
+    /// Are there any more items to return.
+    bool hasMore = 2;
+
+    /// Total number of pages.
+    int32 totalPages = 3;
+
+    /// Total number of items.
+    int32 totalItems = 4;
+}
+
+/// Retry polices.
+message RetryPolicy {
+    /// Re-run immediately.
+    message Immediate {
+        /// Maximum number of retries.
+        uint32 retries = 1;
+    }
+
+    /// Re-run after a given delay.
+    message Delayed {
+        /// Initial delay in milliseconds.
+        uint64 initialDelayMs = 1;
+
+        /// Subsequenet delays in milliseconds.
+        uint64 delayMs = 2;
+
+        /// Maximum number of retries.
+        uint32 retries = 3;
+    }
+
+    /// Exponential back-off retry policy.
+    message ExponentialBackOff {
+        /// Initial delay in milliseconds.
+        uint64 initialDelayMs = 1;
+
+        /// Upper bound on delay interval.
+        uint64 maxDelayIntervalMs = 2;
+
+        /// Maximum number of retries.
+        uint32 retries = 3;
+    }
+
+    oneof Policy {
+        Immediate immediate = 1;
+        Delayed delayed = 2;
+        ExponentialBackOff exponentialBackOff = 3;
+    }
+}
+
+enum Tier {
+    Flex = 0;
+    Critical = 1;
+}
+
+/// Disk mount permission mask
+enum MountPerm {
+    RO = 0;
+    WO = 1;
+    RW = 2;
+}
+
+/// Instance resource dimensions
+message ResourceDimension {
+    uint32 cpu = 1;
+
+    uint32 gpu = 2;
+
+    uint32 memoryMB = 3;
+
+    uint32 diskMB = 4;
+
+    uint32 networkMbps = 5;
+}
+
+

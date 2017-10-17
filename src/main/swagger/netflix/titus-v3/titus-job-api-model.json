@@ -1,0 +1,1094 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "src/main/proto/netflix/titus/titus_job_api.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "JobChangeNotificationJobDefinitionUpdate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "jobDescriptor": {
+          "$ref": "#/definitions/titusJobDescriptor"
+        }
+      },
+      "description": "/ Emitted when a new job is created or existing's job definition is changed."
+    },
+    "JobChangeNotificationJobSnapshot": {
+      "type": "object",
+      "properties": {
+        "job": {
+          "$ref": "#/definitions/titusJob"
+        }
+      },
+      "description": "/ Full information about a job, including its descriptor and active task set.\nImmediately after subscription, one instance of this notification type is send for each running job."
+    },
+    "JobChangeNotificationTaskUpdate": {
+      "type": "object",
+      "properties": {
+        "task": {
+          "$ref": "#/definitions/titusTask"
+        }
+      },
+      "description": "/ Emitted when a task is created or its state has changed."
+    },
+    "JobClusterNotificationJobAdded": {
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "type": "string"
+        }
+      },
+      "description": "/ Emitted when a new job associated with this cluster is created."
+    },
+    "JobClusterNotificationJobClusterDefinitionUpdate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "jobClusterDescriptor": {
+          "$ref": "#/definitions/titusJobClusterDescriptor"
+        }
+      },
+      "description": "/ Emitted when a new job is created or existing's job definition is changed."
+    },
+    "JobClusterNotificationJobClusterRemoved": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "description": "/ Notification sent when a job cluster is removed from the system."
+    },
+    "JobClusterNotificationJobClusterSnapshot": {
+      "type": "object",
+      "properties": {
+        "jobCluster": {
+          "$ref": "#/definitions/titusJobCluster"
+        },
+        "jobIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "/ Full information about a job cluster, including its job ids.\nImmediately after subscription, one instance of this notification type is send for each known job cluster."
+    },
+    "MantisAutoScalingPolicyRollingCount": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "of": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "/ ???"
+    },
+    "MantisAutoScalingPolicyStrategy": {
+      "type": "object",
+      "properties": {
+        "reason": {
+          "type": "string",
+          "title": "/ ???"
+        },
+        "scaleDownBelowPct": {
+          "type": "integer",
+          "format": "int64",
+          "title": "/ A resource utilization level, which if dropped below, makes it eligible for the scale-down action"
+        },
+        "scaleUpAbovePct": {
+          "type": "integer",
+          "format": "int64",
+          "title": "/ A resource utilization level, which if passed over, makes it eligible for the scale-up action"
+        },
+        "rollingCount": {
+          "$ref": "#/definitions/MantisAutoScalingPolicyRollingCount",
+          "description": "/ A time window over which resource utilization is observed."
+        }
+      },
+      "title": "/ Resource-level consumption evaluation rules"
+    },
+    "MantisJobSLADurationType": {
+      "type": "string",
+      "enum": [
+        "Perpetual",
+        "Transient"
+      ],
+      "default": "Perpetual"
+    },
+    "RetryPolicyDelayed": {
+      "type": "object",
+      "properties": {
+        "initialDelayMs": {
+          "type": "string",
+          "format": "uint64",
+          "description": "/ Initial delay in milliseconds."
+        },
+        "delayMs": {
+          "type": "string",
+          "format": "uint64",
+          "description": "/ Subsequenet delays in milliseconds."
+        },
+        "retries": {
+          "type": "integer",
+          "format": "int64",
+          "description": "/ Maximum number of retries."
+        }
+      },
+      "description": "/ Re-run after a given delay."
+    },
+    "RetryPolicyExponentialBackOff": {
+      "type": "object",
+      "properties": {
+        "initialDelayMs": {
+          "type": "string",
+          "format": "uint64",
+          "description": "/ Initial delay in milliseconds."
+        },
+        "maxDelayIntervalMs": {
+          "type": "string",
+          "format": "uint64",
+          "description": "/ Upper bound on delay interval."
+        },
+        "retries": {
+          "type": "integer",
+          "format": "int64",
+          "description": "/ Maximum number of retries."
+        }
+      },
+      "description": "/ Exponential back-off retry policy."
+    },
+    "RetryPolicyImmediate": {
+      "type": "object",
+      "properties": {
+        "retries": {
+          "type": "integer",
+          "format": "int64",
+          "description": "/ Maximum number of retries."
+        }
+      },
+      "description": "/ Re-run immediately."
+    },
+    "protobufEmpty": {
+      "type": "object",
+      "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for `Empty` is empty JSON object `{}`.",
+      "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
+    },
+    "titusBatchClusterSpec": {
+      "type": "object",
+      "description": "/ Batch job cluster specification. Currently there are no batch specific properties."
+    },
+    "titusBatchJobSpec": {
+      "type": "object",
+      "properties": {
+        "instances": {
+          "$ref": "#/definitions/titusTaskInstances",
+          "description": "/ Number of tasks to run. As batch job cannot auto-scale, min/max task numbers can be safely ignored."
+        },
+        "runtimeLimitSecs": {
+          "type": "string",
+          "format": "uint64",
+          "description": "/ Maximum amount of time in seconds that the job's task is allowed to run. Time is measured since the task\ntransitions to 'RUNNING' state. If a task terminates with an error, and is restarted, the time measurement\nstarts from 0."
+        },
+        "retryPolicy": {
+          "$ref": "#/definitions/titusRetryPolicy",
+          "description": "/ Task rescheduling policy in case of failure."
+        },
+        "containerId": {
+          "type": "string",
+          "description": "/ Reference to a container from a job definition that holds this job specification. If there is no container with\nthis id, the job submit request is rejected."
+        }
+      },
+      "description": "/ Batch job specification."
+    },
+    "titusConstraints": {
+      "type": "object",
+      "properties": {
+        "constraints": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "/ (Optional) A map of constraint name/values. If multiple constraints are given, all must be met (logical 'and')."
+        },
+        "expression": {
+          "type": "string",
+          "title": "/ Not supported yet.\n(Optional) An expression combining multiple constraints. For example 'zoneBalance AND serverGroup == \"mySG\"'.\nAvalilable operators: \u003c, \u003c=, ==, \u003e, \u003e=, in, like, AND, OR"
+        }
+      },
+      "title": "/ Task placement constraints. Currently supported constraint types are:\n* zoneBalance\n* uniqueHost\n* exclusiveHost\n* host\n* serverGroup"
+    },
+    "titusContainer": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "/ (Required) Container name, that can be used within job specification section to reference a container.\nContainer name must be unique within a job descriptor."
+        },
+        "resources": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "/ (Required) CPU, memory, disk, network, ports, ENI, allocateIP\nEach resource/configuration is a key/value pair of string type Data encoding is resource/configuration type specific\nHere are the recommendations for data encoding for new resource types (not mandatory):\n* Scalar values encoded always as a string value, with unit if applicable (for example “10Gb”)\n* Array value is a collection of scalar values separated by comma\n* Map value is a collection of key/value pairs separated by semicolon. Key/value pair must contain ‘=’ as a separator. Value may be empty, in which case ‘=’ is optional"
+        },
+        "securityProfile": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "/ (Required) Container security profile: IAM role, security group list."
+        },
+        "image": {
+          "$ref": "#/definitions/titusImage",
+          "description": "/ (Required) Image reference."
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "/ (Optional) Arbitrary set of key/value pairs. Key names starting with 'titus.' are reserved for an internal usage."
+        },
+        "entryPoint": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "/ (Optional) A binary to execute with parameters. If not set, the entry point must be defined in the container image."
+        },
+        "command": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "/ (Optional) Additional parameters for the entry point defined either here or provided in the container image"
+        },
+        "env": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "/ (Optional) A collection of system environment variables passed to the container."
+        },
+        "softConstraints": {
+          "$ref": "#/definitions/titusConstraints",
+          "description": "/ (Optional) Constraints that does not have to be met for a task to be scheduled on an agent, but\nTitus makes best effort to fullfill them if possible."
+        },
+        "hardConstraints": {
+          "$ref": "#/definitions/titusConstraints",
+          "description": "/ (Optional) Constraints that have to be met for a task to be scheduled on an agent."
+        }
+      }
+    },
+    "titusImage": {
+      "type": "object",
+      "properties": {
+        "imageId": {
+          "type": "string",
+          "description": "/ (Optional) Unique image id."
+        },
+        "name": {
+          "type": "string",
+          "description": "/ (Optional) Image name."
+        }
+      },
+      "description": "/ In the job submit operation one of these values should be specified only, ther other will be resolved by Titus.\nThe resulting job descriptor will include always both values. For the deployment purposes only 'imageId' value is used.\nThe resolution happens only once, immediately during the submit type, so the same image is used for all tasks.\nThis behavior is not applied for job cluster. This means that if a name contains 'latest' version, each job\ncreated from the same cluster definition, may have different effective image version."
+    },
+    "titusJob": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "/ (Required) A unique id (UUID) of a job."
+        },
+        "jobClusterId": {
+          "type": "string",
+          "description": "/ (Required) A reference to an existing job cluster."
+        },
+        "jobDescriptor": {
+          "$ref": "#/definitions/titusJobDescriptor",
+          "description": "/ (Required) Job descriptor."
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/titusTask"
+          },
+          "description": "/ (Required) List of tasks associated with this job. The content of the list depends on the query operation."
+        },
+        "jobState": {
+          "$ref": "#/definitions/titusJobState",
+          "description": "/ (Required) Last known job state."
+        },
+        "stateChanges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/titusStateChange"
+          },
+          "description": "/ (Required) State transition history."
+        }
+      },
+      "description": "/ Job entity is returned by query operations only."
+    },
+    "titusJobChangeNotification": {
+      "type": "object",
+      "properties": {
+        "jobSnapshot": {
+          "$ref": "#/definitions/JobChangeNotificationJobSnapshot"
+        },
+        "snapshotEnd": {
+          "$ref": "#/definitions/titusJobChangeNotificationSnapshotEnd"
+        },
+        "jobDefinitionUpdate": {
+          "$ref": "#/definitions/JobChangeNotificationJobDefinitionUpdate"
+        },
+        "jobFinished": {
+          "$ref": "#/definitions/titusJobChangeNotificationJobFinished"
+        },
+        "taskUdate": {
+          "$ref": "#/definitions/JobChangeNotificationTaskUpdate"
+        }
+      }
+    },
+    "titusJobChangeNotificationJobFinished": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "description": "/ Notification sent when a job completes. It is proceeded by all job's task state updates. Once this\nnotification is sent, no other notifications perteining to this job (and its tasks) are sent."
+    },
+    "titusJobChangeNotificationSnapshotEnd": {
+      "type": "object",
+      "description": "/ A marker notification, indicating that all known jobs were streamed to the client, and now will follow\nstate changes."
+    },
+    "titusJobCluster": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "/ (Required) A unique id (UUID) of a job cluster."
+        },
+        "jobClusterDescriptor": {
+          "$ref": "#/definitions/titusJobClusterDescriptor",
+          "description": "/ (Required) Job cluster descriptor."
+        }
+      }
+    },
+    "titusJobClusterDescriptor": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "$ref": "#/definitions/titusOwner",
+          "description": "/ (Optional) Owner of a job cluster (see Owner entity description for more information)."
+        },
+        "name": {
+          "type": "string",
+          "description": "/ (Required) Descriptive name for the job cluster. It does not have to be unique."
+        },
+        "jobDescriptor": {
+          "$ref": "#/definitions/titusJobDescriptor",
+          "description": "/ (Optional) A job descriptor template. A job can be created by referencing a job cluster."
+        },
+        "batch": {
+          "$ref": "#/definitions/titusBatchClusterSpec"
+        },
+        "service": {
+          "$ref": "#/definitions/titusServiceClusterSpec"
+        },
+        "mantis": {
+          "$ref": "#/definitions/titusMantisClusterSpec"
+        }
+      },
+      "description": "/ Job cluster descriptor."
+    },
+    "titusJobClusterId": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "description": "/ A wrapper type for job cluster id."
+    },
+    "titusJobClusterNotification": {
+      "type": "object",
+      "properties": {
+        "jobClusterSnapshot": {
+          "$ref": "#/definitions/JobClusterNotificationJobClusterSnapshot"
+        },
+        "snapshotEnd": {
+          "$ref": "#/definitions/titusJobClusterNotificationSnapshotEnd"
+        },
+        "jobClusterDefinitionUpdate": {
+          "$ref": "#/definitions/JobClusterNotificationJobClusterDefinitionUpdate"
+        },
+        "jobClusterRemoved": {
+          "$ref": "#/definitions/JobClusterNotificationJobClusterRemoved"
+        },
+        "jobAdded": {
+          "$ref": "#/definitions/JobClusterNotificationJobAdded"
+        },
+        "jobFinished": {
+          "$ref": "#/definitions/titusJobClusterNotificationJobFinished"
+        }
+      }
+    },
+    "titusJobClusterNotificationJobFinished": {
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "type": "string"
+        }
+      },
+      "description": "/ Emitted when a new job associated with this cluster is finished."
+    },
+    "titusJobClusterNotificationSnapshotEnd": {
+      "type": "object",
+      "description": "/ A marker notification, indicating that all known jobs were streamed to the client, and now will follow\nstate changes."
+    },
+    "titusJobClusterQuery": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "$ref": "#/definitions/titusPage",
+          "description": "/ (Optional) Requested page number/size."
+        },
+        "fiterlingCriteria": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "/ (Optional) Collection of fields and their values for a filter."
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "/ (Optional) If set, only field values explicitly given in this parameter will be returned."
+        }
+      }
+    },
+    "titusJobClusterQueryResult": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/titusJobCluster"
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/titusPagination"
+        }
+      },
+      "description": "/ A wrapper for a job cluster query reply."
+    },
+    "titusJobClusterStatusUpdate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "enableStatus": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "titusJobDescriptor": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "$ref": "#/definitions/titusOwner",
+          "description": "/ (Optional) Owner of a job (see Owner entity description for more information)."
+        },
+        "jobClusterid": {
+          "type": "string",
+          "description": "/ (Optional) Id of job cluster that owns this job. If not provided, the job will be associated with default cluster."
+        },
+        "appName": {
+          "type": "string",
+          "description": "/ (Optional) Arbitrary name, not interpreted by Titus. Does not have to be unique. If not provided, a default\nname, that depends on job type (batch, service or Mantis) is set."
+        },
+        "jobGroupInfo": {
+          "$ref": "#/definitions/titusJobGroupInfo",
+          "description": "/ (Optional) Mostly relevant for service jobs, provides further grouping criteria for a job."
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "/ Arbitary set of key/value pairs. Names starting with 'titus' (case does not matter) are reserved for an internal use."
+        },
+        "added_to_force_TitusContainer_model_generation": {
+          "$ref": "#/definitions/titusContainer"
+        },
+        "containers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/titusContainer"
+          },
+          "description": "/ (Required) Collection of containers to be executed for a job. For batch and service jobs, a single container\nis required. For Mantis job, number of containers must be equal to number of stages, and each stage must be\nassociated with its own container."
+        },
+        "batch": {
+          "$ref": "#/definitions/titusBatchJobSpec"
+        },
+        "service": {
+          "$ref": "#/definitions/titusServiceJobSpec"
+        },
+        "mantis": {
+          "$ref": "#/definitions/titusMantisJobSpec"
+        }
+      },
+      "description": "/ Job descriptor contains full job specification (batch, service or Mantis) sufficient to run a job."
+    },
+    "titusJobGroupInfo": {
+      "type": "object",
+      "properties": {
+        "stack": {
+          "type": "string",
+          "title": "/ (Required)"
+        },
+        "detail": {
+          "type": "string",
+          "title": "/ (Optional)"
+        },
+        "sequence": {
+          "type": "string",
+          "title": "/ (Optional)"
+        }
+      },
+      "title": "/ ??? This is not really job group, but a single job identifier. Can we find better name here?"
+    },
+    "titusJobId": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "description": "/ A wrapper type for job id."
+    },
+    "titusJobIds": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "titusJobInstancesUpdate": {
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "type": "string"
+        },
+        "taskInstances": {
+          "$ref": "#/definitions/titusTaskInstances"
+        }
+      },
+      "description": "/ TODO For mantis we need also stage index."
+    },
+    "titusJobQuery": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "$ref": "#/definitions/titusPage",
+          "description": "/ (Optional) Requested page number/size."
+        },
+        "fiterlingCriteria": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "/ (Optional) Collection of fields and their values for a filter.\nTODO Should we have oneof data structure so we can implement expressions in the future."
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "/ (Optional) If set, only field values explicitly given in this parameter will be returned\nThis does not include certain attributes like 'jobId', 'appName' which are always returned.\nIf nested field value is provided, only the explicitly listed nested fields will be returned.\nFor example: tasks.taskId rule will result in including just this value when encoding Task entity."
+        }
+      }
+    },
+    "titusJobQueryResult": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/titusJob"
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/titusPagination"
+        }
+      },
+      "description": "/ A wrapper for job query reply."
+    },
+    "titusJobState": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "$ref": "#/definitions/titusState"
+        },
+        "reason": {
+          "type": "string",
+          "description": "/ (Optional) Detailed information about why a transition to this state happened. Mostly relevant for FAILED state\nto further clarify root cause of the failure."
+        }
+      }
+    },
+    "titusJobStatusUpdate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "enableStatus": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "titusMantisAutoScalingPolicy": {
+      "type": "object",
+      "properties": {
+        "increment": {
+          "type": "integer",
+          "format": "int64",
+          "title": "/ Single scale-up increment"
+        },
+        "decrement": {
+          "type": "integer",
+          "format": "int64",
+          "title": "/ Single scale-down decrement"
+        },
+        "coolDownSecs": {
+          "type": "string",
+          "format": "uint64",
+          "title": "/ A minimum amount of time between two auto-scaling actions"
+        },
+        "strategies": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/MantisAutoScalingPolicyStrategy"
+          },
+          "description": "/ A strategy for named resources (memory, network, cpu, etc)."
+        }
+      },
+      "title": "/ Mantis specific auto-scaling policy.\nTODO: provide better behavior description"
+    },
+    "titusMantisClusterSpec": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": "/ If job cluster is not enabled, all running jobs are terminated, and no new job is allowed to start."
+        },
+        "min": {
+          "type": "integer",
+          "format": "int64",
+          "description": "/ Minimum number of expected jobs to run. If this constraint is violated, a required number of additional jobs\nis started based on the job cluster definiton."
+        },
+        "max": {
+          "type": "integer",
+          "format": "int64",
+          "description": "/ Maximum number of jobs allowed to run. A new job can be submitted only if this constraint is not violated."
+        },
+        "cronSpec": {
+          "type": "string",
+          "title": "/ ???"
+        },
+        "cronPolicy": {
+          "type": "string",
+          "title": "/ ???"
+        }
+      },
+      "description": "/ Mantis job cluster specification."
+    },
+    "titusMantisJobSLA": {
+      "type": "object",
+      "properties": {
+        "runtimeLimitSecs": {
+          "type": "string",
+          "format": "uint64",
+          "description": "/ Maximum amount of time in seconds that the job is allowed to run. Time is measured since the job is\nsubmitted."
+        },
+        "minRuntimeSecs": {
+          "type": "string",
+          "format": "uint64",
+          "description": "/ Mantis job can be auto-terminated if there is no subscription to it. To prevent early terminations,\na minimum running time can be specified via this property."
+        },
+        "durationType": {
+          "$ref": "#/definitions/MantisJobSLADurationType",
+          "description": "/ For 'Perpetual' type, do not terminate idle jobs. For 'Transient' jobs, the early termination is on, and is\ncontrolled by 'minRuntimeSecs' property."
+        },
+        "userProvidedType": {
+          "type": "string",
+          "description": "/ Mantis specific. Users can provide a value to dedup job submissions. Users can “submit-and-connect” to jobs\nsuch that only one job per unique value of this type actually is created. Other requests connect to the\nexisting job instead of creating another one."
+        }
+      },
+      "title": "/ Mantis specific job SLA"
+    },
+    "titusMantisJobSpec": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "/ (Required) Arbitrary name, not interpreted by Titus. Does not have to be unique."
+        },
+        "jobSLA": {
+          "$ref": "#/definitions/titusMantisJobSLA",
+          "description": "/ (Required) Mantis SLA definition definining constraints for job execution (for example max execution time)."
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "/ (Optional) Arbitrary set of key/value pairs."
+        },
+        "subscriptionTimeoutSecs": {
+          "type": "string",
+          "format": "uint64",
+          "title": "/ ???"
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/titusMantisStage"
+          },
+          "description": "/ List of Mantis stages. The order of the stages is preserved throughtout the whole life of a job."
+        }
+      },
+      "description": "/ Mantis job specification."
+    },
+    "titusMantisStage": {
+      "type": "object",
+      "properties": {
+        "instances": {
+          "$ref": "#/definitions/titusTaskInstances",
+          "description": "/ Number of tasks to run. If scaling policy is defined, the number of tasks created will be always within\nmin/max range."
+        },
+        "containerId": {
+          "type": "string",
+          "description": "/ Reference to a container from a job definition that holds this job specification. If there is no container with\nthis id, the job submit request is rejected."
+        },
+        "retryPolicy": {
+          "$ref": "#/definitions/titusRetryPolicy",
+          "description": "/ Task rescheduling policy in case of failure."
+        },
+        "autoScalingPolicy": {
+          "$ref": "#/definitions/titusMantisAutoScalingPolicy",
+          "title": "/ Job auto-scaling policy"
+        }
+      },
+      "description": "/ Mantis job definition consists from a seuence of stages. This entity describes a single stage of a job."
+    },
+    "titusOwner": {
+      "type": "object",
+      "properties": {
+        "teamEmail": {
+          "type": "string"
+        }
+      },
+      "description": "/ An owner of a job cluster or a job. If this value is not provided explicitly, a caller's email address\nfrom a security context is used. If the security context does not contain this information, a request is rejected."
+    },
+    "titusPage": {
+      "type": "object",
+      "properties": {
+        "pageNumber": {
+          "type": "integer",
+          "format": "int32",
+          "description": "/ Requested page number, starting from 0 (defaults to 0 if not specified)."
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int32",
+          "description": "/ Requested page size (if not specified, default size is operation specific)."
+        }
+      },
+      "description": "/ An entity representing single page of a collection."
+    },
+    "titusPagination": {
+      "type": "object",
+      "properties": {
+        "currentPage": {
+          "$ref": "#/definitions/titusPage",
+          "description": "/ Requested page details."
+        },
+        "hasMore": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": "/ Are there any more items to return."
+        },
+        "pageCount": {
+          "type": "integer",
+          "format": "int32",
+          "description": "/ Total number of pages."
+        },
+        "itemCount": {
+          "type": "integer",
+          "format": "int32",
+          "description": "/ Total number of items."
+        }
+      },
+      "description": "/ An entity representing pagination information returned to a client iterating over its elements.\nIt includes current page that the client requested, and the total collection size.\nAs not always pageCount * pageSize == itemCount, the item count is included as well."
+    },
+    "titusRetryPolicy": {
+      "type": "object",
+      "properties": {
+        "immediate": {
+          "$ref": "#/definitions/RetryPolicyImmediate"
+        },
+        "delayed": {
+          "$ref": "#/definitions/RetryPolicyDelayed"
+        },
+        "exponentialBackOff": {
+          "$ref": "#/definitions/RetryPolicyExponentialBackOff"
+        }
+      },
+      "description": "/ Retry polices."
+    },
+    "titusScalingPolicy": {
+      "type": "object",
+      "properties": {
+        "condition": {
+          "type": "string",
+          "title": "/ An expression defining a condition for action execution. The expression format is auto-scaling engine specific.\nFor example: 'avg(CPUUtilization) \u003e 80%'"
+        },
+        "action": {
+          "type": "string",
+          "title": "/ Action to execute if condition evalutes to true. The action syntax is auto-scaling engine specific.\nFor example: 'addInstances 1'"
+        },
+        "durationSecs": {
+          "type": "string",
+          "format": "uint64",
+          "title": "/ A duration for the condition to hold true, before an action is executed"
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "/ Additional policy attributes."
+        }
+      },
+      "description": "/ Job scaling policy. Each auto-scaling engine is expected to define their own syntax for condition/action fields."
+    },
+    "titusServiceClusterSpec": {
+      "type": "object",
+      "description": "/ Service job cluster specification. Currently there are no batch specific properties."
+    },
+    "titusServiceJobSpec": {
+      "type": "object",
+      "properties": {
+        "instances": {
+          "$ref": "#/definitions/titusTaskInstances",
+          "description": "/ Number of tasks to run. If scaling policy is defined, the number of tasks created will be always within\nmin/max range."
+        },
+        "enabled": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": "/ Job enable/disable status. If job is disabled, auto-scaling policy rules are not applied."
+        },
+        "scalingPolices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/titusScalingPolicy"
+          },
+          "description": "/ Scaling policy associated with this job."
+        },
+        "retryPolicy": {
+          "$ref": "#/definitions/titusRetryPolicy",
+          "description": "/ Task rescheduling policy in case of failure."
+        },
+        "containerId": {
+          "type": "string",
+          "description": "/ Reference to a container from a job definition that holds this job specification. If there is no container with\nthis id, the job submit request is rejected."
+        }
+      },
+      "description": "/ Service job specification."
+    },
+    "titusState": {
+      "type": "string",
+      "enum": [
+        "QUEUED",
+        "DISPATCHED",
+        "STARTING",
+        "RUNNING",
+        "FINISHED",
+        "FAILED"
+      ],
+      "default": "QUEUED",
+      "title": "/ A state information associated with a job or with a task.\n??? It feels we should have separate states for job (ACTIVE, FINISHED, FAILED)"
+    },
+    "titusStateChange": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string",
+          "description": "/ (Required) State described by this object."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "/ (Required) Time (in RFC-3339 format) at which the transition happened."
+        }
+      },
+      "description": "/ State transition history."
+    },
+    "titusTask": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "/ (Required) TaskId consists of job id, and task identifier (job specific)."
+        },
+        "taskContext": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "/ (Required) Includes:\n* agent execution environment: 'agent.region', 'agent.zone', 'agent.host', 'agent.instance'\n* job type specific information: 'task.index', 'task.resubmitOf' (id of task which this task is replacing), 'task.originalId' (id of task which this task is a replacement)"
+        },
+        "state": {
+          "$ref": "#/definitions/titusTaskState",
+          "description": "/ (Required) Last known state of this task."
+        },
+        "stateChanges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/titusStateChange"
+          },
+          "description": "/ (Required) State transition history."
+        }
+      },
+      "description": "/ Task is an entity representing running container."
+    },
+    "titusTaskId": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "description": "/ A wrapper type for task id."
+    },
+    "titusTaskIds": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "titusTaskInstances": {
+      "type": "object",
+      "properties": {
+        "min": {
+          "type": "integer",
+          "format": "int64",
+          "description": "/ Minimum number of tasks to run. If not set, defaults to 0."
+        },
+        "max": {
+          "type": "integer",
+          "format": "int64",
+          "description": "/ Maximum number of tasks that can be run. If not set, set to 2^31-1 (Integer.MAX_VALUE)."
+        },
+        "desired": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Desired number of tasks to run."
+        }
+      },
+      "description": "/ This data structure is associated with a job, and specifices number of tasks to run (desired). If job\nsupports auto-scaling (service and Mantis jobs), min/max define constraints. At any point in time\nthe condition min \u003c= desired \u003c= max must hold true. The desired state may be changed a user, but also may\nbe changed as a result of auto-scaling action."
+    },
+    "titusTaskQuery": {
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "type": "string",
+          "description": "/ (Required) Job id which tasks are queried."
+        },
+        "page": {
+          "$ref": "#/definitions/titusPage",
+          "description": "/ (Optional) Requested page number/size."
+        },
+        "fiterlingCriteria": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "/ (Optional) Collection of fields and their values for a filter."
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "/ (Optional) If set, only field values explicitly given in this parameter will be returned"
+        }
+      }
+    },
+    "titusTaskQueryResult": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/titusTask"
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/titusPagination"
+        }
+      }
+    },
+    "titusTaskState": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "$ref": "#/definitions/titusState"
+        },
+        "reason": {
+          "type": "string",
+          "description": "/ (Optional) Detailed information about why a transition to this state happened. Mostly relevant for FAILED state\nto further clarify root cause of the failure."
+        }
+      }
+    }
+  }
+}

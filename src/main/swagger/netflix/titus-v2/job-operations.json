@@ -1,0 +1,422 @@
+{
+  "paths": {
+    "jobsOperations": {
+      "post": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "Create a new job",
+        "description": "Sending job description document to this endpoint creates a new job.",
+        "operationId": "createJob",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "jobSpec",
+            "description": "Job description",
+            "required": true,
+            "schema": {
+              "$ref": "./job-model.json#/definitions/JobSpec"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job submitted",
+            "schema": {
+              "$ref": "./job-model.json#/definitions/JobSubmitResponse"
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "Get all jobs",
+        "description": "At least one query criteria (any of the available) must be given. If 'taskState' is not set, any state matches, but archived tasks are not included. To include archived tasks, set 'taskState' to 'ANY'.",
+        "operationId": "getJobs",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "taskState",
+            "in": "query",
+            "description": "Find tasks with the given state (ANY, QUEUED, DISPATCHED, STARTING, RUNNING, FINISHED, ERROR, STOPPED, CRASHED, FAILED, UNKNOWN). Set state value to 'ANY' to return all tasks, including archived ones.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "labels",
+            "in": "query",
+            "description": "Comma separated list of labels that must be present in a job, each with optional value (for example 'labelA' or 'labelA=value')",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "labels.op",
+            "in": "query",
+            "description": "Labels evaluation operator: 'and' if all labels are expected, 'or' if any label must be present to match the query criteria (defaults to 'or')",
+            "required": false,
+            "type": "string",
+            "default": "or"
+          },
+          {
+            "name": "applicationName",
+            "in": "query",
+            "description": "Docker image name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "appName",
+            "in": "query",
+            "description": "Job application name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "jobGroupStack",
+            "in": "query",
+            "description": "Job group stack name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "jobGroupDetail",
+            "in": "query",
+            "description": "Job group detail",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "jobGroupSequence",
+            "in": "query",
+            "description": "Job group sequence",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Job type ('batch' or 'service')",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of jobs to return",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Comma separated list of fields to return. For nested fields, separate field names with dot (for example 'tasks.id' to get only task id)",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jobs found",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "./job-model.json#/definitions/Job"
+              }
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    },
+    "jobOperations": {
+      "get": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "Get job with a specified id",
+        "description": "Extract information about a specific job",
+        "operationId": "getJobById",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "description": "Job id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "taskState",
+            "in": "query",
+            "description": "Find tasks with the given states",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job found",
+            "schema": {
+              "$ref": "./job-model.json#/definitions/Job"
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    },
+    "killJob": {
+      "post": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "Kill a job with the given id",
+        "description": "Kill a job with the given id. Job id is provided in POST request body.",
+        "operationId": "killJob",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "jobKillCmd",
+            "in": "body",
+            "description": "Job kill command",
+            "required": true,
+            "schema": {
+              "$ref": "./job-model.json#/definitions/JobKillCmd"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Job removed"
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    },
+    "setJobInstanceCounts": {
+      "post": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "Change instance counts for a given job",
+        "description": "Change instance counts for a given job.",
+        "operationId": "setJobInstanceCounts",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "jobCounters",
+            "in": "body",
+            "description": "Job counters",
+            "required": true,
+            "schema": {
+              "$ref": "./job-model.json#/definitions/JobSetInstanceCountsCmd"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job instance counts updated"
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    },
+    "killTask": {
+      "post": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "Kill a task with the given id",
+        "description": "Kill a task with the given id. Task id is provided in POST request body.",
+        "operationId": "killTask",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "taskKillCmd",
+            "in": "body",
+            "description": "Task kill command",
+            "required": true,
+            "schema": {
+              "$ref": "./job-model.json#/definitions/TaskKillCmd"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Task killed"
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    },
+    "setInService": {
+      "post": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "Change job in-service status",
+        "description": "Change job in-service status",
+        "operationId": "setInService",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "inServiceUpdate",
+            "in": "body",
+            "description": "In-service request update",
+            "required": true,
+            "schema": {
+              "$ref": "./job-model.json#/definitions/JobSetInServiceCmd"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job 'inService' status changed"
+          },
+          "400": {
+            "description": "Bad request. Returned for non-service jobs.",
+            "schema": {
+              "$ref": "./common-model.json#/definitions/ErrorResponse"
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    },
+    "getTaskById": {
+      "get": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "Get information about a running task",
+        "description": "Get information about a running task",
+        "operationId": "getTaskById",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task found",
+            "schema": {
+              "$ref": "./job-model.json#/definitions/Task"
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    },
+    "getTasksWithHeartbeatTimeout": {
+      "get": {
+        "tags": [
+          "Internal"
+        ],
+        "summary": "Get information about task/container heartbeat timeout/delay",
+        "description": "Get information about task/container heartbeat timeout/delay. If query parameter 'delay' is not given, tasks with heartbeat timeout are returned.",
+        "operationId": "getTasksWithHeartbeatTimeout",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "delay",
+            "in": "query",
+            "description": "Heartbeat delay",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task heartbeat delays",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    },
+    "titusExecutorHeartbeat": {
+      "post": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "Container/task heartbeat from Titus agent",
+        "description": "Container/task heartbeat from Titus agent. This is internal API used between Titus Agent, and Titus Master",
+        "operationId": "titusExecutorHeartbeat",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "heartbeatCmd",
+            "in": "body",
+            "description": "Titus heartbeat command",
+            "required": true,
+            "schema": {
+              "$ref": "./job-model.json#/definitions/TaskHeartbeatCmd"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Heartbeat accepted"
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    }
+  }
+}

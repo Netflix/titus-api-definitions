@@ -1,0 +1,52 @@
+{
+  "definitions": {
+    "ServerStatusRepresentation": {
+      "title": "Server status information",
+      "type": "object",
+      "properties": {
+        "leader": {
+          "description": "Is this node a leader",
+          "type": "boolean"
+        },
+        "uptime": {
+          "description": "Process up time",
+          "type": "string"
+        },
+        "electionTimeStamp": {
+          "description": "Time at which this instance has been elected as master",
+          "type": "string"
+        },
+        "activeTimeStamp": {
+          "description": "Time at which this instance finished activation process after being elected as master, and is ready to server client requests",
+          "type": "string"
+        },
+        "activationTime": {
+          "description": "Amount of time it took to active this instance, after it got elected as master",
+          "type": "string"
+        },
+        "serviceActivationTime": {
+          "description": "Activation time for individual services. The list is in service activation order.",
+          "type": "array",
+          "items": {
+            "type": "#/definitions/ServiceActivation"
+          },
+          "default": []
+        }
+      }
+    },
+    "ServiceActivation": {
+      "title": "Service activation data",
+      "type": "object",
+      "properties": {
+        "service": {
+          "description": "Service name",
+          "type": "string"
+        },
+        "duration": {
+          "description": "Activation time",
+          "type": "string"
+        }
+      }
+    }
+  }
+}

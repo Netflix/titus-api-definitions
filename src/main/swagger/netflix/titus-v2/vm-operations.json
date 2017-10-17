@@ -1,0 +1,260 @@
+{
+  "paths": {
+    "listServerInfos": {
+      "get": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "List all known server types",
+        "description": "List all known server types",
+        "operationId": "listServerInfos",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "./vm-model.json#/definitions/ServerInfo"
+              }
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    },
+    "listAgents": {
+      "get": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "List all agent ASGs",
+        "description": "Fetch all known Titus ASGs with their server pools, and available resources.",
+        "operationId": "listAgents",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "detached",
+            "description": "Show detached agents",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "./vm-model.json#/definitions/Agent"
+              }
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    },
+    "listClusters": {
+      "get": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "List Titus clusters",
+        "description": "List Titus clusters, and their auto scaling rules",
+        "operationId": "listClusters",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "./vm-model.json#/definitions/AgentCluster"
+              }
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    },
+    "listJobsOnAgents": {
+      "get": {
+        "tags": [
+          "Titus"
+        ],
+        "summary": "List jobs running on a specific Virtual Machines",
+        "description": "List jobs running on a specific Virtual Machines",
+        "operationId": "listJobsOnAgents",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "idleOnly",
+            "description": "Show only idle agents",
+            "required": false,
+            "type": "boolean",
+            "default": false
+          },
+          {
+            "in": "query",
+            "name": "excludeIdle",
+            "description": "Exclude idle agents",
+            "required": false,
+            "type": "boolean",
+            "default": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "$ref": "./vm-model.json/#/definitions/JobsOnVMs"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    },
+    "serverGroupsOperations": {
+      "get": {
+        "tags": [
+          "Agent management"
+        ],
+        "summary": "Get all known Titus agent server groups",
+        "description": "Get all known Titus agent server groups",
+        "operationId": "getServerGroups",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "./vm-model.json/#/definitions/AgentServerGroup"
+              }
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Agent management"
+        ],
+        "summary": "Change Titus server group lifecycle state",
+        "description": "Change Titus server group lifecycle state",
+        "operationId": "updateServerGroup",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "./vm-model.json#/definitions/AgentServerGroup"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Titus server group updated"
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    },
+    "serverGroupOperations": {
+      "get": {
+        "tags": [
+          "Agent management"
+        ],
+        "summary": "Get Titus server group by name",
+        "description": "Get Titus server group by name",
+        "operationId": "getServerGroup",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "./vm-model.json/#/definitions/AgentServerGroup"
+            }
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Agent management"
+        ],
+        "summary": "(Deprecated) Remove Titus server group.",
+        "description": "This operation is provided for backward compatibility when server group auto-discovery was not present.",
+        "operationId": "removeServerGroup",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Titus server group removed"
+          },
+          "default": {
+            "$ref": "./responses.json#/responses/Unexpected"
+          }
+        }
+      }
+    }
+  }
+}

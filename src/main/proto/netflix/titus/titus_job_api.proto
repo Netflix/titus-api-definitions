@@ -195,6 +195,21 @@ message ServiceJobSpec {
 
     /// Task rescheduling policy in case of failure.
     RetryPolicy retryPolicy = 3;
+
+    /// This data structure is assoicated with a service job and allows configuration of Job scaling
+    // activities are handled.
+    message ScalingProcesses {
+        /// Prevents increasing the Job's desired capacity. Existing tasks that exit (for example, during
+        // a migration or CAG action) will still be replaced.
+        bool disableIncreaseDesired = 1;
+
+        /// Prevents decreasing the Job's desired capacity. Existing tasks that exit (for example, during
+        // a migration or CAG action) will still be replaced.
+        bool disableDecreaseDesired = 2;
+    }
+
+    /// Job scaling activity configurations.
+    ScalingProcesses scalingProcesses = 4;
 }
 
 /// Job descriptor contains full job specification (batch or service) that is used to run a job.

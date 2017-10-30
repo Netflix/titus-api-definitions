@@ -79,14 +79,20 @@ enum HealthState {
 
 /// Agent health status.
 message HealthStatus {
+    /// Source id
+    string sourceId = 1;
+
     /// Agent health state.
-    HealthState state = 1;
+    HealthState state = 2;
 
     /// If agent is in bad state, contains more information about the problem.
-    string detail = 2;
+    string detail = 3;
 
     /// Time at which an agent went into the given state.
-    uint64 timestamp = 3;
+    uint64 timestamp = 4;
+
+    /// Health status from individual components, which this state aggregates.
+    repeated HealthStatus components = 5;
 }
 
 /// Agent server group lifecycle state.

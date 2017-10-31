@@ -183,6 +183,33 @@ message BatchJobSpec {
     RetryPolicy retryPolicy = 3;
 }
 
+/// Migration polices.
+message MigrationPolicy {
+    /// The default migration policy.
+    message Default {
+    }
+
+    /// The self managed policy where the owner needs to migrate the tasks.
+    message SelfManaged {
+    }
+
+
+    oneof Policy {
+        Default default = 1;
+        SelfManaged selfManaged = 2;
+    }
+}
+
+/// Migration details
+message MigrationDetails {
+    /// true when the the task needs to be migrated to another host.
+    bool needsMigration = 1;
+
+    /// The deadline time that the owner must migrate their task by or the system will automatically do it.
+    /// This value will default to 0 when migration is not needed.
+    uint64 deadline = 2;
+}
+
 /// Service job specification.
 message ServiceJobSpec {
 
@@ -195,6 +222,9 @@ message ServiceJobSpec {
 
     /// Task rescheduling policy in case of failure.
     RetryPolicy retryPolicy = 3;
+
+    /// Migration policy for how the tasks will be migrated during an infrastructure change.
+    MigrationPolicy migrationPolicy = 4;
 }
 
 /// Job descriptor contains full job specification (batch or service) that is used to run a job.
@@ -256,7 +286,7 @@ message JobStatus {
     /// (Optional) Textual description accompanying the 'reasonCode'.
     string reasonMessage = 3;
 
-    /// Time when a transition to a state happned.
+    /// Time when a transition to a state happened.
     uint64 timestamp = 4;
 }
 
@@ -354,6 +384,9 @@ message Task {
 
     /// Container logs.
     LogLocation logLocation = 6;
+
+    /// Migration details.
+    MigrationDetails migrationDetails = 7;
 }
 
 /// Job entity is returned by query operations only.

@@ -151,26 +151,26 @@ message AgentInstance {
 
 /// Auto scaling rule associated with an agent server group.
 message AutoScaleRule {
-    /// An agent server group associated with this record.
-    string instanceGroupId = 1;
-
     /// Minimum number of agents in the server group.
-    uint32 min = 2;
+    uint32 min = 1;
 
     /// Maximum number of agents in the server group.
-    uint32 max = 3;
+    uint32 max = 2;
 
     /// Minimum number of idle agent instances to keep.
-    uint32 minIdleToKeep = 4;
+    uint32 minIdleToKeep = 3;
 
     /// Maximum number of idle agent instances to keep.
-    uint32 maxIdleToKeep = 5;
+    uint32 maxIdleToKeep = 4;
 
     /// Minimum interval between auto-scale actions.
-    uint64 coolDownSec = 6;
+    uint64 coolDownSec = 5;
 
     /// Agent server group auto-scale priority. Server groups with higher priority are scaled up first, and scaled down last.
-    uint32 priority = 7;
+    uint32 priority = 6;
+
+    /// The factor to adjust shortfall.
+    uint32 shortfallAdjustingFactor = 7;
 }
 
 /// An agent instance group.
@@ -220,7 +220,6 @@ message AgentInstanceGroup {
 
 /// Events emitted for agent topology changes (new ASG created, new instance launched, etc).
 message AgentChangeEvent {
-
     /// Sent whenever 'AgentInstanceGroup' state changes, excluding agent instances.
     message InstanceGroupUpdate {
         AgentInstanceGroup instanceGroup = 1;
@@ -320,7 +319,6 @@ message InstanceOverrideStateUpdate {
 }
 
 service AgentManagementService {
-
     /// Return all known Titus agent server groups.
     rpc GetInstanceGroups (google.protobuf.Empty) returns (AgentInstanceGroups) {
     }

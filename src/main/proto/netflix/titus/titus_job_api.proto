@@ -185,17 +185,16 @@ message BatchJobSpec {
 
 /// Migration polices.
 message MigrationPolicy {
-    /// The default migration policy.
-    message Default {
+    /// The system default migration policy.
+    message SystemDefault {
     }
 
     /// The self managed policy where the owner needs to migrate the tasks.
     message SelfManaged {
     }
 
-
     oneof Policy {
-        Default default = 1;
+        SystemDefault systemDefault = 1;
         SelfManaged selfManaged = 2;
     }
 }
@@ -206,7 +205,7 @@ message MigrationDetails {
     bool needsMigration = 1;
 
     /// The deadline time that the owner must migrate their task by or the system will automatically do it.
-    /// This value will default to 0 when migration is not needed.
+    /// This value is irrelevant if 'needsMigration' is set to false and will default to the value '0'.
     uint64 deadline = 2;
 }
 

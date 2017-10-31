@@ -426,6 +426,7 @@ message JobQuery {
     /// (Optional) Collection of fields and their values for a filter.
     // Available query criteria:
     // jobIds - list of comma separated job ids
+    // taskIds - list of comma separated task ids
     // owner - job owner
     // applicationName - job application name
     // imageName - image name
@@ -437,7 +438,9 @@ message JobQuery {
     // jobType - job type (batch or service)
     // attributes - comma separated key/value pairs (for example "key1,key2:value2;k3:value3")
     // attributes.op - logical 'and' or 'or' oeprators, which should be applied to multiple atrributes given in a query
-    // jobState - job state
+    // jobState - job state (one)
+    // taskStates - task states (multiple, comma separated)
+    // taskStateReasons - reasons associated with task states (multiple, comma separated)
     map<string, string> filteringCriteria = 2;
 
     // ---------------------------------------------------
@@ -494,7 +497,9 @@ message TaskQuery {
     // jobType - job type (batch or service)
     // attributes - comma separated key/value pairs (for example "key1,key2:value2;k3:value3")
     // attributes.op - logical 'and' or 'or' oeprators, which should be applied to multiple atrributes given in a query
-    // taskStates - comma separated task states
+    // jobState - job state (one)
+    // taskStates - task states (multiple, comma separated)
+    // taskStateReasons - reasons associated with task states (multiple, comma separated)
     map<string, string> filteringCriteria = 2;
 
     /// (Optional) If set, only field values explicitly given in this parameter will be returned

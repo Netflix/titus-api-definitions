@@ -49,7 +49,7 @@ service LoadBalancerService {
     }
 
     /// Add a load balancer to a Job.
-    rpc AddLoadBalancer (AddLoadBalancerRequest) returns (LoadBalancerId) {
+    rpc AddLoadBalancer (AddLoadBalancerRequest) returns (google.protobuf.Empty) {
     }
 
     /// Remove a load balancer from a Job.

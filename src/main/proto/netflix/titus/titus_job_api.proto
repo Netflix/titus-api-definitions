@@ -343,7 +343,11 @@ message LogLocation {
         string url = 1;
     }
 
-    /// URL addresses for running container stdout/stderr output.
+    /// URL address to a container log service. When a container is running, its stdout/stderr or any other file in the
+    //  '/logs' folder can be acccessed via this endpoint. The endpoint becomes unavailable when the container terminates.
+    //
+    //  A user should provide 'f' query parameter to specify a file to download. If the 'f' query parameter is net set,
+    //  it defaults to 'stdout'. The file path must be relative to the '/logs' folder.
     message LiveStream {
         string url = 1;
     }

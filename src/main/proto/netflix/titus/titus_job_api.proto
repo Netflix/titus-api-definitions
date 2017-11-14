@@ -477,6 +477,7 @@ message JobQuery {
     // jobState - job state (one)
     // taskStates - task states (multiple, comma separated)
     // taskStateReasons - reasons associated with task states (multiple, comma separated)
+    // needsMigration - if set to true, return only jobs with tasks that require migration
     map<string, string> filteringCriteria = 2;
 
     // ---------------------------------------------------
@@ -536,6 +537,7 @@ message TaskQuery {
     // jobState - job state (one)
     // taskStates - task states (multiple, comma separated)
     // taskStateReasons - reasons associated with task states (multiple, comma separated)
+    // needsMigration - if set to true, return only tasks that require migration
     map<string, string> filteringCriteria = 2;
 
     /// (Optional) If set, only field values explicitly given in this parameter will be returned

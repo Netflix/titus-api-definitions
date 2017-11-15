@@ -183,6 +183,32 @@ message BatchJobSpec {
     RetryPolicy retryPolicy = 3;
 }
 
+/// Migration polices.
+message MigrationPolicy {
+    /// The system default migration policy.
+    message SystemDefault {
+    }
+
+    /// The self managed policy where the owner needs to migrate the tasks.
+    message SelfManaged {
+    }
+
+    oneof Policy {
+        SystemDefault systemDefault = 1;
+        SelfManaged selfManaged = 2;
+    }
+}
+
+/// Migration details
+message MigrationDetails {
+    /// true when the the task needs to be migrated to another host.
+    bool needsMigration = 1;
+
+    /// The deadline time that the owner must migrate their task by or the system will automatically do it.
+    /// This value is irrelevant if 'needsMigration' is set to false and will default to the value '0'.
+    uint64 deadline = 2;
+}
+
 /// Service job specification.
 message ServiceJobSpec {
 
@@ -195,6 +221,10 @@ message ServiceJobSpec {
 
     /// Task rescheduling policy in case of failure.
     RetryPolicy retryPolicy = 3;
+
+    
+    /// Migration policy for how the tasks will be migrated during an infrastructure change.
+    MigrationPolicy migrationPolicy = 4;
 
     /// This data structure is assoicated with a service job and allows configuration of Job scaling
     // activities are handled.
@@ -209,7 +239,7 @@ message ServiceJobSpec {
     }
 
     /// Job scaling activity configurations.
-    ServiceJobProcesses serviceJobProcesses = 4;
+    ServiceJobProcesses serviceJobProcesses = 5;
 }
 
 /// Job descriptor contains full job specification (batch or service) that is used to run a job.
@@ -271,7 +301,7 @@ message JobStatus {
     /// (Optional) Textual description accompanying the 'reasonCode'.
     string reasonMessage = 3;
 
-    /// Time when a transition to a state happned.
+    /// Time when a transition to a state happened.
     uint64 timestamp = 4;
 }
 
@@ -329,7 +359,11 @@ message LogLocation {
         string url = 1;
     }
 
-    /// URL addresses for running container stdout/stderr output.
+    /// URL address to a container log service. When a container is running, its stdout/stderr or any other file in the
+    //  '/logs' folder can be acccessed via this endpoint. The endpoint becomes unavailable when the container terminates.
+    //
+    //  A user should provide 'f' query parameter to specify a file to download. If the 'f' query parameter is net set,
+    //  it defaults to 'stdout'. The file path must be relative to the '/logs' folder.
     message LiveStream {
         string url = 1;
     }
@@ -369,6 +403,9 @@ message Task {
 
     /// Container logs.
     LogLocation logLocation = 6;
+
+    /// Migration details.
+    MigrationDetails migrationDetails = 7;
 }
 
 /// Job entity is returned by query operations only.
@@ -441,6 +478,7 @@ message JobQuery {
     /// (Optional) Collection of fields and their values for a filter.
     // Available query criteria:
     // jobIds - list of comma separated job ids
+    // taskIds - list of comma separated task ids
     // owner - job owner
     // applicationName - job application name
     // imageName - image name
@@ -452,7 +490,10 @@ message JobQuery {
     // jobType - job type (batch or service)
     // attributes - comma separated key/value pairs (for example "key1,key2:value2;k3:value3")
     // attributes.op - logical 'and' or 'or' oeprators, which should be applied to multiple atrributes given in a query
-    // jobState - job state
+    // jobState - job state (one)
+    // taskStates - task states (multiple, comma separated)
+    // taskStateReasons - reasons associated with task states (multiple, comma separated)
+    // needsMigration - if set to true, return only jobs with tasks that require migration
     map<string, string> filteringCriteria = 2;
 
     // ---------------------------------------------------
@@ -514,7 +555,10 @@ message TaskQuery {
     // jobType - job type (batch or service)
     // attributes - comma separated key/value pairs (for example "key1,key2:value2;k3:value3")
     // attributes.op - logical 'and' or 'or' oeprators, which should be applied to multiple atrributes given in a query
-    // taskStates - comma separated task states
+    // jobState - job state (one)
+    // taskStates - task states (multiple, comma separated)
+    // taskStateReasons - reasons associated with task states (multiple, comma separated)
+    // needsMigration - if set to true, return only tasks that require migration
     map<string, string> filteringCriteria = 2;
 
     /// (Optional) If set, only field values explicitly given in this parameter will be returned

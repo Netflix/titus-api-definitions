@@ -352,6 +352,6 @@ service AgentManagementService {
     }
 
     /// Sends first current snapshot of the agent topology, and next an event for each topology change.
-    rpc ObserveAgents (google.protobuf.Empty) returns (AgentChangeEvent) {
+    rpc ObserveAgents (google.protobuf.Empty) returns (stream AgentChangeEvent) {
     }
 }

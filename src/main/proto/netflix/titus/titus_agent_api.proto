@@ -46,7 +46,7 @@ message InstanceLifecycleStatus {
 /// Administrator override state for an agent. The primary reason for this state is to alter task placement decisions.
 enum InstanceOverrideState {
     /// No override.
-    None = 0;
+    NotOverriden = 0;
 
     /// An agent instance is in the quarantined mode and is not accepting any traffic, unless a job directly requests
     //  to be placed there.

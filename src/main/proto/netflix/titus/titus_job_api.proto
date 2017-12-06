@@ -222,8 +222,24 @@ message ServiceJobSpec {
     /// Task rescheduling policy in case of failure.
     RetryPolicy retryPolicy = 3;
 
+    
     /// Migration policy for how the tasks will be migrated during an infrastructure change.
     MigrationPolicy migrationPolicy = 4;
+
+    /// This data structure is assoicated with a service job and allows configuration of Job scaling
+    // activities are handled.
+    message ServiceJobProcesses {
+        /// Prevents increasing the Job's desired capacity. Existing tasks that exit (for example, during
+        // a migration or CAG action) will still be replaced.
+        bool disableIncreaseDesired = 1;
+
+        /// Prevents decreasing the Job's desired capacity. Existing tasks that exit (for example, during
+        // a migration or CAG action) will still be replaced.
+        bool disableDecreaseDesired = 2;
+    }
+
+    /// Job scaling activity configurations.
+    ServiceJobProcesses serviceJobProcesses = 5;
 }
 
 /// Job descriptor contains full job specification (batch or service) that is used to run a job.
@@ -507,6 +523,11 @@ message JobStatusUpdate {
     bool enableStatus = 2;
 }
 
+message JobProcessesUpdate {
+    string jobId = 1;
+    ServiceJobSpec.ServiceJobProcesses serviceJobProcesses = 2;
+}
+
 /// A wrapper type for task id.
 message TaskId {
     string id = 1;
@@ -575,6 +596,10 @@ service JobManagementService {
     rpc UpdateJobStatus (JobStatusUpdate) returns (google.protobuf.Empty) {
     }
 
+    /// Update service job processes such as disable increase/decrease instance count
+    rpc UpdateJobProcesses(JobProcessesUpdate) returns (google.protobuf.Empty) {
+    }
+
     /// Return a collection of jobs matching a given criteria. Not provided by TitusMaster (only TitusGateway)
     rpc FindJobs (JobQuery) returns (JobQueryResult) {
     }
@@ -596,6 +621,7 @@ service JobManagementService {
     /// Kill all running tasks of a job, and than terminate it.
     rpc KillJob (JobId) returns (google.protobuf.Empty) {
     }
+
 
     // ------------------------------------------------------------
     // Task operations

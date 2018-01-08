@@ -1,0 +1,11 @@
+apply plugin: 'netflix.nebula'
+apply plugin: 'java'
+
+sourceSets {
+    main {
+        resources {
+            srcDir 'src/main/proto'
+            srcDir 'src/main/swagger'
+        }
+    }
+}

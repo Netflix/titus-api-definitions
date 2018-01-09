@@ -194,4 +194,6 @@ message ContainerInfo {
 
     // imageDigest has precedence over version
     optional string imageDigest = 26;
+
+    optional bool allowNetworkBursting = 27;
 }

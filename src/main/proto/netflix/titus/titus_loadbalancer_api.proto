@@ -8,6 +8,7 @@ package com.netflix.titus;
 import "google/protobuf/empty.proto";
 import "netflix/titus/titus_job_api.proto";
 import "google/protobuf/wrappers.proto";
+import "netflix/titus/titus_base.proto";
 
 option java_multiple_files = true;
 option java_package = "com.netflix.titus.grpc.protogen";
@@ -37,15 +38,37 @@ message RemoveLoadBalancerRequest {
     LoadBalancerId loadBalancerId = 2;
 }
 
+/// Get all job and load balancer associations
+message GetAllLoadBalancersRequest {
+    /// (Required) Requested page number/size.
+    Page page = 1;
+}
+
 /// Message that identifies the load balancers associated with a Job.
-message GetLoadBalancerResult {
+message GetJobLoadBalancersResult {
+    /// Titus Job
+    string jobId = 1;
+
     /// Load balancers assocated with a Job.
-    repeated LoadBalancerId loadBalancers = 1;
+    repeated LoadBalancerId loadBalancers = 2;
+}
+
+/// Paginated result for getting all load balancers
+message GetAllLoadBalancersResult {
+    /// Load balancers in this page
+    repeated GetJobLoadBalancersResult jobLoadBalancers = 1;
+
+    /// Page info
+    Pagination pagination = 2;
 }
 
 service LoadBalancerService {
     /// Returns all load balancers for a Job.
-    rpc GetJobLoadBalancers (JobId) returns (GetLoadBalancerResult) {
+    rpc GetJobLoadBalancers (JobId) returns (GetJobLoadBalancersResult) {
+    }
+
+    /// Returns all job and load balancer associations
+    rpc GetAllLoadBalancers (GetAllLoadBalancersRequest) returns (GetAllLoadBalancersResult) {
     }
 
     /// Add a load balancer to a Job.

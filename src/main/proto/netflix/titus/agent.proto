@@ -196,4 +196,8 @@ message ContainerInfo {
     optional string imageDigest = 26;
 
     optional bool allowNetworkBursting = 27;
+
+    // Number of seconds to wait before killing the container
+    // otherwise, it will use the dockerd default
+    optional uint32 killWaitSeconds = 28;
 }

@@ -188,6 +188,9 @@ message ScalingPolicyStatus {
 
         /// A policy has been removed
         Deleted = 3;
+
+        /// A policy creation error
+        Error = 4;
     }
 
     /// State of the policy
@@ -227,6 +230,15 @@ message PutPolicyRequest {
     ScalingPolicy scalingPolicy = 2;
 }
 
+/// Message representing request for updating policy
+message UpdatePolicyRequest {
+    /// Policy ID for the policy that'll be updated
+    ScalingPolicyID policyId = 1;
+
+    /// Policy to apply
+    ScalingPolicy scalingPolicy = 2;
+}
+
 message DeletePolicyRequest {
 
     /// Scaling policy to delete
@@ -252,6 +264,9 @@ service AutoScalingService {
 
     /// Remove a scaling policy from a job
     rpc DeleteAutoScalingPolicy (DeletePolicyRequest) returns (google.protobuf.Empty) {
+    }
+
+    rpc UpdateAutoScalingPolicy (UpdatePolicyRequest) returns (ScalingPolicyResult) {
     }
 }
 

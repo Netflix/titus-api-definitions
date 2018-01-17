@@ -266,7 +266,7 @@ service AutoScalingService {
     rpc DeleteAutoScalingPolicy (DeletePolicyRequest) returns (google.protobuf.Empty) {
     }
 
-    rpc UpdateAutoScalingPolicy (UpdatePolicyRequest) returns (ScalingPolicyResult) {
+    rpc UpdateAutoScalingPolicy (UpdatePolicyRequest) returns (google.protobuf.Empty) {
     }
 }
 

@@ -200,4 +200,10 @@ message ContainerInfo {
     // Number of seconds to wait before killing the container
     // otherwise, it will use the dockerd default
     optional uint32 killWaitSeconds = 28;
+
+    // If the engine that is using this agent supports the
+    // killinitiated state, this should be set to true.
+    // That way, when this container is killed, as well as
+    // when it is launched, the launchguard will be ignored.
+    optional bool ignoreLaunchGuard = 29;
 }

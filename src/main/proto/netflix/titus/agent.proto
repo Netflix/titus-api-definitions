@@ -206,4 +206,8 @@ message ContainerInfo {
     // That way, when this container is killed, as well as
     // when it is launched, the launchguard will be ignored.
     optional bool ignoreLaunchGuard = 29;
+
+    // Should we allow this container to run privileged enough
+    // to run internal container runtimes?
+    optional bool allowNestedContainers = 30;
 }

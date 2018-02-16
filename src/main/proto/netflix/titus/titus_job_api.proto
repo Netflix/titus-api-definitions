@@ -337,11 +337,20 @@ message TaskStatus {
 
     /// (Optional) An identifier of an event that caused a transition to this state. Each job manager can introduce its own
     //  set of reason codes. Below are the predefined (common) set of reason codes associated with task state 'Finished':
-    //  * 'normal'  - task completed with exit code 0
-    //  * 'failed'  - task completed with non zero error code
-    //  * 'crashed' - task was never run successfully, and its startup process terminated with an error
-    //  * 'lost'    - task was lost, and its final status is unknown
-    //  * 'killed'  - task was explicitly terminated by a user
+    //  * 'normal'               - task completed with the exit code 0
+    //  * 'failed'               - task completed with a non zero error code
+    //  * 'killed'               - task was explicitly terminated by a user
+    //  * 'scaledDown'           - task was terminated as a result of job scaling down
+    //  * 'stuckInState'         - task was terminated, as it did not progress to the next state in the expected amount of time
+    //  * 'runtimeLimitExceeded' - task was terminated, as its runtime limit was exceeded
+    //  * 'lost'                 - task was lost, and its final status is unknown
+    //  * 'invalidRequest'       - invalid container definition (security group, image name, etc)
+    //  * 'crashed'              - container crashed due to some internal system error
+    //  * 'transientSystemError' - transient error, not an agent specific (for example AWS rate limiting)
+    //  * 'localSystemError'     - an error scoped to an agent instance on which a container was run.
+    //                             The agent should be quarantined or terminated.
+    //  * 'unknownSystemError'   - unrecognized error which cannot be classified neither as local/non-local or transient.
+    //                             If there are multiple occurences of this error, the agent should be quarantined or terminated.
     string reasonCode = 2;
 
     /// (Optional) Textual description accompanying the 'reasonCode'.

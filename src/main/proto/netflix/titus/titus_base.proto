@@ -20,6 +20,10 @@ message Page {
 
     /// Requested page size (if not specified, default size is operation specific).
     int32 pageSize = 2;
+
+    /// A position in the collection from which next page should be returned. If the cursor value is set, it is
+    // always used, irrespectively of the page number set.
+    string cursor = 3;
 }
 
 /// An entity representing pagination information returned to a client iterating over its elements.
@@ -37,6 +41,10 @@ message Pagination {
 
     /// Total number of items.
     int32 totalItems = 4;
+
+    /// A position of a last item a page. The cursor value can be used on a subsequent request to get
+    // next page of data. Using cursors, instead of page numbers, guarantees more consitent collection traversal process.
+    string cursor = 5;
 }
 
 /// Retry polices.

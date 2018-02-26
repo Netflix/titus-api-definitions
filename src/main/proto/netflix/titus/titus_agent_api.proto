@@ -336,7 +336,7 @@ service AgentManagementService {
     }
 
     /// Update tier assignment of an agent instance group.
-    rpc UpdateInstanceGroupTier(TierUpdate) returns (google.protobuf.Empty) {
+    rpc UpdateInstanceGroupTier (TierUpdate) returns (google.protobuf.Empty) {
     }
 
     /// Update an auto scaling rule in an agent server group. The previously assigned rule is discarded.

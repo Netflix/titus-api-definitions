@@ -210,4 +210,17 @@ message ContainerInfo {
     // Should we allow this container to run privileged enough
     // to run internal container runtimes?
     optional bool allowNestedContainers = 30;
+
+    // The image name with the registry
+    optional string fullyQualifiedImage = 31;
+
+    // Should this container be allowed to excceed its CPU cap?
+    optional bool allowCpuBursting = 32;
+
+    // Should this be tagged sched_batch? Does it prefer bigger chunks
+    // of CPU, less frequently?
+    optional bool batch = 33;
+
+    // Which S3 bucket to log to?
+    optional string logsS3Bucket = 34;
 }

@@ -221,6 +221,11 @@ message ContainerInfo {
     // of CPU, less frequently?
     optional bool batch = 33;
 
-    // Which S3 bucket to log to?
-    optional string logsS3Bucket = 34;
+    // The s3 log location used when uploading logs
+    message s3LogLocation {
+        required string bucket = 1; // The bucket to use for all uploads
+        required string prefix = 2; // The prefix to append to all object keys
+    }
+
+    repeated s3LogLocation s3LogLocation = 34;
 }

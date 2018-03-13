@@ -222,10 +222,10 @@ message ContainerInfo {
     optional bool batch = 33;
 
     // The s3 log location used when uploading logs
-    message s3LogLocation {
+    message S3LogLocation {
         required string bucket = 1; // The bucket to use for all uploads
-        required string prefix = 2; // The prefix to append to all object keys
+        required string prefix = 2; // The prefix to append to all object keys. e.g. foo/bar
     }
 
-    repeated s3LogLocation s3LogLocation = 34;
+    repeated S3LogLocation s3LogLocation = 34;
 }

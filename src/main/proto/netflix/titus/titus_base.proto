@@ -13,15 +13,29 @@ option go_package = "titus";
 // ----------------------------------------------------------------------------
 // Supplementary data structures
 
+/// Caller's identity, and their security context.
+message UserIdentity {
+    /// (Required) A unique user identifier. Depending on user type (a person or an application), the format
+    // of the id may be different. For example a person's id could be encoded as 'person:<email-address>', and
+    // application id as 'app:<aws-account-id>:<app-name>:<app-stack>'.
+    string id = 1;
+
+    /// (Optional) Security context data associated with the user (for example user roles). The following names are
+    // reserved, and should be used if applicable:
+    // * name - caller's name
+    // * email - caller's email address
+    map<string, string> securityContext = 2;
+}
+
 /// An entity representing single page of a collection.
 message Page {
-    /// Requested page number, starting from 0 (defaults to 0 if not specified).
+    /// (Optional) Requested page number, starting from 0 (defaults to 0 if not specified).
     int32 pageNumber = 1;
 
-    /// Requested page size (if not specified, default size is operation specific).
+    /// (Required) Requested page size (if not specified, default size is operation specific).
     int32 pageSize = 2;
 
-    /// The position in the collection from which the next page should be returned. If the cursor value is set, it is
+    /// (Optional) The position in the collection from which the next page should be returned. If the cursor value is set, it is
     // always used, irrespective of the page number set.
     string cursor = 3;
 }
@@ -30,7 +44,7 @@ message Page {
 // It includes current page that the client requested, and the total collection size.
 // As not always pageCount * pageSize == itemCount, the item count is included as well.
 message Pagination {
-    /// Requested page details.
+    /// (Required) Requested page details.
     Page currentPage = 1;
 
     /// Are there any more items to return.
@@ -42,8 +56,8 @@ message Pagination {
     /// Total number of items.
     int32 totalItems = 4;
 
-    /// The last retrieved item's position in the collection. The cursor value can be sent on a subsequent request
-    // to get the next page of items. Using cursors, instead of page numbers, will guarantee that all items are
+    /// (Required) The last retrieved item's position in the collection. The cursor value can be sent on a subsequent
+    // request to get the next page of items. Using cursors, instead of page numbers, will guarantee that all items are
     // retrieved with a potential of items being duplicated.
     string cursor = 5;
 }
@@ -80,6 +94,7 @@ message RetryPolicy {
         uint32 retries = 3;
     }
 
+    /// (Required) Retry policy.
     oneof Policy {
         Immediate immediate = 1;
         Delayed delayed = 2;
@@ -87,15 +102,24 @@ message RetryPolicy {
     }
 }
 
+/// Titus scheduler tier (see Titus scheduler documentation for more information).
 enum Tier {
+    /// Tier for running latency insensitive batch workloads.
     Flex = 0;
+
+    /// Tier for running latency sensitive workloads.
     Critical = 1;
 }
 
 /// Disk mount permission mask
 enum MountPerm {
+    /// Read only
     RO = 0;
+
+    // Write only
     WO = 1;
+
+    // Read/write
     RW = 2;
 }
 
@@ -111,5 +135,3 @@ message ResourceDimension {
 
     uint32 networkMbps = 5;
 }
-
-

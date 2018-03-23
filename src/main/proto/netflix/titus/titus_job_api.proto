@@ -21,41 +21,29 @@ option go_package = "titus";
 /// An owner of a job. If this value is not provided explicitly, a caller's email address
 // from a security context is used. If the security context does not contain this information, the request is rejected.
 message Owner {
+    /// (Optional) An owner's email address. If not set directly, the email address is read from the caller's security context.
     string teamEmail = 1;
 }
 
-/// Caller's identity, and their security context.
-message UserIdentity {
-    /// (Required) A unique user identifier. Depending on user type (a person or an application), the format
-    // of the id may be different. For example a person's id could be encoded as 'person:<email-address>', and
-    // application id as 'app:<aws-account-id>:<app-name>:<app-stack>'.
-    string id = 1;
-
-    /// (Optional_ Security context data associated with the user (for example user roles). The following names are
-    // reserved, and should be used if applicable:
-    // * name - caller's name
-    // * email - caller's email address
-    map<string, string> securityContext = 2;
-}
-
-/// ??? This is not really job group, but a single job identifier. Can we find better name here?
+/// Additional information for building a supplementary job identifier, as the 'applicationName' can be shared by
+// many jobs running at the same time in Titus. By setting 'JobGroupInfo', a user may create their own job id,
+// that is guaranteed to be unique accross all currently running Titus jobs. The uniquness is checked if any of the attributes
+// in this record is a non empty string. The full name is built as: '<application_name>-<stack>-<detail>-<sequence>.
 message JobGroupInfo {
-    /// (Required)
+    /// (Optional) Any text. It is recommended (but not required), that the value does not include '-' character.
     string stack = 1;
 
-    /// (Optional)
+    /// (Optional) Any text. It is recommended (but not required), that the value does not include '-' character.
     string detail = 2;
 
-    /// (Optional)
+    /// (Optional) Any text. It is recommended (but not required), that the value does not include '-' character.
     string sequence = 3;
 }
 
 /// Task placement constraints. Currently supported constraint types are:
-// * zoneBalance
-// * uniqueHost
-// * exclusiveHost
-// * host
-// * serverGroup
+// * zoneBalance - distributes tasks of a job evenly among the availability zones
+// * uniqueHost - runs each task of a job on a different agent
+// * exclusiveHost - ensures that an agent is exclusively assigned to a given job
 message Constraints {
     /// (Optional) A map of constraint name/values. If multiple constraints are given, all must be met (logical 'and').
     map<string, string> constraints = 1;
@@ -77,50 +65,66 @@ message Constraints {
 // {name=titus-examples, tag=latest, digest=digest=sha256:01f862bd7ba205ebedf79672d78c905660fdd57ab2f80fa8b75b46ba51db520e}.
 // A user could also choose to provide only the digest without a tag. In this case, the tag value would be empty.
 message Image {
-    /// Image name.
+    /// (Required) Image name.
     string name = 1;
 
-    /// (Optional) Image tag.
+    /// (Required if digest not set) Image tag.
     string tag = 2;
 
-    /// (Optional) Image digest.
+    /// (Required if tag not set) Image digest.
     string digest = 3;
 }
 
 message ContainerResources {
+    /// (Required) Number of CPUs to allocate (must be always > 0, but the actual limit is configurable).
     double cpu = 1;
 
+    /// (Optional) Number of GPUs to allocate.
     uint32 gpu = 2;
 
+    /// (Required) Amount of memory to allocate (must be always > 0, but the actual limit is configurable).
     uint32 memoryMB = 3;
 
+    /// (Required) Amount of disk space to allocate (must be always > 0, but the actual limit is configurable).
     uint32 diskMB = 4;
 
+    /// (Required) Amount of network bandwidth to allocate (must be always > 0, but the actual limit is configurable).
     uint32 networkMbps = 5;
 
+    /// (Deprecated) IP always allocated.
     bool allocateIP = 6;
 
     message EfsMount {
+        /// (Required) EFS id
         string efsId = 1;
 
-        string mountPoint =2;
+        /// (Required) EFS mount point
+        string mountPoint = 2;
 
+        /// (Required) EFS mount permission mask
         MountPerm mountPerm = 3;
 
+        /// (Optional) EFS relative mount point
         string efsRelativeMountPoint = 4;
     }
 
+    /// (Optional) EFS mounts.
     repeated EfsMount efsMounts = 7;
 }
 
+/// Container security profile.
 message SecurityProfile {
+    /// (Required) Security groups associated with a container. The expected number of security groups is between 1 and 6.
     repeated string securityGroups = 1;
 
+    /// (Required) IAM role.
     string iamRole = 2;
 
+    /// (Optional) Additional security attributes. Key names starting with 'titus.' are reserved by Titus.
     map<string, string> attributes = 3;
 }
 
+/// Container descriptor.
 message Container {
     /// (Required) Container resources.
     ContainerResources resources = 1;
@@ -131,13 +135,13 @@ message Container {
     /// (Required) Image reference.
     Image image = 3;
 
-    /// (Optional) Arbitrary set of key/value pairs. Key names starting with 'titus.' are reserved for internal usage.
+    /// (Optional) Arbitrary set of key/value pairs. Key names starting with 'titus.' are reserved by Titus.
     map<string, string> attributes = 4;
 
     /// (Optional) A binary to execute with parameters. If not set, the entry point must be defined in the container image.
     repeated string entryPoint = 5;
 
-    /// (Optional) Additional parameters for the entry point defined either here or provided in the container image
+    /// (Optional, not supported yet) Additional parameters for the entry point defined either here or provided in the container image
     repeated string command = 6;
 
     /// (Optional) A collection of system environment variables passed to the container.
@@ -154,32 +158,31 @@ message Container {
     google.protobuf.Any experimental = 10;
 }
 
-/// This data structure is associated with a job and specifies the number of tasks to run (desired). If the job
-// supports auto-scaling (service jobs) then at any point in time, the condition
-// min <= desired <= max must hold true. The desired state may be changed by a user, but also may
-// be changed as a result of an auto-scaling action.
+/// This data structure is associated with a service job and specifies the number of tasks to run (desired).
+// At any point in time, the condition min <= desired <= max must hold true. The desired state may be changed by a user,
+// but also may be changed as a result of an auto-scaling action.
 message Capacity {
-    /// Minimum number of tasks to run. If not set, defaults to 0.
+    /// (Required) Minimum number of tasks to run (min >= 0)
     uint32 min = 1;
 
-    /// Maximum number of tasks that can be run. If not set, defaults to 2^31-1 (Integer.MAX_VALUE).
+    /// (Required) Maximum number of tasks that can be run (max >= desired)
     uint32 max = 2;
 
-    // Desired number of tasks to run.
+    // (Required) Desired number of tasks to run (min <= desired <= max)
     uint32 desired = 3;
 }
 
 /// Batch job specification.
 message BatchJobSpec {
-    /// Number of tasks to run.
+    /// (Required) Number of tasks to run (>= 0).
     uint32 size = 1;
 
-    /// Maximum amount of time in seconds that the job's task is allowed to run. The timer is started once the task
+    /// (Required) Maximum amount of time in seconds that the job's task is allowed to run. The timer is started once the task
     // transitions to the 'RUNNING' state. If a task terminates with an error and is restarted, the time measurement
     // starts from 0.
     uint64 runtimeLimitSec = 2;
 
-    /// Task rescheduling policy in case of failure.
+    /// (Required) Task rescheduling policy in case of failure.
     RetryPolicy retryPolicy = 3;
 }
 
@@ -193,6 +196,7 @@ message MigrationPolicy {
     message SelfManaged {
     }
 
+    /// (Required) Migration policy.
     oneof Policy {
         SystemDefault systemDefault = 1;
         SelfManaged selfManaged = 2;
@@ -212,18 +216,18 @@ message MigrationDetails {
 /// Service job specification.
 message ServiceJobSpec {
 
-    /// Number of tasks to run. If scaling policy is defined, the number of tasks created will be always within
-    // min/max range.
+    /// (Required) Number of tasks to run. If a scaling policy is defined, the number of tasks created will be always
+    // within min/max range.
     Capacity capacity = 1;
 
-    /// Job enable/disable status. If job is disabled, auto-scaling policy rules are not applied.
+    /// (Optional) Job enable/disable status. If job is disabled, auto-scaling policy rules are not applied.
     bool enabled = 2;
 
-    /// Task rescheduling policy in case of failure.
+    /// (Required) Task rescheduling policy in case of failure.
     RetryPolicy retryPolicy = 3;
 
-    
-    /// Migration policy for how the tasks will be migrated during an infrastructure change.
+    /// (Optional) Migration policy for how the tasks will be migrated during an infrastructure change.
+    // If not set, defaults to SystemDefault.
     MigrationPolicy migrationPolicy = 4;
 
     /// This data structure is assoicated with a service job and allows configuration of Job scaling
@@ -238,7 +242,7 @@ message ServiceJobSpec {
         bool disableDecreaseDesired = 2;
     }
 
-    /// Job scaling activity configurations.
+    /// (Optional) Job scaling activity configurations.
     ServiceJobProcesses serviceJobProcesses = 5;
 }
 
@@ -248,32 +252,31 @@ message JobDescriptor {
     /// (Optional) Owner of a job (see Owner entity description for more information).
     Owner owner = 1;
 
-    /// (Optional) Free form name. If not provided, a default
-    // name that depends on job type (batch or service) is set.
+    /// (Required) Free form name.
     string applicationName = 3;
 
-    /// Capacity group associated with a job.
+    /// (Optional) Capacity group associated with a job. If not set, defaults to 'DEFAULT'.
     string capacityGroup = 4;
 
-    /// (Optional) Mostly relevant for service jobs, but applicable to batch jobs as well, provides further grouping
-    //  criteria for a job.
+    /// (Optional) Mostly relevant for service jobs, but applicable to batch jobs as well, allows a user to specify
+    // own unique identifier for a job (see JobGroupInfo for more information).
     JobGroupInfo jobGroupInfo = 5;
 
-    /// Arbitrary set of key/value pairs. Names starting with 'titus' (case does not matter) are reserved for an internal use.
+    /// (Optional) Arbitrary set of key/value pairs. Names starting with 'titus' (case does not matter) are reserved for an internal use.
     map<string, string> attributes = 6;
 
     /// (Required) Container to be executed for a job.
     Container container = 7;
 
-    /// Additional information required for job execution, specific to job type.
+    /// (Required) Additional information required for job execution, specific to job type.
     oneof JobSpec {
+        /// Batch job specific descriptor.
         BatchJobSpec batch = 8;
+
+        /// Service job specific descriptor.
         ServiceJobSpec service = 9;
     };
 }
-
-// ----------------------------------------------------------------------------
-// Task data structures
 
 /// Composite data structure holding both job state information and the reason of the transition to this state.
 message JobStatus {
@@ -291,7 +294,7 @@ message JobStatus {
         Finished = 2;
     }
 
-    /// Job state
+    /// (Required) Job state
     JobState state = 1;
 
     /// (Optional) An identifier of an event that caused a transition to this state. Each job manager can introduce its own
@@ -333,6 +336,7 @@ message TaskStatus {
         Finished = 6;
     }
 
+    /// (Required) Task state
     TaskState state = 1;
 
     /// (Optional) An identifier of an event that caused a transition to this state. Each job manager can introduce its own
@@ -365,6 +369,7 @@ message LogLocation {
 
     /// URL address pointing to the Titus UI log file access page.
     message UI {
+        /// (Required) Titus UI URL.
         string url = 1;
     }
 
@@ -374,20 +379,35 @@ message LogLocation {
     //  A user should provide 'f' query parameter to specify a file to download. If the 'f' query parameter is net set,
     //  it defaults to 'stdout'. The file path must be relative to the '/logs' folder.
     message LiveStream {
+        /// (Required) Live log URL.
         string url = 1;
     }
 
     /// Location of S3 folder containing container's log files.
     message S3 {
+        /// (Required) AWS account name.
         string accountName = 1;
+
+        /// (Required) AWS account id.
         string accountId = 2;
+
+        /// (Required) AWS region.
         string region = 3;
+
+        /// (Required) S3 bucket.
         string bucket = 4;
+
+        /// (Required) A key in the S3 bucket.
         string key = 5;
     }
 
+    /// (Required) Log access via Titus UI.
     UI ui = 1;
+
+    /// (Optional) Live log access. Provided only for runnng tasks.
     LiveStream liveStream = 2;
+
+    /// (Required) S3 log location.
     S3 s3 = 3;
 }
 
@@ -410,10 +430,10 @@ message Task {
     /// (Required) State transition history.
     repeated TaskStatus statusHistory = 5;
 
-    /// Container logs.
+    /// (Required) Container logs.
     LogLocation logLocation = 6;
 
-    /// Migration details.
+    /// (Required) Migration details.
     MigrationDetails migrationDetails = 7;
 }
 
@@ -445,7 +465,7 @@ message JobChangeNotification {
     message JobUpdate {
         Job job = 1;
     }
-    
+
     /// Emitted when a task is created or its state has changed.
     message TaskUpdate {
         Task task = 1;
@@ -596,8 +616,7 @@ service JobManagementService {
     rpc CreateJob (JobDescriptor) returns (JobId) {
     }
 
-    /// Modify the number of instances for a job. The structure may contain fields that are specific to the engine
-    // being used for executing the job.
+    /// Modify the number of instances for a service job.
     rpc UpdateJobCapacity (JobCapacityUpdate) returns (google.protobuf.Empty) {
     }
 
@@ -606,10 +625,10 @@ service JobManagementService {
     }
 
     /// Update service job processes such as disable increase/decrease instance count
-    rpc UpdateJobProcesses(JobProcessesUpdate) returns (google.protobuf.Empty) {
+    rpc UpdateJobProcesses (JobProcessesUpdate) returns (google.protobuf.Empty) {
     }
 
-    /// Return a collection of jobs matching a given criteria. Not provided by TitusMaster (only TitusGateway)
+    /// Return a collection of jobs matching a given criteria.
     rpc FindJobs (JobQuery) returns (JobQueryResult) {
     }
 
@@ -623,14 +642,13 @@ service JobManagementService {
     rpc ObserveJob (JobId) returns (stream JobChangeNotification) {
     }
 
-    /// Equivalent to ObserveJob, applied to all active jobs.
+    /// Equivalent to ObserveJob, applied to all active jobs. This stream never completes.
     rpc ObserveJobs (google.protobuf.Empty) returns (stream JobChangeNotification) {
     }
 
     /// Kill all running tasks of a job, and than terminate it.
     rpc KillJob (JobId) returns (google.protobuf.Empty) {
     }
-
 
     // ------------------------------------------------------------
     // Task operations
@@ -640,7 +658,6 @@ service JobManagementService {
     }
 
     /// Return a collection of tasks belonging to a job specified in the 'TaskQuery' request matching a given criteria.
-    // Not provided by TitusMaster (only TitusGateway)
     rpc FindTasks (TaskQuery) returns (TaskQueryResult) {
     }
 

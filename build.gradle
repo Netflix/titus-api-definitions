@@ -25,18 +25,6 @@ sourceSets {
     }
 }
 
-bintray {
-    pkg {
-        repo = 'maven'
-        userOrg = 'titusoss'
-        version {
-            mavenCentralSync {
-                sync = false
-            }
-        }
-    }
-}
-
 project.tasks.withType(org.jfrog.gradle.plugin.artifactory.task.BuildInfoBaseTask) { Task task ->
     task.enabled = false
 }

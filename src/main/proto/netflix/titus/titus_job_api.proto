@@ -19,24 +19,24 @@ option go_package = "titus";
 // Job specification core data structures
 
 /// An owner of a job. If this value is not provided explicitly, a caller's email address
-// from a security context is used. If the security context does not contain this information, the request is rejected.
+// from the security context is used. If the security context does not contain this information, the request is rejected.
 message Owner {
     /// (Optional) An owner's email address. If not set directly, the email address is read from the caller's security context.
     string teamEmail = 1;
 }
 
 /// Additional information for building a supplementary job identifier, as the 'applicationName' can be shared by
-// many jobs running at the same time in Titus. By setting 'JobGroupInfo', a user may create their own job id,
-// that is guaranteed to be unique accross all currently running Titus jobs. The uniquness is checked if any of the attributes
+// many jobs running at the same time in Titus. By setting 'JobGroupInfo', a user may create a job id that is guaranteed
+// to be unique accross all currently running Titus jobs. The uniquness is checked if any of the attributes
 // in this record is a non empty string. The full name is built as: '<application_name>-<stack>-<detail>-<sequence>.
 message JobGroupInfo {
-    /// (Optional) Any text. It is recommended (but not required), that the value does not include '-' character.
+    /// (Optional) Any text. It is recommended (but not required), that the value does not include the '-' character.
     string stack = 1;
 
-    /// (Optional) Any text. It is recommended (but not required), that the value does not include '-' character.
+    /// (Optional) Any text. It is recommended (but not required), that the value does not include the '-' character.
     string detail = 2;
 
-    /// (Optional) Any text. It is recommended (but not required), that the value does not include '-' character.
+    /// (Optional) Any text. It is recommended (but not required), that the value does not include the '-' character.
     string sequence = 3;
 }
 
@@ -55,14 +55,10 @@ message Constraints {
 }
 
 /// To reference an image, a user has to provide an image name and a version. A user may specify a version either with
-// a tag value (for example 'latest') or a digest. To make sure that all tasks of a job run the same image,
-// a tag value is resolved to a digest when a job is submitted to Titus. Thus irrespective of when a task is started
-// it uses exactly the same image instance. When submitting a job, a user should provide either a tag or a digest value
+// a tag value (for example 'latest') or a digest. When submitting a job, a user should provide either a tag or a digest value
 // only (not both of them).
 //
-// For example, docker images can be referenced by {name=titus-examples, tag=latest}. In this case, tag 'latest' would be
-// immediately resolved to a digest, and the image reference would become
-// {name=titus-examples, tag=latest, digest=digest=sha256:01f862bd7ba205ebedf79672d78c905660fdd57ab2f80fa8b75b46ba51db520e}.
+// For example, docker images can be referenced by {name=titus-examples, tag=latest}.
 // A user could also choose to provide only the digest without a tag. In this case, the tag value would be empty.
 message Image {
     /// (Required) Image name.
@@ -147,8 +143,7 @@ message Container {
     /// (Optional) A collection of system environment variables passed to the container.
     map<string, string> env = 7;
 
-    /// (Optional) Constraints that do not have to be met for a task to be scheduled on an agent, but
-    // Titus makes a best effort attempt to fullfill them.
+    /// (Optional) Constraints that Titus will prefer to fulfill but are not required.
     Constraints softConstraints = 8;
 
     /// (Optional) Constraints that have to be met for a task to be scheduled on an agent.
@@ -178,8 +173,7 @@ message BatchJobSpec {
     uint32 size = 1;
 
     /// (Required) Maximum amount of time in seconds that the job's task is allowed to run. The timer is started once the task
-    // transitions to the 'RUNNING' state. If a task terminates with an error and is restarted, the time measurement
-    // starts from 0.
+    // transitions to the 'RUNNING' state. If a task terminates with an error and is restarted, the timer starts again from 0.
     uint64 runtimeLimitSec = 2;
 
     /// (Required) Task rescheduling policy in case of failure.
@@ -205,7 +199,7 @@ message MigrationPolicy {
 
 /// Migration details
 message MigrationDetails {
-    /// true when the the task needs to be migrated to another host.
+    /// true when the the task needs to be migrated to another agent.
     bool needsMigration = 1;
 
     /// The deadline time that the owner must migrate their task by or the system will automatically do it.
@@ -220,7 +214,7 @@ message ServiceJobSpec {
     // within min/max range.
     Capacity capacity = 1;
 
-    /// (Optional) Job enable/disable status. If job is disabled, auto-scaling policy rules are not applied.
+    /// (Optional) Job enable/disable status. If a job is disabled, auto-scaling policies are not applied.
     bool enabled = 2;
 
     /// (Required) Task rescheduling policy in case of failure.
@@ -230,15 +224,12 @@ message ServiceJobSpec {
     // If not set, defaults to SystemDefault.
     MigrationPolicy migrationPolicy = 4;
 
-    /// This data structure is assoicated with a service job and allows configuration of Job scaling
-    // activities are handled.
+    /// Configuration of service job processes
     message ServiceJobProcesses {
-        /// Prevents increasing the Job's desired capacity. Existing tasks that exit (for example, during
-        // a migration or CAG action) will still be replaced.
+        /// Prevents increasing the Job's desired capacity. Existing tasks that exit such as the process exiting will still be replaced.
         bool disableIncreaseDesired = 1;
 
-        /// Prevents decreasing the Job's desired capacity. Existing tasks that exit (for example, during
-        // a migration or CAG action) will still be replaced.
+        /// Prevents decreasing the Job's desired capacity. Existing tasks that exit such as the process exiting will still be replaced.
         bool disableDecreaseDesired = 2;
     }
 
@@ -246,7 +237,7 @@ message ServiceJobSpec {
     ServiceJobProcesses serviceJobProcesses = 5;
 }
 
-/// Job descriptor contains full job specification (batch or service) that is used to run a job.
+/// Job descriptor contains the full job specification (batch or service) that is used to run a job.
 message JobDescriptor {
 
     /// (Optional) Owner of a job (see Owner entity description for more information).
@@ -313,22 +304,22 @@ message TaskStatus {
     /// State information associated with a task.
     enum TaskState {
 
-        /// A task was passed to scheduler, but has no resources allocated yet.
+        /// A task was passed to the scheduler but has no resources allocated yet.
         Accepted = 0;
 
-        /// A task had resources allocated, and was passed to Mesos.
+        /// A task had resources allocated and was passed to Mesos.
         Launched = 1;
 
         /// An executor provisioned resources for a task.
         StartInitiated = 2;
 
-        /// Task's container started.
+        /// The container was started.
         Started = 3;
 
-        /// A user requested the task to be terminated. An executor is stopping the task, and releasing its allocated resources.
+        /// A user requested the task to be terminated. An executor is stopping the task and releasing its allocated resources.
         KillInitiated = 4;
 
-        /// No connectivity between Mesos and an agent running a task. Task's state cannot be determined until the connection
+        /// No connectivity between Mesos and an agent running a task. The task's state cannot be determined until the connection
         //  is established again.
         Disconnected = 5;
 
@@ -350,33 +341,33 @@ message TaskStatus {
     //  * 'lost'                 - task was lost, and its final status is unknown
     //  * 'invalidRequest'       - invalid container definition (security group, image name, etc)
     //  * 'crashed'              - container crashed due to some internal system error
-    //  * 'transientSystemError' - transient error, not an agent specific (for example AWS rate limiting)
+    //  * 'transientSystemError' - transient error, not agent specific (for example AWS rate limiting)
     //  * 'localSystemError'     - an error scoped to an agent instance on which a container was run.
     //                             The agent should be quarantined or terminated.
-    //  * 'unknownSystemError'   - unrecognized error which cannot be classified neither as local/non-local or transient.
+    //  * 'unknownSystemError'   - unknown error which cannot be classified either as local/non-local or transient.
     //                             If there are multiple occurences of this error, the agent should be quarantined or terminated.
     string reasonCode = 2;
 
     /// (Optional) Textual description accompanying the 'reasonCode'.
     string reasonMessage = 3;
 
-    /// Time when a transition to a state happned.
+    /// Time when a transition to a state occurred.
     uint64 timestamp = 4;
 }
 
 /// Task log locations
 message LogLocation {
 
-    /// URL address pointing to the Titus UI log file access page.
+    /// URL pointing to a UI based log viewer.
     message UI {
-        /// (Required) Titus UI URL.
+        /// (Required) UI URL.
         string url = 1;
     }
 
     /// URL address to a container log service. When a container is running, its stdout/stderr or any other file in the
     //  '/logs' folder can be acccessed via this endpoint. The endpoint becomes unavailable when the container terminates.
     //
-    //  A user should provide 'f' query parameter to specify a file to download. If the 'f' query parameter is net set,
+    //  A user should provide the 'f' query parameter to specify a file to download. If the 'f' query parameter is net set,
     //  it defaults to 'stdout'. The file path must be relative to the '/logs' folder.
     message LiveStream {
         /// (Required) Live log URL.
@@ -397,23 +388,23 @@ message LogLocation {
         /// (Required) S3 bucket.
         string bucket = 4;
 
-        /// (Required) A key in the S3 bucket.
+        /// (Required) The key prefix in the S3 bucket. The assumption is that the consumer finds all objects based on this key prefix.
         string key = 5;
     }
 
-    /// (Required) Log access via Titus UI.
+    /// (Required) Log access via UI.
     UI ui = 1;
 
-    /// (Optional) Live log access. Provided only for runnng tasks.
+    /// (Optional) Live log access. Provided only for running tasks.
     LiveStream liveStream = 2;
 
     /// (Required) S3 log location.
     S3 s3 = 3;
 }
 
-/// Task is an entity representing running container.
+/// Task is an entity representing a running container.
 message Task {
-    /// (Required) TaskId consists of job id and task identifier (job specific).
+    /// (Required) The Id of the task.
     string id = 1;
 
     /// (Required) Id of a job that owns this task.
@@ -456,8 +447,8 @@ message Job {
 // ----------------------------------------------------------------------------
 // Change notification model
 
-/// Job event stream consists of two phases. In the first one a snapshot of a current state (a job and its tasks) is
-//  streamed, and it is followed by SnapshotEnd notification marker. In the second phase job/task state updates are
+/// Job event stream consists of two phases. In the first phase, a snapshot of the current state (a job and its tasks) is
+//  streamed, and it is followed by the SnapshotEnd notification marker. In the second phase, job/task state updates are
 //  sent. When a job is terminated, the stream completes.
 message JobChangeNotification {
 
@@ -471,7 +462,7 @@ message JobChangeNotification {
         Task task = 1;
     }
 
-    /// A marker notification, indicating that all known jobs were streamed to the client.
+    /// A notification marker that indicates that all known jobs were streamed to the client.
     message SnapshotEnd {
     }
 
@@ -485,10 +476,9 @@ message JobChangeNotification {
 // ----------------------------------------------------------------------------
 // GRPC services
 //
-// The data structes below are envelope data structures that are not part of the
+// The data structures below are wrapper messages that are not part of the
 // core data model.
 
-/// A wrapper type for job id.
 message JobId {
     string id = 1;
 }
@@ -518,7 +508,7 @@ message JobQuery {
     // jobGroupSequence - job group sequence
     // jobType - job type (batch or service)
     // attributes - comma separated key/value pairs (for example "key1,key2:value2;k3:value3")
-    // attributes.op - logical 'and' or 'or' oeprators, which should be applied to multiple atrributes given in a query
+    // attributes.op - logical 'and' or 'or' oeprators, which should be applied to multiple atrributes specified in the query
     // jobState - job state (one)
     // taskStates - task states (multiple, comma separated)
     // taskStateReasons - reasons associated with task states (multiple, comma separated)
@@ -528,20 +518,18 @@ message JobQuery {
     // ---------------------------------------------------
     // Output
 
-    /// (Optional) If set, only field values explicitly given in this parameter will be returned
+    /// (Optional) If set, only field values explicitly specified in this parameter will be returned
     // This does not include certain attributes like 'jobId', 'appName' which are always returned.
-    // If nested field value is provided, only the explicitly listed nested fields will be returned.
+    // If the nested field value is provided, only the explicitly listed nested fields will be returned.
     // For example: tasks.taskId rule will result in including just this value when encoding Task entity.
     repeated string fields = 5;
 }
 
-/// A wrapper for job query reply.
 message JobQueryResult {
     repeated Job items = 1;
     Pagination pagination = 2;
 }
 
-/// Job size update request.
 message JobCapacityUpdate {
     string jobId = 1;
     Capacity Capacity = 2;
@@ -557,10 +545,10 @@ message JobProcessesUpdate {
     ServiceJobSpec.ServiceJobProcesses serviceJobProcesses = 2;
 }
 
-/// A wrapper type for task id.
 message TaskId {
     string id = 1;
 }
+
 message TaskIds {
     repeated string id = 1;
 }
@@ -583,7 +571,7 @@ message TaskQuery {
     // jobGroupSequence - job group sequence
     // jobType - job type (batch or service)
     // attributes - comma separated key/value pairs (for example "key1,key2:value2;k3:value3")
-    // attributes.op - logical 'and' or 'or' oeprators, which should be applied to multiple atrributes given in a query
+    // attributes.op - logical 'and' or 'or' oeprators, which should be applied to multiple atrributes specified in the query
     // jobState - job state (one)
     // taskStates - task states (multiple, comma separated)
     // taskStateReasons - reasons associated with task states (multiple, comma separated)
@@ -632,13 +620,13 @@ service JobManagementService {
     rpc FindJobs (JobQuery) returns (JobQueryResult) {
     }
 
-    /// Returns a job with given id.
+    /// Return a job with given id.
     rpc FindJob (JobId) returns (Job) {
     }
 
-    /// On subscription, sends complete job (definition and active tasks). After that sends distinct job definition
-    // or task state chage notifications. The stream is closed by server only when the job is finished, which
-    // happens after 'JobFinished' notification is delivered.
+    /// On subscription, sends complete job (definition and active tasks). Next, send distinct job definition
+    // or task state chage notifications. The stream is closed by the server only when the job is finished, which
+    // happens after the 'JobFinished' notification is delivered.
     rpc ObserveJob (JobId) returns (stream JobChangeNotification) {
     }
 
@@ -646,14 +634,14 @@ service JobManagementService {
     rpc ObserveJobs (google.protobuf.Empty) returns (stream JobChangeNotification) {
     }
 
-    /// Kill all running tasks of a job, and than terminate it.
+    /// Terminate all running tasks of a job, and than terminate the job.
     rpc KillJob (JobId) returns (google.protobuf.Empty) {
     }
 
     // ------------------------------------------------------------
     // Task operations
 
-    /// Get a task with the given id.
+    /// Get a task with the specified id.
     rpc FindTask (TaskId) returns (Task) {
     }
 
@@ -661,7 +649,7 @@ service JobManagementService {
     rpc FindTasks (TaskQuery) returns (TaskQueryResult) {
     }
 
-    /// Kill a task with the given id. Depending on job type, the task might be immediately restarted/replaced with a new one.
+    /// Terminate a task with the given id. Depending on job type, the task might be immediately restarted/replaced with a new one.
     rpc KillTask (TaskKillRequest) returns (google.protobuf.Empty) {
     }
 }

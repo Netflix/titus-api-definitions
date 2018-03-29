@@ -60,6 +60,10 @@ message Pagination {
     // request to get the next page of items. Using cursors, instead of page numbers, will guarantee that all items are
     // retrieved with a potential of items being duplicated.
     string cursor = 5;
+
+    /// (Required) Position of the cursor relative to totalItems. It can be used to determine what pageNumber would
+    // overlap with a cursor, or to provide an idea of progress when walking all pages. Valid values are [0, totalItems-1].
+    int32 cursorPosition = 6;
 }
 
 /// Retry polices.

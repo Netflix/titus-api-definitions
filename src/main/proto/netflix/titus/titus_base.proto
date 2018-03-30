@@ -27,7 +27,7 @@ message UserIdentity {
     map<string, string> securityContext = 2;
 }
 
-/// An entity representing single page of a collection.
+/// An entity representing single page of a collection. Either pageNumber or cursor must be set on requests.
 message Page {
     /// (Optional) Requested page number, starting from 0 (defaults to 0 if not specified).
     int32 pageNumber = 1;
@@ -56,13 +56,13 @@ message Pagination {
     /// Total number of items.
     int32 totalItems = 4;
 
-    /// (Required) The last retrieved item's position in the collection. The cursor value can be sent on a subsequent
-    // request to get the next page of items. Using cursors, instead of page numbers, will guarantee that all items are
+    /// The last retrieved item's position in the collection. The cursor value can be sent on a subsequent request to
+    // get the next page of items. Using cursors, instead of page numbers, will guarantee that all items are
     // retrieved with a potential of items being duplicated.
     string cursor = 5;
 
-    /// (Required) Position of the cursor relative to totalItems. It can be used to determine what pageNumber would
-    // overlap with a cursor, or to provide an idea of progress when walking all pages. Valid values are [0, totalItems-1].
+    /// Position of the cursor relative to totalItems. It can be used to determine what pageNumber would overlap with a
+    // cursor, or to provide an idea of progress when walking all pages. Valid values are [0, totalItems-1].
     int32 cursorPosition = 6;
 }
 

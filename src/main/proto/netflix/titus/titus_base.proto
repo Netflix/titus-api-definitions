@@ -15,15 +15,15 @@ option go_package = "titus";
 
 /// Call metadata (caller's identity, call path).
 message CallMetadata {
-    /// (Required) An original caller identifier. Depending on user type (a person or an application), the format
-    // of the id may be different. For example a person's id could be encoded as 'person:<email-address>', and
+    /// (Required) The original caller identifier. Depending on the user identity (a user or an application), the format
+    // of the id may be different. For example a user's id could be encoded as 'user:<email-address>', and
     // application id as 'app:<aws-account-id>:<app-name>:<app-stack>'.
     string callerId = 1;
 
-    /// (Optional) A reason why a call was made.
+    /// (Optional) The reason why a call was made.
     string callReason = 2;
 
-    /// (Optional) A list of intermediaries via which a call was relayed.
+    /// (Optional) The list of intermediaries via which a call was relayed.
     repeated string callPath = 3;
 
     /// (Optional) If set to true, a diagnostic information is provided if a request fails.

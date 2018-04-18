@@ -1,5 +1,5 @@
 # Titus API Definitions
-[![Build Status](https://travis-ci.org/Netflix/titus-control-plane.svg?branch=master)](https://travis-ci.org/Netflix/titus-control-plane)
+[![Build Status](https://travis-ci.org/Netflix/titus-api-definitions.svg?branch=master)](https://travis-ci.org/Netflix/titus-api-definitions)
 [![Apache 2.0](https://img.shields.io/github/license/nebula-plugins/gradle-lint-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
 ## Overview

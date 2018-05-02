@@ -101,9 +101,8 @@ message ContainerInfo {
     optional string iamProfile = 17;
 
     message NetworkConfigInfo {
-        // deprecated: use eniLabel instead
-        required string eniLablel = 1 [deprecated = true];
-        // this should be required, but it was added later (typo fix) and is optional for backwards compatibility
+        // should this be required?
+        // it was added later (typo fix)
         optional string eniLabel = 5;
         optional bool allocateIpAddress = 2 [default = false];
         repeated string securityGroups = 3;

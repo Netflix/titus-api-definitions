@@ -99,8 +99,9 @@ message ContainerInfo {
     optional string iamProfile = 17;
 
     message NetworkConfigInfo {
-        // should this be required?
-        // it was added later (typo fix)
+        // deprecated: use eniLabel instead
+        required string eniLablel = 1 [deprecated = true];
+        // this should be required, but it was added later (typo fix) and is optional for backwards compatibility
         optional string eniLabel = 5;
         repeated string securityGroups = 3;
         optional uint32 bandwidthLimitMbps = 4; // In Mbps

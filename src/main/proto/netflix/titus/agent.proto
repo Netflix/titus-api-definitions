@@ -226,4 +226,17 @@ message ContainerInfo {
     }
 
     repeated S3LogLocation s3LogLocations = 34;
+
+    // This influences the value of oom_score_adj for the PID 1 (tini) of the container
+    //
+    // The value of /proc/<pid>/oom_score_adj is added to the badness score before it
+    // is used to determine which task to kill.  Acceptable values range from -1000
+    // (OOM_SCORE_ADJ_MIN) to +1000 (OOM_SCORE_ADJ_MAX).  This allows userspace to
+    // polarize the preference for oom killing either by always preferring a certain
+    // task or completely disabling it.  The lowest possible value, -1000, is
+    // equivalent to disabling oom killing entirely for that task since it will always
+    // report a badness score of 0.
+    //
+    // If this value is unset, it will be set to +1000 as default.
+    optional int32 oom_score_adj = 35;
 }

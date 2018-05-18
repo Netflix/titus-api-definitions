@@ -1,3 +1,6 @@
+# May require you to install protoc-gen-doc
+# If you have a Go environment:
+# go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc
 
 titus-v3-doc:
 	echo "Generating documentation for Titus v3 API"

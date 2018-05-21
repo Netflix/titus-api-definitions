@@ -239,4 +239,16 @@ message ContainerInfo {
     //
     // If this value is unset, it will be set to +1000 as default.
     optional int32 oom_score_adj = 35;
+
+    // Borrowed from Kubernetes
+    enum ImagePullPolicy {
+        // Always pull the tag / digest
+        Always = 0;
+        // Only pull if we don't have an image with that given tag / digest (guarantees freshness, as it requires digest)
+        IfNotPresent = 1;
+        // Only pull if we don't have an image with that given tag
+        IfLabelPresent = 2;
+    }
+    // If omitted, Always is the default
+    optional ImagePullPolicy imagePullPolicy = 36;
 }

@@ -238,7 +238,7 @@ message ContainerInfo {
     // report a badness score of 0.
     //
     // If this value is unset, it will be set to +1000 as default.
-    optional int32 oom_score_adj = 35;
+    optional int32 oomScoreAdj = 35;
 
     // Borrowed from Kubernetes
     enum ImagePullPolicy {

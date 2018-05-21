@@ -56,7 +56,7 @@ message ContainerInfo {
 
     optional string command = 2; // deprecated. replaced by entrypointCmd.
 
-    optional string containerPorts = 3;
+    optional string containerPorts = 3 [deprecated = true];
 
     optional string version = 4 [default = "latest"];
 

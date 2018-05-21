@@ -251,4 +251,7 @@ message ContainerInfo {
     }
     // If omitted, Always is the default
     optional ImagePullPolicy imagePullPolicy = 36;
+
+    // passthrough attributes are an arbitrary set of key / value pairs that are passed from API to executor
+    map<string, string> passthroughAttributes = 37;
 }

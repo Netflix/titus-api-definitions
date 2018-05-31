@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+// Titus task eviction API specification.
+//
+
+package com.netflix.titus;
+
+import "google/protobuf/empty.proto";
+import "netflix/titus/titus_base.proto";
+
+option java_multiple_files = true;
+option java_package = "com.netflix.titus.grpc.protogen";
+option java_outer_classname = "EvictionProto";
+
+option go_package = "titus";
+
+// ----------------------------------------------------------------------------
+// Eviction core data structures
+
+/// The global distruption budget provides an upper bound on allowed number of task evictions.
+message GlobalDisruptionBudget {
+    /// (Required) Bucket refill rate per second.
+    uint32 rate = 1;
+
+    /// (Required) Eviction burst.
+    uint32 bucket = 2;
+}
+
+/// Current eviction quota at the global, tier or a capacity group level. There is no quota at a job/task level, as
+//  as their eviction process is governed by the configured policies.
+//  For example, for the global disruption budget with the bucket size of 100 half empty, the eviction quota is 50.
+message EvictionQuota {
+    /// (Required) Total number of tasks that can be evicted at a given point in time.
+    uint32 quota = 1;
+}
+
+// ----------------------------------------------------------------------------
+// GRPC services
+
+message EvictionQuotaQuery {
+    enum Level {
+        Global = 0;
+        Tier = 1;
+        CapacityGroup = 2;
+    }
+
+    Level level = 1;
+}
+
+message EvictionQueryResponse {
+    repeated EvictionQuota quotas = 1;
+}
+
+message TaskTerminateRequest {
+    string taskId = 1;
+}
+
+message TaskTerminateResponse {
+    /// Set to true if the termination request was accepted.
+    bool allowed = 1;
+
+    /// If a termination request is not accepted, contains the reason code explaining why:
+    //  * aboveGlobalDisruptionBudget
+    //  * aboveTierDisruptionBudget
+    //  * aboveCapacityGroupDisruptionBudget
+    //  * jobRelocationPolicyViolation
+    string reasonCode = 2;
+
+    /// If a termination request is not accepted, contains explanation why.
+    string reasonMessage = 3;
+}
+
+message EvictionServiceEvent {
+    message GlobalDisruptionBudgetUpdateEvent {
+        GlobalDisruptionBudget current = 1;
+    }
+
+    message TaskTerminationEvent {
+        string taskId = 1;
+        bool allowed = 2;
+    }
+
+    oneof Event {
+        GlobalDisruptionBudgetUpdateEvent globalDisruptionBudgetUpdateEvent = 1;
+
+        TaskTerminationEvent taskTerminationEvent = 2;
+    }
+}
+
+service EvictionService {
+
+    rpc GetGlobalDisruptionBudget (google.protobuf.Empty) returns (GlobalDisruptionBudget) {
+    }
+
+    /// Update the global distruption budget.
+    rpc UpdateGlobalDisruptionBudget (GlobalDisruptionBudget) returns (google.protobuf.Empty) {
+    }
+
+    /// Get information about the current eviction quotas.
+    rpc GetEvictionQuotas (EvictionQuotaQuery) returns (EvictionQueryResponse) {
+    }
+
+    /// Kill
+    rpc TerminateTask (TaskTerminateRequest) returns (TaskTerminateResponse) {
+    }
+
+    rpc ObserveEvents (google.protobuf.Empty) returns (stream EvictionServiceEvent) {
+    }
+}

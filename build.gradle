@@ -7,6 +7,7 @@ buildscript {
 }
 
 plugins {
+    id "com.jfrog.artifactory" version "4.4.18" // required by nebula.netflixoss
     id 'nebula.netflixoss' version '5.0.0'
     id 'nebula.ospackage' version '4.8.0'
 }

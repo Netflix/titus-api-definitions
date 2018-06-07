@@ -118,6 +118,38 @@ enum Tier {
     Critical = 1;
 }
 
+/// Titus hierarchy level.
+enum Level {
+    GlobalLevel = 0;
+    TierLevel = 1;
+    CapacityGroupLevel = 2;
+    JobLevel = 3;
+    TaskLevel = 4;
+}
+
+/// A reference to an entity in the Titus hierarchy.
+message Reference {
+    message Global {
+    }
+
+    oneof Reference {
+        /// Global level.
+        Global global = 1;
+
+        /// Tier level
+        Tier tier = 2;
+
+        /// A capacity group level, with the capacity group name as a value.
+        string capacityGroup = 3;
+
+        /// Job id.
+        string job = 4;
+
+        /// Task id.
+        string task = 5;
+    }
+}
+
 /// Disk mount permission mask
 enum MountPerm {
     /// Read only

@@ -24,17 +24,17 @@ option go_package = "titus";
 //  disruption budget is defined at the global, tier and a capacity group level.
 message SystemDisruptionBudget {
     /// System layer/entity refrence.
-    Reference reference = 1;
+    Reference target = 1;
 
     /// (Required) The admision control policy.
     TokenBucketPolicy admissionControlPolicy = 2;
 }
 
-/// Current eviction quota at the global, tier, capacity group, and job level.
-//  For example, for the global disruption budget with the bucket size of 100 half empty, the eviction quota is 50.
+/// Current eviction quota at the global, tier, capacity group, and job level. The total amount of tasks that
+//  can be evicted at a given point in time is constraint by this number.
 message EvictionQuota {
     /// System layer/entity refrence.
-    Reference reference = 1;
+    Reference target = 1;
 
     /// (Required) Total number of tasks that can be evicted at a given point in time.
     uint32 quota = 2;
@@ -107,22 +107,10 @@ message EvictionServiceEvent {
 
 service EvictionService {
 
-    rpc GetGlobalDisruptionBudget (google.protobuf.Empty) returns (SystemDisruptionBudget) {
+    rpc GetDisruptionBudget (Reference) returns (SystemDisruptionBudget) {
     }
 
-    rpc GetTierDisruptionBudget (TierId) returns (SystemDisruptionBudget) {
-    }
-
-    rpc GetCapacityGroupDisruptionBudget (CapacityGroupId) returns (SystemDisruptionBudget) {
-    }
-
-    rpc GetGlobalEvictionQuota (google.protobuf.Empty) returns (EvictionQuota) {
-    }
-
-    rpc GetTierEvictionQuota (TierId) returns (EvictionQuota) {
-    }
-
-    rpc GetCapacityGroupEvictionQuota (CapacityGroupId) returns (EvictionQuota) {
+    rpc GetEvictionQuota (Reference) returns (EvictionQuota) {
     }
 
     /// Terminate a task.

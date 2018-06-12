@@ -112,7 +112,7 @@ message RetryPolicy {
 /// Token bucket policies
 message TokenBucketPolicy {
     message FixedIntervalRefillStrategy {
-        uint64 numberOfTokensPerInterval = 3;
+        uint64 refillRate = 3;
 
         uint64 intervalMs = 4;
     }

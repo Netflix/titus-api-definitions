@@ -172,7 +172,7 @@ message JobDisruptionBudget {
     /// The minimum required percentage of tasks in a healthy state. Tasks will not be terminated by the eviction service
     //  if this limit would be violated.
     message AvailabilityPercentageLimit {
-        uint32 limit = 1;
+        double limit = 1;
     }
 
     /// The minimum required amount of tasks in a healthy state. Tasks will not be terminated by the eviction service

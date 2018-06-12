@@ -109,6 +109,23 @@ message RetryPolicy {
     }
 }
 
+/// Token bucket policies
+message TokenBucketPolicy {
+    message FixedIntervalRefillStrategy {
+        uint64 numberOfTokensPerInterval = 3;
+
+        uint64 intervalMs = 4;
+    }
+
+    uint64 capacity = 1;
+
+    uint64 initialNumberOfTokens = 2;
+
+    oneof RefillStrategy {
+        FixedIntervalRefillStrategy fixedIntervalRefillStrategy = 3;
+    }
+}
+
 /// Titus scheduler tier (see Titus scheduler documentation for more information).
 enum Tier {
     /// Tier for running latency insensitive batch workloads.
@@ -143,10 +160,10 @@ message Reference {
         string capacityGroup = 3;
 
         /// Job id.
-        string job = 4;
+        string jobId = 4;
 
         /// Task id.
-        string task = 5;
+        string taskId = 5;
     }
 }
 

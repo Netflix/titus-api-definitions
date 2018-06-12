@@ -29,7 +29,7 @@ message ExecutionStatus {
     repeated string terminatedTaskIds = 1;
 
     // Map with key values containing the task ids from a relocation plan, that could not be evicted due to disruption
-    // budget or other constraints. Map value contain the failure reason.
+    // budget or other constraints. Map value is the failure reason.
     map<string, string> taskTerminationFailures = 2;
 }
 

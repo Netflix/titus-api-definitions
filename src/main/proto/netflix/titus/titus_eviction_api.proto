@@ -8,6 +8,7 @@ syntax = "proto3";
 
 package com.netflix.titus;
 
+import "google/protobuf/empty.proto";
 import "netflix/titus/titus_base.proto";
 
 option java_multiple_files = true;
@@ -25,11 +26,8 @@ message SystemDisruptionBudget {
     /// System layer/entity refrence.
     Reference reference = 1;
 
-    /// (Required) Bucket refill rate per second.
-    uint32 rate = 2;
-
-    /// (Required) Eviction burst.
-    uint32 bucket = 3;
+    /// (Required) The admision control policy.
+    TokenBucketPolicy admissionControlPolicy = 2;
 }
 
 /// Current eviction quota at the global, tier, capacity group, and job level.
@@ -45,22 +43,19 @@ message EvictionQuota {
 // ----------------------------------------------------------------------------
 // GRPC services
 
-message EvictionQuotaQuery {
-    /// An entity reference (global, tier, etc) for which the available quota should be returned.
-    Reference reference = 1;
-
-    /// If set to true, the direct children subquotas are returned as well.
-    bool inlcudeChildren = 2;
+message CapacityGroupId {
+    string id = 1;
 }
 
-message EvictionQueryResponse {
-    EvictionQuota quota = 1;
-
-    repeated EvictionQueryResponse nestedQuotas = 2;
+message TierId {
+    Tier tier = 1;
 }
 
 message TaskTerminateRequest {
     string taskId = 1;
+
+    /// Textual description of why a task termination was requested.
+    string reason = 2;
 }
 
 message TaskTerminateResponse {
@@ -90,6 +85,10 @@ message EvictionServiceEvent {
         SystemDisruptionBudget current = 1;
     }
 
+    message EvictionQuotaEvent {
+        EvictionQuota quota = 1;
+    }
+
     message TaskTerminationEvent {
         string taskId = 1;
         bool approved = 2;
@@ -100,17 +99,30 @@ message EvictionServiceEvent {
 
         SystemDisruptionBudgetUpdateEvent systemDisruptionBudgetUpdateEvent = 2;
 
-        TaskTerminationEvent taskTerminationEvent = 3;
+        EvictionQuotaEvent evictionQuotaEvent = 3;
+
+        TaskTerminationEvent taskTerminationEvent = 4;
     }
 }
 
 service EvictionService {
 
-    rpc GetSystemDisruptionBudget (Reference) returns (SystemDisruptionBudget) {
+    rpc GetGlobalDisruptionBudget (google.protobuf.Empty) returns (SystemDisruptionBudget) {
     }
 
-    /// Get information about the current eviction quotas.
-    rpc GetEvictionQuotas (EvictionQuotaQuery) returns (EvictionQueryResponse) {
+    rpc GetTierDisruptionBudget (TierId) returns (SystemDisruptionBudget) {
+    }
+
+    rpc GetCapacityGroupDisruptionBudget (CapacityGroupId) returns (SystemDisruptionBudget) {
+    }
+
+    rpc GetGlobalEvictionQuota (google.protobuf.Empty) returns (EvictionQuota) {
+    }
+
+    rpc GetTierEvictionQuota (TierId) returns (EvictionQuota) {
+    }
+
+    rpc GetCapacityGroupEvictionQuota (CapacityGroupId) returns (EvictionQuota) {
     }
 
     /// Terminate a task.

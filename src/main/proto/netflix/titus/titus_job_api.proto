@@ -133,10 +133,16 @@ message Container {
     /// (Optional) Arbitrary set of key/value pairs. Key names starting with 'titus.' are reserved by Titus.
     map<string, string> attributes = 4;
 
-    /// (Optional) A binary to execute with parameters. If not set, the entry point must be defined in the container image.
+    /// (Optional) Override the entry point of the image.
+    // If set, the command baked into the image (if any) is always ignored. Interactions between the entry point and
+    // command are the same as specified by Docker:
+    // https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact
+    //
+    //  To simply clear (unset) the entry point of the image, pass a single empty string value: [""]
     repeated string entryPoint = 5;
 
-    /// (Optional, not supported yet) Additional parameters for the entry point defined either here or provided in the container image
+    /// (Optional) Additional parameters for the entry point defined either here or provided in the container image.
+    // To simply clear (unset) the command of the image, pass a single empty string value: [""]
     repeated string command = 6;
 
     /// (Optional) A collection of system environment variables passed to the container.

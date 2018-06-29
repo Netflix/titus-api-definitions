@@ -262,9 +262,9 @@ message ContainerInfo {
     //
     // Both CMD and ENTRYPOINT baked into the image can be explicitly cleared with a single empty value (i.e.: `[""]`).
     message Process {
-        // when set will override ENTRYPOINT baked into the image, and cause CMD from the image to be ignored
+        // when set, will override ENTRYPOINT baked into the image, and cause CMD from the image to be ignored
         repeated string entrypoint = 1;
-        // when set will override CMD baked into the image
+        // when set, will override CMD baked into the image
         repeated string command = 2;
     }
     // Process to be executed inside the container

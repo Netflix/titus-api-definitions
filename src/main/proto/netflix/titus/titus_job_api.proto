@@ -138,11 +138,11 @@ message Container {
     // command are the same as specified by Docker:
     // https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact
     //
-    //  To simply clear (unset) the entry point of the image, pass a single empty string value: [""]
+    //  To clear (unset) the entry point of the image, pass a single empty string value: [""]
     repeated string entryPoint = 5;
 
     /// (Optional) Additional parameters for the entry point defined either here or provided in the container image.
-    // To simply clear (unset) the command of the image, pass a single empty string value: [""]
+    // To clear (unset) the command of the image, pass a single empty string value: [""]
     repeated string command = 6;
 
     /// (Optional) A collection of system environment variables passed to the container.

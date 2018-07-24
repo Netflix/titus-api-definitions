@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+// Data entities exchanged between Titus control plane and its agents.
+//
+
+/// Information about network interface associated with a container.
+message NetworkConfiguration {
+
+    /// Assigned IP address.
+    string ipAddress = 1;
+
+    /// ENI id.
+    string eniId = 2;
+}
+
+/// An evelop data type for passing information from Titus agent to Titus control plane.
+message ContainerStatus {
+
+    oneof Data {
+        NetworkConfiguration networkConfiguration = 1;
+    }
+}

@@ -3,6 +3,14 @@ syntax = "proto3";
 // Data entities exchanged between Titus control plane and its agents.
 //
 
+package com.netflix.titus;
+
+option java_multiple_files = true;
+option java_package = "com.netflix.titus.protogen";
+option java_outer_classname = "ControlPlaneAgentProto";
+
+option go_package = "titus";
+
 /// Information about network interface associated with a container.
 message NetworkConfiguration {
 
@@ -13,10 +21,15 @@ message NetworkConfiguration {
     string eniId = 2;
 }
 
-/// An envelop data type for passing information from Titus agent to Titus control plane.
+/// A union type that encapsulates all agent to control plane updates.
 message ContainerStatus {
 
     oneof Data {
         NetworkConfiguration networkConfiguration = 1;
     }
+}
+
+/// An envelop data type for passing information from Titus agent to Titus control plane.
+message ContainerStatusUpdate {
+    repeated ContainerStatus updates = 1;
 }

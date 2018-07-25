@@ -13,7 +13,7 @@ message NetworkConfiguration {
     string eniId = 2;
 }
 
-/// An evelop data type for passing information from Titus agent to Titus control plane.
+/// An envelop data type for passing information from Titus agent to Titus control plane.
 message ContainerStatus {
 
     oneof Data {

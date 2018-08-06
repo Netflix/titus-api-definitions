@@ -32,6 +32,9 @@ enum InstanceLifecycleState {
 
     /// An agent instance is not running anymore.
     Stopped = 3;
+
+    /// An agent instance state is unknown.
+    InstanceStateUnknown = 4;
 }
 
 /// Agent instance deployment status.

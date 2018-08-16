@@ -102,8 +102,9 @@ service SupervisorService {
     rpc GetMasterInstance (MasterInstanceId) returns (MasterInstance) {
     }
 
-    /// Requests the TitusMaster instance that handles this request to restart.
-    rpc RestartMasterInstance (google.protobuf.Empty) returns (google.protobuf.Empty) {
+    /// Requests the TitusMaster instance that handles this request to stop being leader. If the given instance
+    //  is not a leader, the request is ignored.
+    rpc StopBeingLeader (google.protobuf.Empty) returns (google.protobuf.Empty) {
     }
 
     /// Supervisor event stream.

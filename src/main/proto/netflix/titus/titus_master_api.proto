@@ -2,6 +2,9 @@ syntax = "proto3";
 
 // TitusMaster Supervisor API specification. This API provides access to TitusMaster operational state
 // (leader/non-leader, activation time, etc), as well as provides management operations.
+// The supervisor API is intended to be used by internal tools, which should make the calls directly to the desired
+// TitusMaster instance (not via the Titus gateway). The API calls tunneled via gateway are executed
+// against any available master instance.
 //
 
 package com.netflix.titus;

@@ -56,7 +56,7 @@ enum InstanceOverrideState {
     Quarantined = 1;
 
     /// An agent instance is in the removable state and will be removed once it becomes idles.
-    Removable = 2;
+    AgentRemovable = 2;
 }
 
 /// Agent instance override status.

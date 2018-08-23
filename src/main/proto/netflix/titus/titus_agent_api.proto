@@ -54,6 +54,9 @@ enum InstanceOverrideState {
     /// An agent instance is in the quarantined mode and is not accepting any traffic, unless a job directly requests
     //  to be placed there.
     Quarantined = 1;
+
+    /// An agent instance is in the removable state and will be removed once it becomes idles.
+    Removable = 2;
 }
 
 /// Agent instance override status.

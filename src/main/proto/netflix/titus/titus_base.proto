@@ -191,3 +191,33 @@ message ResourceDimension {
 
     uint32 networkMbps = 5;
 }
+
+// Time related data structures.
+
+enum Day {
+    Monday = 0;
+    Tuesday = 1;
+    Wednesday = 2;
+    Thursday = 3;
+    Friday = 4;
+    Saturday = 5;
+    Sunday = 6;
+}
+
+/// Time window descriptor.
+message TimeWindow {
+
+    message HourlyTimeWindow {
+        /// (Required) Starting hour.
+        uint32 startHour = 1;
+
+        /// (Required) Ending hour.
+        uint32 endHour = 2;
+    }
+
+    /// (Required) Included days.
+    repeated Day days = 1;
+
+    /// (Optional) Included hour ranges.
+    repeated HourlyTimeWindow hourlyTimeWindows = 2;
+}

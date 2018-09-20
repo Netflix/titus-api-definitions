@@ -187,16 +187,28 @@ message JobDisruptionBudget {
         uint32 limit = 1;
     }
 
-    /// Maximum number of times a task can be evicted.
-    message EvictionLimit {
+    /// Maximum number of times a task can be relocated.
+    message RelocationLimit {
         uint32 limit = 1;
     }
 
     oneof Policy {
         AvailabilityPercentageLimit availabilityPercentageLimit = 1;
         AvailableTasksLimit availableTasksLimit = 2;
-        EvictionLimit relocationLimit = 3;
+        RelocationLimit relocationLimit = 3;
     }
+
+    /// Defines the relocation delay. A user is notified about the
+    //  relocation plan, and may choose to handle the relocation itself.
+    //  If the contain is still running after the delay passes, it is
+    //  moved by the task relocation process.
+    uint64 relocationDelayMs = 4;
+
+    /// (Optional) Minimum amount of time a task should be running, before it can be qualified as healthy.
+    uint64 minContainerRuningTimeMs = 5;
+
+    /// (Optional) Time window to which relocation process is restricted.
+    TimeWindow timeWindows = 6;
 }
 
 /// Batch job specification.

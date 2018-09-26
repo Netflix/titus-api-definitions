@@ -175,28 +175,63 @@ message Capacity {
 /// Job disruption budget, associated (optionally) with a job.
 message JobDisruptionBudget {
 
+    // ----------------------------------------------------
+    // Policies
+
+    /// Self management task relocation policy for users who want to terminate their containers themselve.
+    //  If the containers are not terminated within the confgured amount of time, the system default migration
+    //  policy is assumed instead.
+    message SelfManaged {
+        /// Amount of time a container owner has to migrate their containers.
+        uint64 relocationTimeMs = 1;
+    }
+
     /// The minimum required percentage of tasks in a healthy state. Tasks will not be terminated by the eviction service
     //  if this limit would be violated.
     message AvailabilityPercentageLimit {
-        double limit = 1;
+        double percentageOfHealthyContainers = 1;
     }
 
     /// The minimum required amount of tasks in a healthy state. Tasks will not be terminated by the eviction service
     //  if this limit would be violated.
-    message AvailableTasksLimit {
-        uint32 limit = 1;
+    message UnhealthyTasksLimit {
+        uint32 limitOfUnhealthyContainers = 1;
     }
 
-    /// Maximum number of times a task can be evicted.
-    message EvictionLimit {
+    /// Maximum number of times a task can be relocated (only batch tasks, which have constraint execution time).
+    message RelocationLimit {
         uint32 limit = 1;
     }
 
     oneof Policy {
-        AvailabilityPercentageLimit availabilityPercentageLimit = 1;
-        AvailableTasksLimit availableTasksLimit = 2;
-        EvictionLimit relocationLimit = 3;
+        SelfManaged selfManaged = 1;
+        AvailabilityPercentageLimit availabilityPercentageLimit = 2;
+        UnhealthyTasksLimit unhealthyTasksLimit = 3;
+        RelocationLimit relocationLimit = 4;
     }
+
+    // ----------------------------------------------------
+    // Rates
+
+    /// No limits on how many containers in a job may be relocated, provided the other disruption budget constraints are not violated.
+    message RateUnlimited {
+    }
+
+    /// Allow up to the given percentage of tasks to be relocated within an hour.
+    message RatePercentagePerHour {
+        double maxPercentageOfContainersRelocatedInHour = 1;
+    }
+
+    oneof Rate {
+        RateUnlimited rateUnlimited = 5;
+        RatePercentagePerHour ratePercentagePerHour = 6;
+    }
+
+    /// (Optional) Minimum amount of time a task should be running, before it can be qualified as healthy.
+    uint64 minContainerRuningTimeMs = 7;
+
+    /// (Optional) Time window to which relocation process is restricted.
+    repeated TimeWindow timeWindows = 8;
 }
 
 /// Batch job specification.

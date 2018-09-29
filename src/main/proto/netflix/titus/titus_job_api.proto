@@ -603,6 +603,32 @@ message JobQueryResult {
     Pagination pagination = 2;
 }
 
+message ObserveJobsQuery {
+    // ---------------------------------------------------
+    // Filtering criteria
+
+    /// (Optional) Collection of fields and their values for a filter.
+    // Available query criteria:
+    // jobIds - list of comma separated job ids
+    // taskIds - list of comma separated task ids
+    // owner - job owner
+    // applicationName - job application name
+    // imageName - image name
+    // imageTag - image tag
+    // capacityGroup - job assigned capacity group
+    // jobGroupStack - job group stack
+    // jobGroupDetail - job group details
+    // jobGroupSequence - job group sequence
+    // jobType - job type (batch or service)
+    // attributes - comma separated key/value pairs (for example "key1,key2:value2;k3:value3")
+    // attributes.op - logical 'and' or 'or' oeprators, which should be applied to multiple atrributes specified in the query
+    // jobState - job state (one)
+    // taskStates - task states (multiple, comma separated)
+    // taskStateReasons - reasons associated with task states (multiple, comma separated)
+    // needsMigration - if set to true, return only jobs with tasks that require migration
+    map<string, string> filteringCriteria = 1;
+}
+
 message JobCapacityUpdate {
     string jobId = 1;
     Capacity Capacity = 2;
@@ -704,7 +730,7 @@ service JobManagementService {
     }
 
     /// Equivalent to ObserveJob, applied to all active jobs. This stream never completes.
-    rpc ObserveJobs (google.protobuf.Empty) returns (stream JobChangeNotification) {
+    rpc ObserveJobs (ObserveJobsQuery) returns (stream JobChangeNotification) {
     }
 
     /// Terminate all running tasks of a job, and than terminate the job.

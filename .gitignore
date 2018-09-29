@@ -68,3 +68,5 @@ bin/
 
 # Scala build
 *.cache
+
+*.code-workspace

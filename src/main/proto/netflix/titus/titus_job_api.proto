@@ -603,6 +603,10 @@ message JobQueryResult {
     Pagination pagination = 2;
 }
 
+// The filtering criteria is applied to both Job and Task events. If a criteria applies to task fields, the stream will
+// include both task events matching it, and events for jobs with tasks that match it. The opposite is also true, e.g.:
+// a criteria on applicationName (a job field) will include both job events matching it, and events for tasks belonging
+// to a job that matches it.
 message ObserveJobsQuery {
     // ---------------------------------------------------
     // Filtering criteria

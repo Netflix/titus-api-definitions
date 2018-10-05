@@ -221,3 +221,13 @@ message TimeWindow {
     /// (Optional) Included hour ranges.
     repeated HourlyTimeWindow hourlyTimeWindows = 2;
 }
+
+/// A provider for container health
+message ContainerHealthProvider {
+
+    /// (Required) The name of the provider.
+    string name = 1;
+
+    /// (Optional) Attributes to be used by the provider.
+    map<string, string> attributes = 3;
+}

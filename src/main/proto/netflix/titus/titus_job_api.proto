@@ -178,11 +178,11 @@ message JobDisruptionBudget {
     // ----------------------------------------------------
     // Policies
 
-    /// Self management task relocation policy for users who want to terminate their containers themselve.
+    /// Self managed task relocation policy for users that would like to orchestrate custom termination logic.
     //  If the containers are not terminated within the confgured amount of time, the system default migration
     //  policy is assumed instead.
     message SelfManaged {
-        /// Amount of time a container owner has to migrate their containers.
+        /// Amount of time a container owner has to migrate their containers. A maximum will be enforced by the system.
         uint64 relocationTimeMs = 1;
     }
 
@@ -192,13 +192,13 @@ message JobDisruptionBudget {
         double percentageOfHealthyContainers = 1;
     }
 
-    /// The minimum required amount of tasks in a healthy state. Tasks will not be terminated by the eviction service
+    /// The maximum required amount of tasks in an unhealthy state. Tasks will not be terminated by the eviction service
     //  if this limit would be violated.
     message UnhealthyTasksLimit {
         uint32 limitOfUnhealthyContainers = 1;
     }
 
-    /// Maximum number of times a task can be relocated (only batch tasks, which have constraint execution time).
+    /// Maximum number of times a task can be relocated (only batch tasks, which have a maximum execution time).
     message RelocationLimit {
         uint32 limit = 1;
     }
@@ -227,11 +227,11 @@ message JobDisruptionBudget {
         RatePercentagePerHour ratePercentagePerHour = 6;
     }
 
-    /// (Optional) Minimum amount of time a task should be running, before it can be qualified as healthy.
-    uint64 minContainerRuningTimeMs = 7;
-
     /// (Optional) Time window to which relocation process is restricted.
-    repeated TimeWindow timeWindows = 8;
+    repeated TimeWindow timeWindows = 7;
+
+    /// (Optional) Container health providers to use when relocating a container.
+    repeated ContainerHealthProvider containerHealthProviders = 8;
 }
 
 /// Batch job specification.
@@ -339,7 +339,7 @@ message JobDescriptor {
     };
 
     /// (Optional) Job disruption budget. If not defined, a job type specific (batch or service) default is set.
-    // JobDisruptionBudget disruptionBudget = 10;
+    JobDisruptionBudget disruptionBudget = 10;
 }
 
 /// Composite data structure holding both job state information and the reason of the transition to this state.

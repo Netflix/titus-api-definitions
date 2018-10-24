@@ -44,9 +44,14 @@ message TaskRelocationStatus {
         Failure = 1;
     }
 
+    /// (Required) Task relocation execution state.
+    TaskRelocationState state = 1;
+
     /// (Required) Execution result. Each task relocation state is associated with a different set of the reason codes.
     string reasonCode = 2;
 
+    /// (Required) Execution result details.
+    string reasonMessage = 3;
 }
 
 /// An execution status for a single relocation plan.
@@ -61,6 +66,10 @@ message TaskRelocationExecution {
 // ----------------------------------------------------------------------------
 // GRPC services
 
+message RelocationTaskId {
+    string id = 1;
+}
+
 message TaskRelocationPlans {
     repeated TaskRelocationPlan plans = 1;
 }
@@ -74,7 +83,7 @@ message TaskRelocationQuery {
     Page page = 1;
 
     /// (Optional) Collection of fields and their values for a filter.
-    //  Query critria common for all operations:
+    //  Query criteria common for all operations:
     //  * jobIds - list of comma separated job ids
     //  * taskIds - list of comma separated task ids
     //  * applicationName - job application name
@@ -106,8 +115,12 @@ service TaskRelocationService {
     rpc GetCurrentTaskRelocationPlans (TaskRelocationQuery) returns (TaskRelocationPlans) {
     }
 
-    /// Get the previous relocation plans.
-    rpc GetTaskRelocationResult (TaskRelocationQuery) returns (TaskRelocationExecutions) {
+    /// Get task relocation results for all tasks, optionally filtered, which are currently being processed.
+    rpc GetLatestTaskRelocationResults (TaskRelocationQuery) returns (TaskRelocationExecutions) {
+    }
+
+    /// Returns task relocation result for a task with the given id. Both active and archived data sets are checked.
+    rpc GetTaskRelocationResult(RelocationTaskId) returns (TaskRelocationExecution) {
     }
 
     /// Observe relocation plans and their execution status.

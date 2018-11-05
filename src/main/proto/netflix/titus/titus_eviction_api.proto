@@ -20,7 +20,7 @@ option go_package = "titus";
 // ----------------------------------------------------------------------------
 // Eviction core data structures
 
-/// Current eviction quota at the global, tier, capacity group, and job level. The total amount of tasks that
+/// Current eviction quota at the system, tier, capacity group, and job level. The total amount of tasks that
 //  can be evicted at a given point in time is constraint by this number.
 message EvictionQuota {
     /// System layer/entity refrence.

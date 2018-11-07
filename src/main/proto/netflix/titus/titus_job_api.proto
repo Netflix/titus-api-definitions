@@ -703,6 +703,14 @@ message TaskKillRequest {
     bool shrink = 2;
 }
 
+message TaskMoveRequest {
+    /// (Required) Task to move.
+    string taskId = 1;
+
+    /// (Required) Job which is the recipient of the task.
+    string targetJobId = 2;
+}
+
 service JobManagementService {
 
     // ------------------------------------------------------------
@@ -763,5 +771,9 @@ service JobManagementService {
 
     /// Terminate a task with the given id. Depending on job type, the task might be immediately restarted/replaced with a new one.
     rpc KillTask (TaskKillRequest) returns (google.protobuf.Empty) {
+    }
+
+    /// Move a task from one job to another.
+    rpc MoveTask (TaskMoveRequest) returns (google.protobuf.Empty) {
     }
 }

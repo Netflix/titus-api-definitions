@@ -30,10 +30,12 @@ message CallMetadata {
     bool debug = 4;
 }
 
-/// An entity representing single page of a collection. Either pageNumber or cursor must be set on requests.
+/// An entity representing single page of a collection. Prefer using cursor-based pagination, pageNumber is being retired.
+//  For the first page, leave both pageNumber and cursor empty.
 message Page {
     /// (Optional) Requested page number, starting from 0 (defaults to 0 if not specified).
-    int32 pageNumber = 1;
+    //  (Deprecated) Use cursor-based pagination instead.
+    int32 pageNumber = 1 [deprecated=true];
 
     /// (Required) Requested page size (if not specified, default size is operation specific).
     int32 pageSize = 2;
@@ -50,11 +52,11 @@ message Pagination {
     /// (Required) Requested page details.
     Page currentPage = 1;
 
-    /// Are there any more items to return.
+    /// Are there any more items to return? Use the cursor to fetch the next page when required.
     bool hasMore = 2;
 
-    /// Total number of pages.
-    int32 totalPages = 3;
+    /// (Deprecated) Use cursor-based pagination instead. Total number of pages.
+    int32 totalPages = 3 [deprecated=true];
 
     /// Total number of items.
     int32 totalItems = 4;

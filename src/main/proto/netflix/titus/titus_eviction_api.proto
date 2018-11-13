@@ -78,6 +78,9 @@ message EvictionServiceEvent {
     message TaskTerminationEvent {
         string taskId = 1;
         bool approved = 2;
+        string reason = 3;
+        string restrictionCode = 4;
+        string restrictionMessage = 5;
     }
 
     oneof Event {

@@ -699,11 +699,14 @@ message TaskKillRequest {
 }
 
 message TaskMoveRequest {
-    /// (Required) Task to move.
-    string taskId = 1;
+    /// (Required) Job which is the source of the task.
+    string sourceJobId = 1;
 
     /// (Required) Job which is the recipient of the task.
     string targetJobId = 2;
+
+    /// (Required) Task to move.
+    string taskId = 3;
 }
 
 service JobManagementService {

@@ -648,6 +648,11 @@ message JobProcessesUpdate {
     ServiceJobSpec.ServiceJobProcesses serviceJobProcesses = 2;
 }
 
+message JobDisruptionBudgetUpdate {
+    string jobId = 1;
+    JobDisruptionBudget disruptionBudget = 2;
+}
+
 message TaskId {
     string id = 1;
 }
@@ -717,6 +722,10 @@ service JobManagementService {
 
     /// Update service job processes such as disable increase/decrease instance count
     rpc UpdateJobProcesses (JobProcessesUpdate) returns (google.protobuf.Empty) {
+    }
+
+    /// Update a job disruption budget.
+    rpc UpdateJobDisruptionBudget (JobDisruptionBudgetUpdate) returns (google.protobuf.Empty) {
     }
 
     /// Return a collection of jobs matching a given criteria.

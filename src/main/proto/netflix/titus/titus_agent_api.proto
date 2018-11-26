@@ -259,9 +259,14 @@ message InstanceGroupLifecycleStateUpdate {
 }
 
 message InstanceGroupAttributesUpdate {
-    string instanceGroupId = 1;
-    map<string, string> attributes = 2;
-}
+     string instanceGroupId = 1;
+     map<string, string> attributes = 2;
+ }
+
+ message AgentInstanceAttributesUpdate {
+     string agentInstanceId = 1;
+     map<string, string> attributes = 2;
+ }
 
 service AgentManagementService {
     /// Return all known Titus agent server groups.
@@ -290,6 +295,10 @@ service AgentManagementService {
 
     /// Update the attributes of an instance group. The old attributes will be replaced completely.
     rpc UpdateInstanceGroupAttributes (InstanceGroupAttributesUpdate) returns (google.protobuf.Empty) {
+    }
+
+    /// Update the attributes of an agent instance. The old attributes will be replaced completely.
+    rpc UpdateAgentInstanceAttributes (AgentInstanceAttributesUpdate) returns (google.protobuf.Empty) {
     }
 
     /// Sends first current snapshot of the agent topology, and next an event for each topology change.

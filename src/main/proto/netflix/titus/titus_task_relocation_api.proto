@@ -47,11 +47,11 @@ message TaskRelocationStatus {
     /// (Required) Task relocation execution state.
     TaskRelocationState state = 1;
 
-    /// (Required) Execution result. Each task relocation state is associated with a different set of the reason codes.
-    string reasonCode = 2;
+    /// (Required) Execution result. Each task relocation state is associated with a different set of the status codes.
+    string statusCode = 2;
 
     /// (Required) Execution result details.
-    string reasonMessage = 3;
+    string statusMessage = 3;
 }
 
 /// An execution status for a single relocation plan.

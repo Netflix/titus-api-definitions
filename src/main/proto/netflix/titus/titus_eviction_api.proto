@@ -28,6 +28,9 @@ message EvictionQuota {
 
     /// (Required) Total number of tasks that can be evicted at a given point in time.
     uint32 quota = 2;
+
+    /// (Optional) Additional information associated with the current quota level.
+    string message = 3;
 }
 
 // ----------------------------------------------------------------------------

@@ -776,7 +776,9 @@ service JobManagementService {
     rpc KillTask (TaskKillRequest) returns (google.protobuf.Empty) {
     }
 
-    /// Move a task from one job to another.
+    /// Move a task from one job to another. Source and destination jobs must be compatible, as defined by:
+    // - Both are service jobs.
+    // - Both their JobDescriptors have the exact same Container definition (image, entryPoint, command, env, etc).
     rpc MoveTask (TaskMoveRequest) returns (google.protobuf.Empty) {
     }
 }

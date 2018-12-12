@@ -703,6 +703,17 @@ message TaskKillRequest {
     bool shrink = 2;
 }
 
+message TaskMoveRequest {
+    /// (Required) Source Job(Service) distinct from target job which is the source of the task.
+    string sourceJobId = 1;
+
+    /// (Required) Target Job(Service) distinct from source job which is the recipient of the task.
+    string targetJobId = 2;
+
+    /// (Required) Task to move. Task must be in started state.
+    string taskId = 3;
+}
+
 service JobManagementService {
 
     // ------------------------------------------------------------
@@ -763,5 +774,11 @@ service JobManagementService {
 
     /// Terminate a task with the given id. Depending on job type, the task might be immediately restarted/replaced with a new one.
     rpc KillTask (TaskKillRequest) returns (google.protobuf.Empty) {
+    }
+
+    /// Move a task from one job to another. Source and destination jobs must be compatible, as defined by:
+    // - Both are service jobs.
+    // - Both their JobDescriptors have the exact same Container definition (image, entryPoint, command, env, etc).
+    rpc MoveTask (TaskMoveRequest) returns (google.protobuf.Empty) {
     }
 }

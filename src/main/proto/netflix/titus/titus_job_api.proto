@@ -499,6 +499,9 @@ message Task {
 
     /// (Required) Migration details.
     MigrationDetails migrationDetails = 7;
+
+    /// (Optional) User defined key/value pairs.
+    map<string, string> attributes = 8;
 }
 
 /// Job entity is returned by query operations only.
@@ -703,6 +706,11 @@ message TaskKillRequest {
     bool shrink = 2;
 }
 
+message TaskAttributesUpdate {
+    string taskId = 1;
+    map<string, string> attributes = 2;
+}
+
 message TaskMoveRequest {
     /// (Required) Source Job(Service) distinct from target job which is the source of the task.
     string sourceJobId = 1;
@@ -774,6 +782,10 @@ service JobManagementService {
 
     /// Terminate a task with the given id. Depending on job type, the task might be immediately restarted/replaced with a new one.
     rpc KillTask (TaskKillRequest) returns (google.protobuf.Empty) {
+    }
+
+    /// Update the attributes of a task. The old attributes will be replaced completely.
+    rpc UpdateTaskAttributes (TaskAttributesUpdate) returns (google.protobuf.Empty) {
     }
 
     /// Move a task from one job to another. Source and destination jobs must be compatible, as defined by:

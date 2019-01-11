@@ -581,7 +581,7 @@ message JobQuery {
     // jobGroupSequence - job group sequence
     // jobType - job type (batch or service)
     // attributes - comma separated key/value pairs (for example "key1,key2:value2;k3:value3")
-    // attributes.op - logical 'and' or 'or' oeprators, which should be applied to multiple atrributes specified in the query
+    // attributes.op - logical 'and' or 'or' operators, which should be applied to multiple atrributes specified in the query
     // jobState - job state (one)
     // taskStates - task states (multiple, comma separated)
     // taskStateReasons - reasons associated with task states (multiple, comma separated)

@@ -31,6 +31,9 @@ message TaskRelocationPlan {
     /// (Optional) The earliest time (epoch in milliseconds) at which the relocation may happen. Until that time,
     //  an owner of the task may chose to do the relocation themselve.
     uint64 relocationTime = 4;
+
+    /// (Optional) The time at which the decision about relocating the task was made.
+    uint64 decisionTime = 5;
 }
 
 message TaskRelocationStatus {

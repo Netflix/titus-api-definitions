@@ -275,6 +275,10 @@ message MigrationDetails {
     /// The deadline time that the owner must migrate their task by or the system will automatically do it.
     /// This value is irrelevant if 'needsMigration' is set to false and will default to the value '0'.
     uint64 deadline = 2;
+
+    /// Time at which the migration decision was made.
+    /// This value is irrelevant if 'needsMigration' is set to false and will default to the value '0'.
+    uint64 started = 3;
 }
 
 /// Service job specification.

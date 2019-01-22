@@ -307,25 +307,38 @@ message TaskIdentity {
     optional string ipv4Address = 4;
 }
 
+enum SignatureAlgorithm {
+    SHA256withRSAandMGF1 = 0;
+    SHA384withRSAandMGF1 = 1;
+    SHA512withRSAandMGF1 = 2;
+    SHA256withECDSA = 3;
+    SHA384withECDSA = 4;
+    SHA512withECDSA = 5;
+}
+
 message CertificateSignature {
     // (Required) Raw signature produced from signing input bytes using the
     // private key of the titus agent’s certificate.
     optional bytes signature = 1;
 
-    enum SignatureAlgorithm {
-        SHA256withRSAandMGF1 = 0;
-        SHA384withRSAandMGF1 = 1;
-        SHA512withRSAandMGF1 = 2;
-        SHA256withECDSA = 3;
-        SHA384withECDSA = 4;
-        SHA512withECDSA = 5;
-    }
-
-    // (Required) Name of signature algorithm used (e.g.” SHA512withRSAandMGF1”)
+    // (Required) Signature algorithm used (e.g. SHA512withRSAandMGF1)
     optional SignatureAlgorithm algorithm = 2;
 
     // (Required) The agent’s public certificate in DER form, followed by its trust chain.
     repeated bytes certChain = 3;
+}
+
+// Version of CertificateSignature that encodes all byte[]s as human-readable strings
+message CertificateStringSignature {
+    // (Required) Base64 signature produced from signing input bytes using the
+    // private key of the titus agent’s certificate.
+    optional string signature = 1;
+
+    // (Required) Signature algorithm used (e.g. SHA512withRSAandMGF1)
+    optional SignatureAlgorithm algorithm = 2;
+
+    // (Required) The agent’s public certificate in DER form, followed by its trust chain.
+    repeated string certChain = 3;
 }
 
 message TaskIdentityDocument {
@@ -334,4 +347,13 @@ message TaskIdentityDocument {
 
     // (Required) Signature produced by signing identity bytes.
     optional CertificateSignature signature = 2;
+}
+
+// Version of TaskIdentityDocument that encodes all byte[]s as human-readable strings
+message TaskIdentityStringDocument {
+    // (Required) Task Identity
+    optional TaskIdentity identity = 1;
+
+    // (Required) Signature produced by signing identity bytes.
+    optional CertificateStringSignature signature = 2;
 }

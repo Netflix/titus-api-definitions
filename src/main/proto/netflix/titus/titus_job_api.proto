@@ -540,6 +540,10 @@ message JobChangeNotification {
     /// Emitted when a task is created or its state has changed.
     message TaskUpdate {
         Task task = 1;
+        /// movedFromAnotherJob will be true on the first event for the target Job after a task is moved between jobs.
+        //  task.jobId will be the destination job, and it will include a 'task.movedFromJob' entry in its taskContext
+        //  map with the source jobId.
+        bool movedFromAnotherJob = 2;
     }
 
     /// A notification marker that indicates that all known jobs were streamed to the client.

@@ -796,9 +796,16 @@ service JobManagementService {
     rpc UpdateTaskAttributes (TaskAttributesUpdate) returns (google.protobuf.Empty) {
     }
 
-    /// Move a task from one job to another. Source and destination jobs must be compatible, as defined by:
-    // - Both are service jobs.
-    // - Both their JobDescriptors have the exact same Container definition (image, entryPoint, command, env, etc).
+    /// Move a task from one service job to another. Source and destination jobs must be service jobs, and compatible.
+    // Jobs are compatible when their JobDescriptors are identical, ignoring the following values:
+    //
+    // * owner
+    // * applicationName
+    // * jobGroupInfo (stack, details, sequence)
+    // * disruptionBudget
+    // * Any attributes not prefixed with `titus.` or `titusParameter.`
+    // * Any container.attributes not prefixed with `titus.` or `titusParameter.`
+    // * All information specific to service jobs (JobSpec): Capacity, RetryPolicy, MigrationPolicy, etc
     rpc MoveTask (TaskMoveRequest) returns (google.protobuf.Empty) {
     }
 }

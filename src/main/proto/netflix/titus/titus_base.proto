@@ -28,7 +28,6 @@ message CallMetadata {
 
         /// (Required) A caller identifier. Depending on the user identity (a user or an application), the format
         // of the id may be different. For example a user's id could be their email address, and application's id its name.
-        //  (Deprecated) use 'caller' field instead.
         string id = 1;
 
         /// (Optional) The caller type.

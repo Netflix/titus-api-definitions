@@ -664,6 +664,16 @@ message JobDisruptionBudgetUpdate {
     JobDisruptionBudget disruptionBudget = 2;
 }
 
+message JobAttributesUpdate {
+    string jobId = 1;
+    map<string, string> attributes = 2;
+}
+
+message JobAttributesDeleteRequest {
+    string jobId = 1;
+    repeated string keys = 2;
+}
+
 message TaskId {
     string id = 1;
 }
@@ -717,6 +727,11 @@ message TaskKillRequest {
 message TaskAttributesUpdate {
     string taskId = 1;
     map<string, string> attributes = 2;
+}
+
+message TaskAttributesDeleteRequest {
+    string taskId = 1;
+    repeated string keys = 2;
 }
 
 message TaskMoveRequest {
@@ -777,6 +792,14 @@ service JobManagementService {
     rpc KillJob (JobId) returns (google.protobuf.Empty) {
     }
 
+    /// Update the attributes of a job. This will either create new attributes or replace existing ones with the same key.
+    rpc UpdateJobAttributes (JobAttributesUpdate) returns (google.protobuf.Empty) {
+    }
+
+    /// Delete the attributes of a job.
+    rpc DeleteJobAttributes (JobAttributesDeleteRequest) returns (google.protobuf.Empty) {
+    }
+
     // ------------------------------------------------------------
     // Task operations
 
@@ -792,8 +815,12 @@ service JobManagementService {
     rpc KillTask (TaskKillRequest) returns (google.protobuf.Empty) {
     }
 
-    /// Update the attributes of a task. The old attributes will be replaced completely.
+    /// Update the attributes of a task. This will either create new attributes or replace existing ones with the same key.
     rpc UpdateTaskAttributes (TaskAttributesUpdate) returns (google.protobuf.Empty) {
+    }
+
+    /// Delete the attributes of a task.
+    rpc DeleteTaskAttributes (TaskAttributesDeleteRequest) returns (google.protobuf.Empty) {
     }
 
     /// Move a task from one service job to another. Source and destination jobs must be service jobs, and compatible.

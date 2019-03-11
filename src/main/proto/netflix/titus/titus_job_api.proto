@@ -222,9 +222,16 @@ message JobDisruptionBudget {
         double maxPercentageOfContainersRelocatedInHour = 1;
     }
 
+    /// Allow up to the given amount of relocations per the time interval.
+    message RatePerInterval {
+        uint64 intervalMs = 1;
+        uint32 limitPerInterval = 2;
+    }
+
     oneof Rate {
         RateUnlimited rateUnlimited = 5;
         RatePercentagePerHour ratePercentagePerHour = 6;
+        RatePerInterval ratePerInterval = 9;
     }
 
     /// (Optional) Time window to which relocation process is restricted.

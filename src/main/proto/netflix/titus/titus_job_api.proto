@@ -229,11 +229,11 @@ message JobDisruptionBudget {
     }
 
     /// Percentage of containers that can be relocated within a time interval. The number of containers is determined
-    /// during each evaluation, and the number is based on the current desired job size. If the job size changes, the percentage of containers
-    /// changes accordingly. For example, setting / interval to 60000 (1 minute) and ratePercentagePerInterval to 5 (5%)
-    /// would allow only for up to 5% of all containers to be relocated every minute, given the other criteria are met.
-    /// For a job with a desired size of 100, 5 container relocations per minute would be allowed. If the desired job size changes
-    /// to 200, the relocation rate increases to 10 containers per minute.
+    //  during each evaluation, and the number is based on the current desired job size. If the job size changes, the percentage of containers
+    //  changes accordingly. For example, setting / interval to 60000 (1 minute) and ratePercentagePerInterval to 5 (5%)
+    //  would allow only for up to 5% of all containers to be relocated every minute, given the other criteria are met.
+    //  For a job with a desired size of 100, 5 container relocations per minute would be allowed. If the desired job size changes
+    //  to 200, the relocation rate increases to 10 containers per minute.
     message RatePercentagePerInterval {
         uint64 intervalMs = 1;
         double percentageLimitPerInterval = 2;

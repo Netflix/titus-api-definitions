@@ -105,7 +105,7 @@ message RelocationEvent {
         TaskRelocationPlan plan = 1;
     }
 
-    message TaskRelocationPlanRemovedEvent {
+    message TaskRelocationPlanRemoveEvent {
         string taskId = 1;
     }
 
@@ -116,7 +116,7 @@ message RelocationEvent {
     oneof Event {
         SnapshotEnd snapshotEnd = 1;
         TaskRelocationPlanUpdateEvent taskRelocationPlanUpdateEvent = 2;
-        TaskRelocationPlanRemovedEvent taskRelocationPlanRemovedEvent = 3;
+        TaskRelocationPlanRemoveEvent taskRelocationPlanRemoveEvent = 3;
         TaskRelocationResultEvent taskRelocationResultEvent = 4;
     }
 }

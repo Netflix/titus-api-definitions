@@ -1,0 +1,510 @@
+syntax = "proto3";
+
+// Titus task management API specification.
+//
+
+package com.netflix.titus.v4;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
+import "netflix/titus/titus_base.proto";
+
+option java_multiple_files = true;
+option java_package = "com.netflix.titus.grpc.protogen";
+option java_outer_classname = "TaskManagementProto";
+
+option go_package = "titus";
+
+// -----------------------------------------
+// Common data structures for the RPC layer.
+
+message Id {
+    string id = 1;
+}
+
+message QueryRequest {
+    map<string, string> filteringCriteria = 1;
+
+    string fields = 2;
+
+    Page page = 3;
+}
+
+// ----------------------------------------------------------------------------
+// Common data structures
+
+message Constraints {
+    map<string, string> soft = 1;
+
+    map<string, string> hard = 2;
+}
+
+message MachineResources {
+
+    uint32 cpu = 1;
+
+    uint32 gpu = 2;
+
+    uint32 memoryMB = 3;
+
+    uint32 diskMB = 4;
+
+    uint32 networkMbps = 5;
+}
+
+message MachineType {
+    string id = 1;
+
+    uint32 preference = 2;
+
+    map<string, string> attributes = 3;
+
+    MachineResources totalMachineResources = 4;
+}
+
+message Machine {
+
+    string id = 1;
+
+    map<string, string> attributes = 2;
+
+    /// All resources available for placement on the given machine.
+    MachineResources instanceResources = 3;
+
+    /// Amount of resources that can be assigned over the machine capacity.
+    //  For example, if machine has 10 CPUs, and cpu over-provisioning is 2 CPUs, the total amount of cpus
+    //  the placement service can assigned is 12. If a machine that is over-provisioned may become overloaded,
+    //  it is expected that the task executor process terminates lower priority containers to free resources.
+    MachineResources overprovisioningResources = 4;
+
+    /// A total amount of allocated resources.
+    MachineResources allocatedResources = 5;
+
+    /// All external resources attached to a machine. This includes free ENIs, allocated ENIs, downloaded images.
+    //  As a single resource may be shared by multiple containers, there is no strict separation between
+    //  allocated and free external resources.
+    repeated ExternalResourceInstance externalResources = 6;
+}
+
+/// Instances of this message specify required resources to run a container. Resource description is different
+//  from resource allocation, which is covered by `ExternalResourceInstance` type.
+message ExternalResourceDescriptor {
+
+    /// Describes properties of the network interface connected to a container.
+    message NetworkConnectivity {
+
+        /// Set to `true` if IPv4 address should be assigned to a container. Each container must be associated always
+        //  with at least one IP address.
+        bool assignIpv4 = 1;
+
+        /// Set to `true` if IPv6 address should be assigned to a container. Each container must be associated always
+        //  with at least one IP address.
+        bool assignIpv6 = 2;
+
+        /// (Required) Security group names associated with an allocated network interface. At least one group
+        //  must be specified.
+        repeated string securityGroups = 3;
+    }
+
+    /// Describes a container image, which before a container is run is resolved to a digest.
+    //  The `ExternalResourceInstance` counterpart stores always the image digest.
+    message Image {
+        string name = 1;
+
+        string tag = 2;
+
+        string digest = 3;
+    }
+
+    /// A container security context.
+    message SecurityContext {
+        /// (Required) Relative or absolute IAM role name.
+        string iamRole = 1;
+
+        /// (Optional) Security domain associated with a container, which may by used during the authorization process.
+        string securityDomain = 2;
+    }
+
+    oneof Descriptor {
+
+        NetworkConnectivity networkConnectivity = 1;
+
+        Image image = 2;
+
+        SecurityContext awsSecurity = 3;
+    }
+}
+
+/// `ExternalResourceInstance` represents both allocated and non-allocated resources.
+message ExternalResourceInstance {
+
+    /// A network interface instance that can be associated with a container.
+    message NetworkInterface {
+        /// A unique interface id.
+        string id = 1;
+
+        /// Set to `true` if the network interface is attached to a machine, and `false` otherwise.
+        bool attached = 2;
+
+        /// Maximum amount of IPs that can be attached to the given interface.
+        uint32 ipLimit = 3;
+
+        /// Security groups associated with the network interface.
+        repeated string securityGroups = 4;
+
+        /// Network interface attributes, like AWS resource id.
+        map<string, string> attributes = 5;
+    }
+
+    /// An IP address allocation for a container.
+    message IpAddress {
+
+        /// Id of the network interface that is associated with the given IP address.
+        string networkInterfaceId = 1;
+
+        /// Allocated IPv4 address or an empty string if none is allocated.
+        string ipv4Address = 2;
+
+        /// Allocated IPv6 address or an empty string if none is allocated.
+        string ipv6Address = 3;
+    }
+
+    /// A resolved image digest.
+    message Image {
+        string digest = 1;
+    }
+
+    /// A container security context.
+    message SecurityContext {
+        /// A normalized IAM role ARN.
+        string iamRoleArn = 1;
+    }
+
+    oneof Instance {
+
+        NetworkInterface eni = 1;
+
+        IpAddress ipAddress = 2;
+
+        Image image = 3;
+
+        SecurityContext awsSecurity = 4;
+    }
+}
+
+// ----------------------------------------------------------------------------
+// Core data structures
+
+/// Data structure representing resources assigned to a task.
+message ResourceAllocationStatus {
+
+    enum ResourceAllocationState {
+        /// Resource allocation request accepted. No machine is assigned yet.
+        Accepted = 0;
+
+        /// Resources requested on a machine, and the machine is ready yet to run a container.
+        Ready = 1;
+
+        /// Resources requested on a machine, but the machine is not ready yet to run a container.
+        NotReady = 2;
+
+        /// A container is started.
+        InUse = 4;
+
+        /// Resource release requested.
+        ReleaseRequested = 5;
+
+        /// Resources are being released.
+        Releasing = 6;
+
+        /// Resources are released.
+        Released = 7;
+    }
+
+    ResourceAllocationState state = 1;
+
+    string reasonCode = 2;
+
+    string reasonMessage = 3;
+
+    uint64 timestamp = 4;
+
+    /// Id of a task that is associated with this allocation. Required in state 'InUse' and 'AfterUseCleanup'.
+    string taskId = 5;
+}
+
+message ResourceAllocationDescriptor {
+
+    /// (Optional) Placement group id. If not set, a default placement group is assigned to a task.
+    string placementGroupId = 1;
+
+    /// (Required) Priority of this allocation. The following priority ranges are defined:
+    //  - 0..100 - high priority, not evictable workloads
+    //  - 100...1000 - high priority, evictable workloads
+    //  - 1000... - best effort workloads
+    uint32 priority = 2;
+
+    /// (Required) Container resources.
+    MachineResources machineResources = 3;
+
+    /// External resources.
+    repeated ExternalResourceDescriptor externalResources = 4;
+
+    /// (Optional) Arbitrary set of key/value pairs. Key names starting with 'titus.' are reserved by Titus.
+    map<string, string> attributes = 5;
+
+    /// (Optional) Resource allocation placement constraints.
+    Constraints constraints = 6;
+}
+
+message ResourceAllocation {
+
+    /// (Required) Reservation id.
+    string id = 1;
+
+    /// (Required) Resource allocation descriptor.
+    ResourceAllocationDescriptor descriptor = 2;
+
+    /// Id of an instance which is associated with this reservation, or empty if assignment is not done yet.
+    string instanceId = 3;
+
+    /// Assigned machine resources, or empty if assignment is not done yet.
+    MachineResources assignedMachineResources = 4;
+
+    /// Assigned external resources, or empty if assignment is not done yet.
+    repeated ExternalResourceInstance assignedExternalResources = 5;
+
+    /// (Required) Current status.
+    ResourceAllocationStatus status = 6;
+
+    /// (Required) State transition history.
+    repeated ResourceAllocationStatus statusHistory = 7;
+}
+
+/// Task status
+message TaskStatus {
+
+    /// State information associated with a task.
+    enum TaskState {
+
+        /// A task was accepted, and persisted in a durable storage.
+        Accepted = 0;
+
+        /// All task validation rules were executed, including checking the availability of a resource allocation
+        //  associated with this task.
+        Validated = 1;
+
+        /// A request was sent to start a container.
+        Starting = 2;
+
+        /// The container was started.
+        Started = 3;
+
+        /// A user requested the task to be terminated.
+        TerminateRequested = 4;
+
+        /// A container termination is in progress.
+        Terminating = 5;
+
+        /// A task completed or was forced by a user to be terminated.
+        //  After reaching this state, the resources assigned to this task are released, and can be used by another task.
+        Finished = 6;
+    }
+
+    TaskState state = 1;
+
+    string reasonCode = 2;
+
+    string reasonMessage = 3;
+
+    uint64 timestamp = 4;
+}
+
+message TaskDescriptor {
+
+    string allocationId = 1;
+
+    /// (Optional) Override the entry point of the image.
+    repeated string entryPoint = 2;
+
+    /// (Optional) Additional parameters for the entry point defined either here or provided in the container image.
+    repeated string command = 3;
+
+    /// (Optional) A collection of system environment variables passed to the container.
+    map<string, string> environment = 4;
+
+    map<string, string> attributes = 5;
+}
+
+message Task {
+
+    string id = 1;
+
+    TaskDescriptor descriptor = 3;
+
+    /// (Required) Last known state of this task.
+    TaskStatus status = 4;
+
+    /// (Required) State transition history.
+    repeated TaskStatus statusHistory = 5;
+}
+
+message Owner {
+    string emailAddress = 1;
+}
+
+/// Constraint sets may be task collection constraints (for example zone balancing) or resource constraints
+//  (only m4 family).
+message PlacementGroupDescriptor {
+    /// (Required) Owner of a job (see Owner entity description for more information).
+    Owner owner = 1;
+
+    /// (Optional) Placement group constraints.
+    Constraints constraints = 2;
+}
+
+message PlacementGroup {
+    string id = 1;
+
+    PlacementGroupDescriptor descriptor = 2;
+}
+
+// ----------------------------------------------------------------------------
+// GRPC services
+
+// -----------------------------------------
+// Resource allocation service
+
+message ResourceAllocationCreateRequest {
+
+    ResourceAllocationDescriptor descriptor = 1;
+
+    uint32 deadlineMs = 2;
+
+    /// If set to true, do not store allocation, and instead transition to Finished with a reason code telling if it
+    //  actually succeeded or not.
+    bool dryRun = 3;
+}
+
+service ResourceAllocationService {
+
+    /// Create resource allocation.
+    rpc CreateResourceAllocation (ResourceAllocationCreateRequest) returns (ResourceAllocation) {
+    }
+
+    rpc GetResourceAllocation (Id) returns (ResourceAllocation) {
+    }
+
+    rpc GetResourceAllocations (QueryRequest) returns (stream ResourceAllocation) {
+    }
+
+    rpc ReleaseResourceAllocation (Id) returns (google.protobuf.Empty)
+}
+
+service ResourceAllocationArchiveService {
+
+    rpc GetResourceAllocation (Id) returns (ResourceAllocation) {
+    }
+}
+
+// -----------------------------------------
+// Task management service
+
+message TaskCreateRequest {
+
+    TaskDescriptor descriptor = 1;
+
+    string resourceAllocationId = 2;
+
+    uint32 deadlineMs = 3;
+
+    /// If set to true, do not store allocation, and instead mark as failure with a reason code telling if it
+    //  actually succeeded or not.
+    bool dryRun = 4;
+}
+
+message TaskTerminateRequest {
+    string taskId = 1;
+
+    /// (Optional) If set limit the graceful shutdown to the given interval.
+    uint64 deadlineMs = 2;
+
+    /// (Optional) If set to true, task will stay in the terminating state until all its allocated resources are released,
+    //  including log file uploads. If set to false, the task moves to the finished state as soon as the container
+    //  process is terminated. Post-termination cleanup work happens as part of the resource allocation lifecycle
+    //  handling.
+    //
+    //  Examples when waiting is preferential:
+    //  - immediate reuse of the allocated resources (container restarts or in place upgrades)
+    //
+    //  Examples when finishing fast is better:
+    //  - container restarts when alternative allocations might be available
+    bool waitForCleanup = 3;
+}
+
+service TaskManagementService {
+
+    /// Create a task.
+    rpc CreateTask (TaskCreateRequest) returns (Task) {
+    }
+
+    /// This includes running tasks, and recently completed tasks.
+    rpc GetTask (Id) returns (Task) {
+    }
+
+    /// This includes only running tasks.
+    rpc GetTasks (QueryRequest) returns (stream Task) {
+    }
+
+    rpc TerminateTask (TaskTerminateRequest) returns (google.protobuf.Empty)
+}
+
+service TaskManagementArchiveService {
+
+    rpc GetTask (Id) returns (Task) {
+    }
+}
+
+// -----------------------------------------
+// Resource consumption service
+
+message ReservationUsage {
+
+    string reservationId = 1;
+
+    message ShapeUsage {
+        string shapeId = 1;
+
+        MachineResources allocatedResources = 2;
+
+        MachineResources unallocatedResources = 3;
+    }
+
+    repeated ShapeUsage shapesUsage = 2;
+}
+
+message ReservationsUsage {
+    repeated ReservationUsage usage = 1;
+}
+
+service ResourceConsumptionService {
+
+    /// Given reservation id (any level), returns information about its current usage.
+    rpc GetReservationUsage (Id) returns (ReservationUsage) {
+    }
+}
+
+// -----------------------------------------
+// Resource availability and reporting service
+
+service MachineService {
+
+    /// Return machine data.
+    rpc GetMachine (Id) returns (Machine) {
+    }
+
+    /// Returns machines matching the given criteria:
+    //  - 'freeCpu', 'freeMemoryMb', 'freeDiskMb', 'freeNetworkMbps' - only machines with free resources at the expected level
+    rpc GetMachines (QueryRequest) returns (stream Machine) {
+    }
+}

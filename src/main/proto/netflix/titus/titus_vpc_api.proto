@@ -1,0 +1,157 @@
+syntax = "proto3";
+
+package com.netflix.titus;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "titus";
+
+// This is embedded in responses / replies so that a given IP Service Server may cache data from AWS. Since the client
+// is the only one ever going to make requests for that given ENI, it can take a lock on that ENI. If the cache version
+// the client presents is not present, or it is different from the one the server has, the server must refresh its
+// state from AWS
+message CacheVersion {
+    bytes uuid = 1;
+}
+
+message NetworkInterface {
+    message NetworkInterfaceAttachment {
+        uint32 deviceIndex = 1;
+        string attachedInstanceID = 2;
+    };
+    string subnetId = 1;
+    string availabilityZone = 2;
+    string macAddress = 3;
+    string networkInterfaceId = 4;
+    string ownerAccountId = 5;
+    NetworkInterfaceAttachment networkInterfaceAttachment = 6;
+};
+
+// ProvisionInstanceRequest is called when the instance is first initialized, in order to configure its interfaces,
+// and other network capabilities.
+// The provisioning service decides which account / subnet / VPC the interface will live in.
+message ProvisionInstanceRequest {
+    string instanceID = 1;
+    // This is optional to a degree. If it's unset, we can always call the AWS APIs and DescribeInstance
+    string instanceType = 2;
+    // This is the account ID that is in the instance identity document
+    string accountID = 3;
+    string region = 4;
+    string availabilityZone = 5;
+
+    // This is duplicated data from the above information, but we include it for verification. No containers should
+    // run on the instance prior to this API call being completed. This prevents a sort of replay attack, where
+    // the service is convinced to modify an instance by a rogue container. If someone else compromises an EC2 instance,
+    // they can get the IP service to do "bad things".
+    bytes instanceIdentityDocument = 6;
+    bytes instanceIdentitySignature = 7;
+};
+
+message ProvisionInstanceResponse {
+    // In this, the deviceIndex, macAddress, and networkInterfaceId must be unique in this list.
+    repeated NetworkInterface networkInterfaces = 1;
+    CacheVersion cacheVersion = 2;
+};
+
+enum Family {
+    // Default should never really be used, but we're required to have one due to protobuf
+    FAMILY_DEFAULT = 0;
+    FAMILY_V4 = 1;
+    FAMILY_V6 = 2;
+};
+
+message Address {
+    Family family = 1;
+    string address = 2;
+    // This is the cidr Prefix length, 0-32 bits for IPv4, and 0-128 bits for IPv6.
+    uint32 prefixLength = 3;
+}
+
+message AddressAllocation {
+    string region = 1;
+    string availabilityZone = 2;
+    string subnetId = 3;
+    // address.address must be unset when requesting an allocation
+    Address address = 4;
+    // A valid UUID4. We "trust" the client to generate these.
+    string uuid = 5;
+};
+
+message SignedAddressAllocation {
+    AddressAllocation addressAllocation = 1;
+    // This is an x509v3 signed version of the Address allocation.
+    bytes signedAddressAllocation = 2;
+}
+
+message AllocateAddressRequest {
+    AddressAllocation addressAllocation = 1;
+};
+
+
+message AllocateAddressResponse {
+    SignedAddressAllocation signedAddressAllocation = 1;
+};
+
+message GetAllocationRequest {
+    oneof searchParameter {
+        Address address = 1;
+        string uuid = 2;
+    }
+};
+
+message AssignIPRequest {
+    // If the SignedAddressAllocation.signedAddressAllocation,
+    // SignedAddressAllocation.addressAllocation.address.address,
+    // SignedAddressAllocation.addressAllocation.uuid are empty, this indicates you want that many IP addresses
+    repeated SignedAddressAllocation signedAddressAllocation = 1;
+    NetworkInterface networkInterface = 2;
+    repeated string securityGroupIds = 3;
+    repeated Address inUseAddresses = 4;
+    CacheVersion cacheVersion  = 5;
+};
+
+// UsableAddress is everything you need in order to assign an address to a container
+message UsableAddress {
+    Address address = 1;
+    Address resolver = 2;
+    Address gateway = 3;
+}
+
+message AssignIPResponse {
+    // A batch of IPs may be given back. It is up to the client to figure out what IPs it can use.
+    repeated UsableAddress usableAddresses = 1;
+    CacheVersion cacheVersion = 2;
+};
+
+// AddressGCMetadata is sent when the instance requests that the IP Service GC it. It's basically a way to
+// indicate when the IP was last used, and we can GC it based on that metadata.
+message AddressGCMetadata {
+    Address address = 1;
+    google.protobuf.Timestamp lastUsedTime = 2;
+}
+
+message GCRequest {
+    NetworkInterface networkInterface = 1;
+    repeated AddressGCMetadata addressGCMetadata = 2;
+    CacheVersion cacheVersion = 3;
+}
+
+message GCResponse {
+    repeated UsableAddress usableAddresses = 1;
+    CacheVersion cacheVersion = 2;
+}
+
+service IPService {
+    // This ProvisionInstance function has to be called at startup of the instance, and it is idempotent.
+    rpc ProvisionInstance (ProvisionInstanceRequest) returns (ProvisionInstanceResponse);
+    // AssignIP is how to assign any IP to a container
+    rpc AssignIP (AssignIPRequest) returns (AssignIPResponse);
+
+
+    // Static IP Address flow
+    rpc AllocateAddress (AllocateAddressRequest) returns (AllocateAddressResponse);
+    rpc GetAllocation (GetAllocationRequest) returns (AllocateAddressResponse);
+
+    // GC extra IPs
+    rpc GC (GCRequest) returns (GCResponse);
+}

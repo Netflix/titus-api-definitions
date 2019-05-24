@@ -1,5 +1,4 @@
 syntax = "proto3";
-
 package com.netflix.titus;
 
 import "google/protobuf/timestamp.proto";
@@ -17,14 +16,14 @@ message CacheVersion {
 message NetworkInterface {
     message NetworkInterfaceAttachment {
         uint32 deviceIndex = 1;
-        string attachedInstanceID = 2;
     };
     string subnetId = 1;
     string availabilityZone = 2;
     string macAddress = 3;
     string networkInterfaceId = 4;
     string ownerAccountId = 5;
-    NetworkInterfaceAttachment networkInterfaceAttachment = 6;
+    string attachedInstanceID = 6;
+    NetworkInterfaceAttachment networkInterfaceAttachment = 7;
 };
 
 // ProvisionInstanceRequest is called when the instance is first initialized, in order to configure its interfaces,
@@ -39,10 +38,11 @@ message ProvisionInstanceRequest {
     string region = 4;
     string availabilityZone = 5;
 
-    // This is duplicated data from the above information, but we include it for verification. No containers should
-    // run on the instance prior to this API call being completed. This prevents a sort of replay attack, where
-    // the service is convinced to modify an instance by a rogue container. If someone else compromises an EC2 instance,
-    // they can get the IP service to do "bad things".
+    // We don't include the subnet ID here because the instance subnets should be decided on the side of the IP Service
+
+    // This is duplicated data from the above information, but we include it for verification beyond Metatron. No
+    // containers should run on the instance prior to this API call being completed. We can then rely on the instance
+    // identity document for further verification.
     bytes instanceIdentityDocument = 6;
     bytes instanceIdentitySignature = 7;
 };
@@ -67,14 +67,18 @@ message Address {
     uint32 prefixLength = 3;
 }
 
-message AddressAllocation {
+message AddressLocation {
     string region = 1;
     string availabilityZone = 2;
     string subnetId = 3;
+}
+
+message AddressAllocation {
+    AddressLocation addressLocation = 1;
+    // A valid UUID4. It should be set during allocation, if unset, one will be set for you.
+    string uuid = 2;
     // address.address must be unset when requesting an allocation
-    Address address = 4;
-    // A valid UUID4. We "trust" the client to generate these.
-    string uuid = 5;
+    Address address = 3;
 };
 
 message SignedAddressAllocation {
@@ -100,27 +104,25 @@ message GetAllocationRequest {
 };
 
 message AssignIPRequest {
-    // If the SignedAddressAllocation.signedAddressAllocation,
-    // SignedAddressAllocation.addressAllocation.address.address,
-    // SignedAddressAllocation.addressAllocation.uuid are empty, this indicates you want that many IP addresses
-    repeated SignedAddressAllocation signedAddressAllocation = 1;
+    // This is optional. If it is not specified then we will assign a "random" IP to the interface
+    SignedAddressAllocation signedAddressAllocation = 1;
     NetworkInterface networkInterface = 2;
     repeated string securityGroupIds = 3;
-    repeated Address inUseAddresses = 4;
+    Family family = 4;
     CacheVersion cacheVersion  = 5;
 };
-
-// UsableAddress is everything you need in order to assign an address to a container
-message UsableAddress {
-    Address address = 1;
-    Address resolver = 2;
-    Address gateway = 3;
-}
 
 message AssignIPResponse {
     // A batch of IPs may be given back. It is up to the client to figure out what IPs it can use.
     repeated UsableAddress usableAddresses = 1;
     CacheVersion cacheVersion = 2;
+};
+
+
+message UsableAddress {
+    Address address = 1;
+    Address resolver = 2;
+    Address gateway = 3;
 };
 
 // AddressGCMetadata is sent when the instance requests that the IP Service GC it. It's basically a way to
@@ -141,17 +143,17 @@ message GCResponse {
     CacheVersion cacheVersion = 2;
 }
 
-service IPService {
-    // This ProvisionInstance function has to be called at startup of the instance, and it is idempotent.
-    rpc ProvisionInstance (ProvisionInstanceRequest) returns (ProvisionInstanceResponse);
-    // AssignIP is how to assign any IP to a container
-    rpc AssignIP (AssignIPRequest) returns (AssignIPResponse);
-
-
+service UserIPService {
     // Static IP Address flow
     rpc AllocateAddress (AllocateAddressRequest) returns (AllocateAddressResponse);
     rpc GetAllocation (GetAllocationRequest) returns (AllocateAddressResponse);
+}
 
+service TitusAgentVPCService {
+    // This ProvisionInstance function has to be called at startup of the instance, and it is idempotent.
+    rpc ProvisionInstance (ProvisionInstanceRequest) returns (ProvisionInstanceResponse);
+
+    rpc AssignIP (AssignIPRequest) returns (AssignIPResponse);
     // GC extra IPs
     rpc GC (GCRequest) returns (GCResponse);
 }

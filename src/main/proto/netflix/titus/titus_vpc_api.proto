@@ -5,54 +5,6 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "titus";
 
-// This is embedded in responses / replies so that a given IP Service Server may cache data from AWS. Since the client
-// is the only one ever going to make requests for that given ENI, it can take a lock on that ENI. If the cache version
-// the client presents is not present, or it is different from the one the server has, the server must refresh its
-// state from AWS
-message CacheVersion {
-    bytes uuid = 1;
-}
-
-message NetworkInterface {
-    message NetworkInterfaceAttachment {
-        uint32 deviceIndex = 1;
-    };
-    string subnetId = 1;
-    string availabilityZone = 2;
-    string macAddress = 3;
-    string networkInterfaceId = 4;
-    string ownerAccountId = 5;
-    string attachedInstanceID = 6;
-    NetworkInterfaceAttachment networkInterfaceAttachment = 7;
-};
-
-// ProvisionInstanceRequest is called when the instance is first initialized, in order to configure its interfaces,
-// and other network capabilities.
-// The provisioning service decides which account / subnet / VPC the interface will live in.
-message ProvisionInstanceRequest {
-    string instanceID = 1;
-    // This is optional to a degree. If it's unset, we can always call the AWS APIs and DescribeInstance
-    string instanceType = 2;
-    // This is the account ID that is in the instance identity document
-    string accountID = 3;
-    string region = 4;
-    string availabilityZone = 5;
-
-    // We don't include the subnet ID here because the instance subnets should be decided on the side of the IP Service
-
-    // This is duplicated data from the above information, but we include it for verification beyond Metatron. No
-    // containers should run on the instance prior to this API call being completed. We can then rely on the instance
-    // identity document for further verification.
-    bytes instanceIdentityDocument = 6;
-    bytes instanceIdentitySignature = 7;
-};
-
-message ProvisionInstanceResponse {
-    // In this, the deviceIndex, macAddress, and networkInterfaceId must be unique in this list.
-    repeated NetworkInterface networkInterfaces = 1;
-    CacheVersion cacheVersion = 2;
-};
-
 enum Family {
     // Default should never really be used, but we're required to have one due to protobuf
     FAMILY_DEFAULT = 0;
@@ -103,57 +55,8 @@ message GetAllocationRequest {
     }
 };
 
-message AssignIPRequest {
-    // This is optional. If it is not specified then we will assign a "random" IP to the interface
-    SignedAddressAllocation signedAddressAllocation = 1;
-    NetworkInterface networkInterface = 2;
-    repeated string securityGroupIds = 3;
-    Family family = 4;
-    CacheVersion cacheVersion  = 5;
-};
-
-message AssignIPResponse {
-    // A batch of IPs may be given back. It is up to the client to figure out what IPs it can use.
-    repeated UsableAddress usableAddresses = 1;
-    CacheVersion cacheVersion = 2;
-};
-
-
-message UsableAddress {
-    Address address = 1;
-    Address resolver = 2;
-    Address gateway = 3;
-};
-
-// AddressGCMetadata is sent when the instance requests that the IP Service GC it. It's basically a way to
-// indicate when the IP was last used, and we can GC it based on that metadata.
-message AddressGCMetadata {
-    Address address = 1;
-    google.protobuf.Timestamp lastUsedTime = 2;
-}
-
-message GCRequest {
-    NetworkInterface networkInterface = 1;
-    repeated AddressGCMetadata addressGCMetadata = 2;
-    CacheVersion cacheVersion = 3;
-}
-
-message GCResponse {
-    repeated UsableAddress usableAddresses = 1;
-    CacheVersion cacheVersion = 2;
-}
-
 service UserIPService {
     // Static IP Address flow
     rpc AllocateAddress (AllocateAddressRequest) returns (AllocateAddressResponse);
     rpc GetAllocation (GetAllocationRequest) returns (AllocateAddressResponse);
-}
-
-service TitusAgentVPCService {
-    // This ProvisionInstance function has to be called at startup of the instance, and it is idempotent.
-    rpc ProvisionInstance (ProvisionInstanceRequest) returns (ProvisionInstanceResponse);
-
-    rpc AssignIP (AssignIPRequest) returns (AssignIPResponse);
-    // GC extra IPs
-    rpc GC (GCRequest) returns (GCResponse);
 }

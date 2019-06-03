@@ -39,4 +39,4 @@ message Metadata {
     uint64 creationTimestamp = 2;
 
     uint64 lastUpdateTimestamp = 3;
-}}
+}

@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 // Resource Management API Specification.
-
 package com.netflix.titus.v4;
 
 import "google/protobuf/any.proto";
@@ -17,7 +16,6 @@ option go_package = "titus";
 
 // ----------------------------------------------------------------------------
 // Common data structures
-
 message MachineResources {
     double cpu = 1;
 
@@ -226,21 +224,20 @@ message MachineResourcesAllocationStatus {
 }
 
 message MachineResourcesAllocationDescriptor {
+    /// (Required) Container resources.
+    MachineResources machineResources = 1;
+
+    /// External resources.
+    repeated ExternalResourceDescriptor externalResources = 2;
+
+    /// (Optional) Arbitrary set of key/value pairs. Key names starting with 'titus.' are reserved by Titus.
+    map<string, string> labels = 3;
 
     /// (Required) Priority of this allocation. The following priority ranges are defined:
     //  - 0..100 - high priority, not evictable workloads
     //  - 100...1000 - high priority, evictable workloads
     //  - 1000... - best effort workloads
-    uint32 priority = 1;
-
-    /// (Required) Container resources.
-    MachineResources machineResources = 2;
-
-    /// External resources.
-    repeated ExternalResourceDescriptor externalResources = 3;
-
-    /// (Optional) Arbitrary set of key/value pairs. Key names starting with 'titus.' are reserved by Titus.
-    map<string, string> labels = 4;
+    uint32 priority = 4;
 }
 
 message MachineResourcesAllocation {
@@ -429,9 +426,6 @@ service MachineResourcesAllocationService {
 
 /// Container Management Service
 message CreateContainerRequest {
-    /// The allocation to use
-    string allocationId = 1;
-
     /// The container descriptor
     ContainerDescriptor descriptor = 2;
 }

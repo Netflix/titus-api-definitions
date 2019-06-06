@@ -13,10 +13,7 @@ enum Family {
 };
 
 message Address {
-    Family family = 1;
-    string address = 2;
-    // This is the cidr Prefix length, 0-32 bits for IPv4, and 0-128 bits for IPv6.
-    uint32 prefixLength = 3;
+    string address = 1;
 }
 
 message AddressLocation {
@@ -41,6 +38,7 @@ message SignedAddressAllocation {
 
 message AllocateAddressRequest {
     AddressAllocation addressAllocation = 1;
+    Family family = 2;
 };
 
 

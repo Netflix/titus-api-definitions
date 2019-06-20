@@ -8,6 +8,7 @@ package com.netflix.titus.v4;
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 import "netflix/titus/titus_base.proto";
+import "netflix/titus/v4/common_api.proto";
 
 option java_multiple_files = true;
 option java_package = "com.netflix.titus.grpc.protogen";
@@ -15,23 +16,8 @@ option java_outer_classname = "TaskManagementProto";
 
 option go_package = "titus";
 
-// -----------------------------------------
-// Common data structures for the RPC layer.
-
-message Id {
-    string id = 1;
-}
-
-message QueryRequest {
-    map<string, string> filteringCriteria = 1;
-
-    string fields = 2;
-
-    Page page = 3;
-}
-
 // ----------------------------------------------------------------------------
-// Common data structures
+// Data structures
 
 message Constraints {
     map<string, string> soft = 1;
@@ -52,6 +38,18 @@ message MachineResources {
     uint32 networkMbps = 5;
 }
 
+message CategorizedMachineResources {
+
+    MachineResources machineResources = 1;
+
+    // Machine resource category. 'physical' category is reserved for machine physical resources.
+    string category = 2;
+
+    // Additional data associated with the declared machine resources. For example, in 'opportunisitic' category could
+    // an expiry time can be defined after which the resource is no longer available.
+    map<string, string> labels = 3;
+}
+
 message MachineType {
     string id = 1;
 
@@ -69,21 +67,15 @@ message Machine {
     map<string, string> attributes = 2;
 
     /// All resources available for placement on the given machine.
-    MachineResources instanceResources = 3;
-
-    /// Amount of resources that can be assigned over the machine capacity.
-    //  For example, if machine has 10 CPUs, and cpu over-provisioning is 2 CPUs, the total amount of cpus
-    //  the placement service can assigned is 12. If a machine that is over-provisioned may become overloaded,
-    //  it is expected that the task executor process terminates lower priority containers to free resources.
-    MachineResources overprovisioningResources = 4;
+    repeated CategorizedMachineResources instanceResources = 3;
 
     /// A total amount of allocated resources.
-    MachineResources allocatedResources = 5;
+    MachineResources allocatedResources = 4;
 
     /// All external resources attached to a machine. This includes free ENIs, allocated ENIs, downloaded images.
     //  As a single resource may be shared by multiple containers, there is no strict separation between
     //  allocated and free external resources.
-    repeated ExternalResourceInstance externalResources = 6;
+    repeated ExternalResourceInstance externalResources = 5;
 }
 
 /// Instances of this message specify required resources to run a container. Resource description is different
@@ -192,9 +184,6 @@ message ExternalResourceInstance {
     }
 }
 
-// ----------------------------------------------------------------------------
-// Core data structures
-
 /// Data structure representing resources assigned to a task.
 message ResourceAllocationStatus {
 
@@ -202,11 +191,11 @@ message ResourceAllocationStatus {
         /// Resource allocation request accepted. No machine is assigned yet.
         Accepted = 0;
 
-        /// Resources requested on a machine, and the machine is ready yet to run a container.
-        Ready = 1;
-
         /// Resources requested on a machine, but the machine is not ready yet to run a container.
-        NotReady = 2;
+        NotReady = 1;
+
+        /// Resources requested on a machine, and the machine is ready yet to run a container.
+        Ready = 2;
 
         /// A container is started.
         InUse = 4;
@@ -349,18 +338,16 @@ message Task {
     repeated TaskStatus statusHistory = 5;
 }
 
-message Owner {
-    string emailAddress = 1;
-}
-
 /// Constraint sets may be task collection constraints (for example zone balancing) or resource constraints
 //  (only m4 family).
 message PlacementGroupDescriptor {
     /// (Required) Owner of a job (see Owner entity description for more information).
     Owner owner = 1;
 
+    string reservationId = 2;
+
     /// (Optional) Placement group constraints.
-    Constraints constraints = 2;
+    Constraints constraints = 3;
 }
 
 message PlacementGroup {

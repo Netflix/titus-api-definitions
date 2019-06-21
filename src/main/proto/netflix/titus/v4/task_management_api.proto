@@ -198,16 +198,16 @@ message ResourceAllocationStatus {
         Ready = 2;
 
         /// A container is started.
-        InUse = 4;
+        InUse = 3;
 
         /// Resource release requested.
-        ReleaseRequested = 5;
+        ReleaseRequested = 4;
 
         /// Resources are being released.
-        Releasing = 6;
+        Releasing = 5;
 
         /// Resources are released.
-        Released = 7;
+        Released = 6;
     }
 
     ResourceAllocationState state = 1;

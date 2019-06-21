@@ -15,6 +15,13 @@ option java_outer_classname = "CommonProto";
 option go_package = "titus";
 
 // ----------------------------------------------------------------------------
+// Common data structures.
+
+message Owner {
+    string emailAddress = 1;
+}
+
+// ----------------------------------------------------------------------------
 // Common data structures for the RPC layer.
 
 message Id {

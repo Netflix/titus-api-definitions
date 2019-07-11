@@ -8,6 +8,7 @@ package com.netflix.titus;
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 import "netflix/titus/titus_base.proto";
+import "netflix/titus/titus_vpc_api.proto";
 
 option java_multiple_files = true;
 option java_package = "com.netflix.titus.grpc.protogen";
@@ -109,6 +110,9 @@ message ContainerResources {
     /// (Optional) Size of shared memory /dev/shm. If not set, a default value will be provided. A provided value
     // must be less than or equal to amount of memory allocated.
     uint32 shmSizeMB = 8;
+
+    /// (Optional) IP addresses allocated from Titus VPC IP service to be assigned to tasks.
+    repeated SignedAddressAllocation signedAddressAllocations = 9;
 }
 
 /// Container security profile.

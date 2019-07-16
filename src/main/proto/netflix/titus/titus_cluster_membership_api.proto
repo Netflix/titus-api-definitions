@@ -34,14 +34,17 @@ message ChangeRecord {
     uint64 timestamp = 4;
 }
 
-message ServicePort {
-    uint32 portNumber = 1;
+message ServiceAddress {
 
-    string protocol = 2;
+    string ipAddress = 1;
 
-    bool secure = 3;
+    uint32 portNumber = 2;
 
-    string description = 4;
+    string protocol = 3;
+
+    bool secure = 4;
+
+    string description = 5;
 }
 
 // A descriptor of a single service instance.
@@ -85,9 +88,7 @@ message ServiceInstance {
     // set to `NonLeader`.
     LeadershipState leadershipState = 4;
 
-    string ipAddress = 5;
-
-    repeated ServicePort serverPorts = 6;
+    repeated ServiceAddress addresses = 6;
 
     // Collection of key/value pairs. Read-only special name spaces:
     // * 'aws.deployment.XXX' - deployment data (ASG creation time, EC2 instance launch time, etc)
@@ -139,12 +140,12 @@ message ChangeLogRequest {
 }
 
 message ChangeLogResponse {
-    message ChangeRecord {
+    message Entry {
         ChangeRecord change = 1;
         ServiceInstance changedTo = 2;
     }
 
-    repeated ChangeRecord changes = 1;
+    repeated Entry entries = 1;
 }
 
 message UpdateServiceLabelsRequest {

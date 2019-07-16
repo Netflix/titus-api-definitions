@@ -176,6 +176,23 @@ message Capacity {
     uint32 desired = 3;
 }
 
+message JobCapacity {
+    // (Optional) Minimum number of tasks to run (min >= 0)
+    oneof Min {
+        uint32 minValue = 1;
+    }
+
+    // (Optional) Maximum number of tasks that can be run (max >= desired)
+    oneof Max {
+        uint32 maxValue = 2;
+    }
+
+    // (Optional) Desired number of tasks to run (min <= desired <= max)
+    oneof Desired {
+        uint32 desiredValue = 3;
+    }
+}
+
 /// Job disruption budget, associated (optionally) with a job.
 message JobDisruptionBudget {
 
@@ -672,6 +689,11 @@ message JobCapacityUpdate {
     Capacity Capacity = 2;
 }
 
+message JobCapacityValues {
+    string jobId = 1;
+    JobCapacity jobCapacity = 2;
+}
+
 message JobStatusUpdate {
     string id = 1;
     bool enableStatus = 2;
@@ -780,6 +802,11 @@ service JobManagementService {
     /// Modify the number of instances for a service job.
     rpc UpdateJobCapacity (JobCapacityUpdate) returns (google.protobuf.Empty) {
     }
+
+    /// Modify job capacity for a service job. It allows you to specify only values (min / max / desired) that need to be updated.
+    rpc UpdateJobCapacityValues (JobCapacityValues) returns (google.protobuf.Empty) {
+    }
+
 
     /// Mark a job as enabled or disabled. Disabled jobs are not auto-scaled.
     rpc UpdateJobStatus (JobStatusUpdate) returns (google.protobuf.Empty) {

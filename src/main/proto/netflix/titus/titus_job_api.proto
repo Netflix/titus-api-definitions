@@ -8,7 +8,6 @@ package com.netflix.titus;
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 import "netflix/titus/titus_base.proto";
-import "netflix/titus/titus_vpc_api.proto";
 
 option java_multiple_files = true;
 option java_package = "com.netflix.titus.grpc.protogen";

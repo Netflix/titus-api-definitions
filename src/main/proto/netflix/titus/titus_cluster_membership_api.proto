@@ -21,20 +21,6 @@ option go_package = "titus";
 // ----------------------------------------------------------------------------
 // Titus supervisor data model.
 
-message ClusterMembershipChange {
-
-    string memberId = 1;
-
-    // (Required) Detailed code for being in a specific state.
-    string code = 2;
-
-    // (Optional) Textual description accompanying the 'reasonCode'.
-    string message = 3;
-
-    // Time when a transition to a state happened.
-    uint64 timestamp = 4;
-}
-
 message ClusterMemberAddress {
 
     string ipAddress = 1;
@@ -98,21 +84,32 @@ message ClusterMember {
     map<string, string> labels = 5;
 }
 
+message ClusterMembershipRevision {
+
+    ClusterMember current = 1;
+
+    // (Required) Detailed code for being in a specific state.
+    string code = 2;
+
+    // (Optional) Textual description accompanying the 'reasonCode'.
+    string message = 3;
+
+    // Time when a transition to a state happened.
+    uint64 timestamp = 4;
+}
+
 message ClusterMembershipEvent {
 
     message Snapshot {
-        repeated ClusterMember members = 1;
+        repeated ClusterMembershipRevision revisions = 1;
     }
 
     message Updated {
-        ClusterMembershipChange change = 1;
-        ClusterMember previous = 2;
-        ClusterMember after = 3;
+        ClusterMembershipRevision revision = 1;
     }
 
     message Removed {
-        ClusterMembershipChange change = 1;
-        ClusterMember last = 2;
+        ClusterMembershipRevision revision = 1;
     }
 
     oneof Event {
@@ -146,13 +143,8 @@ message QueryRequest {
     repeated string fields = 2;
 }
 
-message ChangeLogResponse {
-    message Entry {
-        ClusterMembershipChange change = 1;
-        ClusterMember changedTo = 2;
-    }
-
-    repeated Entry entries = 1;
+message ClusterMembershipRevisions {
+    repeated ClusterMembershipRevision revisions = 1;
 }
 
 message UpdateMemberLabelsRequest {
@@ -185,7 +177,7 @@ service ClusterMembershipService {
     }
 
     // Get recent changes.
-    rpc GetChangeLog (QueryRequest) returns (ChangeLogResponse) {
+    rpc GetMembershipRevisions (QueryRequest) returns (ClusterMembershipRevisions) {
     }
 
     // Adds all labels from the request object to the target member. Labels that exist are

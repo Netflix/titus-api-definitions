@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 // Titus Membership Management API specification. This API provides access to Titus cluster operational state,
-// as well as provides management operations. The membership management API is intended to be used by internal tools,
+// as well as management operations. The membership management API is intended to be used by internal tools,
 // which should make the calls directly to the desired members (not via proxy or load balancer). The API calls tunneled
 // via gateway are executed against any available cluster member. All members should have identical eventually
 // consistent state.
@@ -37,6 +37,7 @@ message ClusterMemberAddress {
 // A descriptor of a single cluster member.
 message ClusterMember {
 
+    // Current state of a cluster member.
     enum State {
 
         // Member instance is starting, and its operational state is not known yet.
@@ -44,6 +45,7 @@ message ClusterMember {
 
         // Member is inactive, and does not participate in the leader election process. Predefined
         // reason codes in this state:
+        // * 'notEnabled' - the member is not enabled
         // * 'outOfService' - the member is healthy, but taken of out of service by an administrator
         // * 'unhealthy' - the member is not healthy
         Inactive = 1;
@@ -66,14 +68,17 @@ message ClusterMember {
 
     string memberId = 1;
 
-    // (Required) Member instance state
-    State state = 2;
+    // (Required) If set to false, member should not handle traffic, nor participate in the leader election process.
+    bool enabled = 2;
+
+    // (Required) Current state of the given member.
+    State state = 3;
 
     // (Required) For services with a leader, indicates the leadership status of this instance. Otherwise, always
     // set to `NonLeader`.
-    LeadershipState leadershipState = 3;
+    LeadershipState leadershipState = 4;
 
-    repeated ClusterMemberAddress addresses = 4;
+    repeated ClusterMemberAddress addresses = 5;
 
     // Collection of key/value pairs. Read-only special name spaces:
     // * 'aws.instanceGroupId' - member's ASG instance group id
@@ -81,7 +86,7 @@ message ClusterMember {
     // * 'aws.asgTags.XXX' - service's ASG tags
     // * 'aws.ec2Tags.XXX' - service's EC2 tags
     // * 'release.XXX' - release data (number, build time, bake time)
-    map<string, string> labels = 5;
+    map<string, string> labels = 6;
 }
 
 message ClusterMembershipRevision {
@@ -158,14 +163,14 @@ message DeleteMemberLabelsRequest {
     repeated string keys = 2;
 }
 
-message UpdateMemberStateRequest {
+message EnableMemberRequest {
     string memberId = 1;
 
-    string reasonMessage = 2;
-
-    ClusterMember.State newState = 3;
+    bool enabled = 2;
 }
 
+// All member update operations are routed internally to the target member instance. If multiple clients attempt
+// to change the same member instance, their requests are serialized.
 service ClusterMembershipService {
 
     // Get all known cluster members.
@@ -190,8 +195,8 @@ service ClusterMembershipService {
     rpc DeleteMemberLabels (DeleteMemberLabelsRequest) returns (ClusterMember) {
     }
 
-    // Change state of a given member. Returns the updated object.
-    rpc UpdateMemberState (UpdateMemberStateRequest) returns (ClusterMember) {
+    // Enable or disable a member.
+    rpc EnableMember (EnableMemberRequest) returns (ClusterMember) {
     }
 
     // Requests the member that handles this request to stop being leader. If the given member

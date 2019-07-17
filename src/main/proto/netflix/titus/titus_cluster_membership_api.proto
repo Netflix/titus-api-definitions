@@ -1,15 +1,16 @@
 syntax = "proto3";
 
-// Titus Membership Management API specification. This API provides access to Titus service operational state
-// (leader/non-leader, activation time, etc), as well as provides management operations.
-// The membership management API is intended to be used by internal tools, which should make the calls directly to the
-// desired service instance (not via proxy or load balancer). The API calls tunneled via gateway are executed
-// against any available service instance. All service nodes should have identical eventually consistent state.
+// Titus Membership Management API specification. This API provides access to Titus cluster operational state,
+// as well as provides management operations. The membership management API is intended to be used by internal tools,
+// which should make the calls directly to the desired members (not via proxy or load balancer). The API calls tunneled
+// via gateway are executed against any available cluster member. All members should have identical eventually
+// consistent state.
 //
 
 package com.netflix.titus;
 
 import "google/protobuf/empty.proto";
+import "netflix/titus/titus_base.proto";
 
 option java_multiple_files = true;
 option java_package = "com.netflix.titus.grpc.protogen";
@@ -20,21 +21,21 @@ option go_package = "titus";
 // ----------------------------------------------------------------------------
 // Titus supervisor data model.
 
-message ChangeRecord {
+message ClusterMembershipChange {
 
-    string instanceId = 1;
+    string memberId = 1;
 
     // (Required) Detailed code for being in a specific state.
-    string reasonCode = 2;
+    string code = 2;
 
     // (Optional) Textual description accompanying the 'reasonCode'.
-    string reasonMessage = 3;
+    string message = 3;
 
     // Time when a transition to a state happened.
     uint64 timestamp = 4;
 }
 
-message ServiceAddress {
+message ClusterMemberAddress {
 
     string ipAddress = 1;
 
@@ -47,155 +48,161 @@ message ServiceAddress {
     string description = 5;
 }
 
-// A descriptor of a single service instance.
-message ServiceInstance {
+// A descriptor of a single cluster member.
+message ClusterMember {
 
-    enum ServiceState {
+    enum State {
 
-        // Service instance is starting, and its operational state is not known yet.
+        // Member instance is starting, and its operational state is not known yet.
         Starting = 0;
 
-        // Service is inactive, and does not participate in the leader election process. Predefined
+        // Member is inactive, and does not participate in the leader election process. Predefined
         // reason codes in this state:
-        // * 'outOfService' - the instance is healthy, but taken of out of service by an administrator
-        // * 'unhealthy' - the instance is not healthy
+        // * 'outOfService' - the member is healthy, but taken of out of service by an administrator
+        // * 'unhealthy' - the member is not healthy
         Inactive = 1;
 
-        // Service is fully activated, and if does not participate in the leader election process, is ready to
+        // Member is fully activated, and if does not participate in the leader election process, is ready to
         // take traffic.
         Active = 2;
     }
 
     enum LeadershipState {
-        // Service is healthy, and participates in the leader election process, but is not the leader yet.
+        // Member is healthy, and participates in the leader election process, but is not the leader yet.
         NonLeader = 0;
 
-        // Service became a leader, and is activating all components. It does not accept client requests yet.
+        // Member became a leader, and is activating all components. It does not accept client requests yet.
         LeaderActivating = 1;
 
-        // Service is a fully activated leader.
+        // Member is a fully activated leader.
         LeaderActivated = 2;
     }
 
-    string instanceId = 1;
+    string memberId = 1;
 
-    string instanceGroupId = 2;
-
-    // (Required) Service instance state
-    ServiceState state = 3;
+    // (Required) Member instance state
+    State state = 2;
 
     // (Required) For services with a leader, indicates the leadership status of this instance. Otherwise, always
     // set to `NonLeader`.
-    LeadershipState leadershipState = 4;
+    LeadershipState leadershipState = 3;
 
-    repeated ServiceAddress addresses = 6;
+    repeated ClusterMemberAddress addresses = 4;
 
     // Collection of key/value pairs. Read-only special name spaces:
+    // * 'aws.instanceGroupId' - member's ASG instance group id
     // * 'aws.deployment.XXX' - deployment data (ASG creation time, EC2 instance launch time, etc)
     // * 'aws.asgTags.XXX' - service's ASG tags
     // * 'aws.ec2Tags.XXX' - service's EC2 tags
     // * 'release.XXX' - release data (number, build time, bake time)
-    map<string, string> labels = 7;
+    map<string, string> labels = 5;
 }
 
 message ClusterMembershipEvent {
-    message ServiceInstanceUpdate {
-        ChangeRecord change = 1;
-        ServiceInstance previous = 2;
-        ServiceInstance after = 3;
+
+    message Snapshot {
+        repeated ClusterMember members = 1;
     }
 
-    message ServiceInstanceRemoved {
-        ChangeRecord change = 1;
-        ServiceInstance last = 2;
+    message Updated {
+        ClusterMembershipChange change = 1;
+        ClusterMember previous = 2;
+        ClusterMember after = 3;
+    }
+
+    message Removed {
+        ClusterMembershipChange change = 1;
+        ClusterMember last = 2;
     }
 
     oneof Event {
-        ServiceInstanceUpdate serviceUpdated = 1;
-        ServiceInstanceRemoved serviceRemoved = 2;
+        Snapshot snapshot = 1;
+        Updated updated = 2;
+        Removed removed = 3;
     }
 }
 
 // ----------------------------------------------------------------------------
 // GRPC services
 
-message Id {
+message MemberId {
     string id = 1;
 }
 
-message ServiceInstances {
-    repeated ServiceInstance instances = 1;
+message ClusterMembers {
+    repeated ClusterMember members = 1;
 }
 
-message ChangeLogRequest {
+message QueryRequest {
     // Filtering criteria:
     // * 'ids' - comma separated list of instance ids
     // * 'instanceLimit' - maximum number of records to return per instance
     // * 'limit' - maximum number of records to return
     // * 'before' - events before the given timestamp (epoch)
     // * 'since' - events at or after the given timestamp (epoch)
-    map<string, string> filters = 1;
+    map<string, string> filteringCriteria = 1;
 
-    string fields = 2;
+    /// (Optional) If set, only field values explicitly specified in this parameter will be returned.
+    repeated string fields = 2;
 }
 
 message ChangeLogResponse {
     message Entry {
-        ChangeRecord change = 1;
-        ServiceInstance changedTo = 2;
+        ClusterMembershipChange change = 1;
+        ClusterMember changedTo = 2;
     }
 
     repeated Entry entries = 1;
 }
 
-message UpdateServiceLabelsRequest {
-    string instanceId = 1;
+message UpdateMemberLabelsRequest {
+    string memberId = 1;
 
     map<string, string> labels = 2;
 }
 
-message DeleteServiceLabelsRequest {
-    string instanceId = 1;
+message DeleteMemberLabelsRequest {
+    string memberId = 1;
     repeated string keys = 2;
 }
 
-message UpdateServiceStateRequest {
-    string instanceId = 1;
+message UpdateMemberStateRequest {
+    string memberId = 1;
 
     string reasonMessage = 2;
 
-    ServiceInstance.ServiceState newState = 3;
+    ClusterMember.State newState = 3;
 }
 
 service ClusterMembershipService {
 
-    // Get all known service instances.
-    rpc GetServiceInstances (google.protobuf.Empty) returns (ServiceInstances) {
+    // Get all known cluster members.
+    rpc GetMembers (google.protobuf.Empty) returns (ClusterMembers) {
     }
 
-    // Get service instance with the given id.
-    rpc GetServiceInstance (Id) returns (ServiceInstance) {
+    // Get member with the given id.
+    rpc GetMember (MemberId) returns (ClusterMember) {
     }
 
     // Get recent changes.
-    rpc GetChangeLog (ChangeLogRequest) returns (ChangeLogResponse) {
+    rpc GetChangeLog (QueryRequest) returns (ChangeLogResponse) {
     }
 
-    // Adds all labels from the request object to the target service instance. Labels that exist are
+    // Adds all labels from the request object to the target member. Labels that exist are
     // overridden. Returns the updated object.
-    rpc UpdateServiceLabels (UpdateServiceLabelsRequest) returns (ServiceInstance) {
+    rpc UpdateMemberLabels (UpdateMemberLabelsRequest) returns (ClusterMember) {
     }
 
     // Removes all specified labels from the target object. Labels that do not exist are ignored.
     // Returns the updated object.
-    rpc DeleteServiceLabels (DeleteServiceLabelsRequest) returns (ServiceInstance) {
+    rpc DeleteMemberLabels (DeleteMemberLabelsRequest) returns (ClusterMember) {
     }
 
-    // Change state of a given service instance. Returns the updated object.
-    rpc UpdateServiceState (UpdateServiceStateRequest) returns (ServiceInstance) {
+    // Change state of a given member. Returns the updated object.
+    rpc UpdateMemberState (UpdateMemberStateRequest) returns (ClusterMember) {
     }
 
-    // Requests the service instance that handles this request to stop being leader. If the given instance
+    // Requests the member that handles this request to stop being leader. If the given member
     //  is not a leader, the request is ignored.
     rpc StopBeingLeader (google.protobuf.Empty) returns (google.protobuf.Empty) {
     }

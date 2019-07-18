@@ -135,7 +135,7 @@ message ClusterMembers {
     repeated ClusterMember members = 1;
 }
 
-message QueryRequest {
+message ClusterMembershipQueryRequest {
     // Filtering criteria:
     // * 'ids' - comma separated list of instance ids
     // * 'instanceLimit' - maximum number of records to return per instance
@@ -182,7 +182,7 @@ service ClusterMembershipService {
     }
 
     // Get recent changes.
-    rpc GetMembershipRevisions (QueryRequest) returns (ClusterMembershipRevisions) {
+    rpc GetMembershipRevisions (ClusterMembershipQueryRequest) returns (ClusterMembershipRevisions) {
     }
 
     // Adds all labels from the request object to the target member. Labels that exist are

@@ -7,6 +7,7 @@ package com.netflix.titus;
 
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 import "netflix/titus/titus_base.proto";
 
 option java_multiple_files = true;
@@ -174,6 +175,17 @@ message Capacity {
 
     // (Required) Desired number of tasks to run (min <= desired <= max)
     uint32 desired = 3;
+}
+
+message JobCapacityWithOptionalAttributes {
+    // (Optional) Minimum number of tasks to run (min >= 0)
+    google.protobuf.UInt32Value min = 1;
+
+    // (Optional) Maximum number of tasks that can be run (max >= desired)
+    google.protobuf.UInt32Value max = 2;
+
+    // (Optional) Desired number of tasks to run (min <= desired <= max)
+    google.protobuf.UInt32Value desired = 3;
 }
 
 /// Job disruption budget, associated (optionally) with a job.
@@ -672,6 +684,11 @@ message JobCapacityUpdate {
     Capacity Capacity = 2;
 }
 
+message JobCapacityUpdateWithOptionalAttributes {
+    string jobId = 1;
+    JobCapacityWithOptionalAttributes jobCapacityWithOptionalAttributes = 2;
+}
+
 message JobStatusUpdate {
     string id = 1;
     bool enableStatus = 2;
@@ -780,6 +797,11 @@ service JobManagementService {
     /// Modify the number of instances for a service job.
     rpc UpdateJobCapacity (JobCapacityUpdate) returns (google.protobuf.Empty) {
     }
+
+    /// Modify job capacity for a service job. It allows you to specify only values (min / max / desired) that need to be updated.
+    rpc UpdateJobCapacityWithOptionalAttributes(JobCapacityUpdateWithOptionalAttributes) returns (google.protobuf.Empty) {
+    }
+
 
     /// Mark a job as enabled or disabled. Disabled jobs are not auto-scaled.
     rpc UpdateJobStatus (JobStatusUpdate) returns (google.protobuf.Empty) {

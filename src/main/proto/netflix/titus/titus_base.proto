@@ -269,13 +269,6 @@ message ContainerHealthProvider {
     map<string, string> attributes = 3;
 }
 
-/// An IP address.
-message Address {
-
-    /// (Required) The IP address.
-    string address = 1;
-}
-
 /// The location within the VPC where the address exists.
 message AddressLocation {
 
@@ -298,8 +291,8 @@ message AddressAllocation {
     /// (Required) A valid UUID4. It should be set during VPC service allocation, if unset, one will be set for you.
     string uuid = 2;
 
-    /// (Required) The VPC IP address. The address.address must be unset when requesting an allocation from the VPC service.
-    Address address = 3;
+    /// (Required) The VPC IP address. The address must be unset when requesting an allocation from the VPC service.
+    string address = 3;
 };
 
 /// An IP address allocation signed by the Titus VPC service.

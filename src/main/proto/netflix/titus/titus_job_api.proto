@@ -110,6 +110,9 @@ message ContainerResources {
     /// (Optional) Size of shared memory /dev/shm. If not set, a default value will be provided. A provided value
     // must be less than or equal to amount of memory allocated.
     uint32 shmSizeMB = 8;
+
+    /// (Optional) IP addresses allocated from Titus VPC IP service to be assigned to tasks.
+    repeated SignedAddressAllocation signedAddressAllocations = 9;
 }
 
 /// Container security profile.

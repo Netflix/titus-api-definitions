@@ -298,7 +298,7 @@ message AddressAllocation {
 /// An IP address allocation signed by the Titus VPC service.
 message SignedAddressAllocation {
 
-    /// (Required) The IP address and metadata taht was allocated.
+    /// (Required) The IP address and metadata that was allocated.
     AddressAllocation addressAllocation = 1;
 
     // (Required) This is an x509v3 signed version of the address allocation.

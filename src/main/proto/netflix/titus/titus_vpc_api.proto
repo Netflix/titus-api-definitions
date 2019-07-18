@@ -39,6 +39,7 @@ message SignedAddressAllocation {
 message AllocateAddressRequest {
     AddressAllocation addressAllocation = 1;
     Family family = 2;
+    string accountId = 3;
 };
 
 

@@ -301,7 +301,8 @@ message SignedAddressAllocation {
     /// (Required) The IP address and metadata that was allocated.
     AddressAllocation addressAllocation = 1;
 
-    // Skip #2, it points to an unused field for x509v3 signatures that were never implemented
+    // This is an x509v3 signed version of the address allocation.
+    bytes signedAddressAllocation = 2 [deprecated = true];
 
     // authoritative publicKey is the key that came from the database
     bytes authoritativePublicKey = 3;

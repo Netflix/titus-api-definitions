@@ -301,6 +301,16 @@ message SignedAddressAllocation {
     /// (Required) The IP address and metadata that was allocated.
     AddressAllocation addressAllocation = 1;
 
-    // (Required) This is an x509v3 signed version of the address allocation.
-    bytes signedAddressAllocation = 2;
+    // Skip #2, it points to an unused field for x509v3 signatures that were never implemented
+
+    // authoritative publicKey is the key that came from the database
+    bytes authoritativePublicKey = 3;
+    // the hostPublicKey is the ephemeral public key
+    bytes hostPublicKey = 4;
+    // hostPublicKeySignature is the signature of the authoratative key signing the hostPublicKey
+    bytes hostPublicKeySignature = 5;
+    // serialized version of the addressAllocation message
+    bytes message = 6;
+    // the resultant signature
+    bytes messageSignature = 7;
 };

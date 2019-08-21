@@ -30,8 +30,12 @@ message GetAllocationRequest {
     }
 };
 
+message GetAllocationResponse {
+    AddressAllocation addressAllocation = 1;
+};
+
 service UserIPService {
     // Static IP Address flow
     rpc AllocateAddress (AllocateAddressRequest) returns (AllocateAddressResponse);
-    rpc GetAllocation (GetAllocationRequest) returns (AllocateAddressResponse);
+    rpc GetAllocation (GetAllocationRequest) returns (GetAllocationResponse);
 }

@@ -765,6 +765,11 @@ message TaskKillRequest {
 
     /// (Optional) Should job size be reduced
     bool shrink = 2;
+
+    // (Optional) If set to true, and this is a terminate and shrink request ('shrink' set to true), reject
+    // the kill request if it would cause the job size go below the current minimum size. Otherwise, the job
+    // size minimum size is decremented by 1.
+    bool preventMinSizeUpdate = 3;
 }
 
 message TaskAttributesUpdate {

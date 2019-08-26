@@ -596,6 +596,25 @@ message JobChangeNotification {
 }
 
 // ----------------------------------------------------------------------------
+// Data model used in the durable storage.
+
+message JobDataRecord {
+
+    DataRecordMetadata metadata = 1;
+
+    Job job = 2;
+}
+
+message TaskDataRecord {
+
+    DataRecordMetadata metadata = 1;
+
+    Job job = 2;
+
+    Task task = 3;
+}
+
+// ----------------------------------------------------------------------------
 // GRPC services
 //
 // The data structures below are wrapper messages that are not part of the

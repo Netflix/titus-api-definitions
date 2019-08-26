@@ -600,18 +600,18 @@ message JobChangeNotification {
 
 message JobDataRecord {
 
-    Job job = 1;
+    DataRecordMetadata metadata = 1;
 
-    DataRecordMetadata metadata = 2;
+    Job job = 2;
 }
 
 message TaskDataRecord {
 
-    Task task = 1;
+    DataRecordMetadata metadata = 1;
 
     Job job = 2;
 
-    DataRecordMetadata metadata = 3;
+    Task task = 3;
 }
 
 // ----------------------------------------------------------------------------

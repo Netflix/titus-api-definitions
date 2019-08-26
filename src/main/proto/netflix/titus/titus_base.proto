@@ -323,7 +323,7 @@ message SignedAddressAllocation {
 message DataRecordMetadata {
 
     // Description of why new version of the data was created.
-    string reasonMessage = 1;
+    string description = 1;
 
     // Identification of the person who changed the data.
     CallMetadata callMetadata = 2;

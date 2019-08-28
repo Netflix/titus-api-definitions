@@ -39,3 +39,14 @@ service UserIPService {
     rpc AllocateAddress (AllocateAddressRequest) returns (AllocateAddressResponse);
     rpc GetAllocation (GetAllocationRequest) returns (GetAllocationResponse);
 }
+
+message ValidationRequest {
+    SignedAddressAllocation signedAddressAllocation = 1;
+};
+
+message ValidationResponse {
+};
+
+service ValidatorIPService {
+    rpc ValidateAllocation (ValidationRequest) returns (ValidationResponse);
+}

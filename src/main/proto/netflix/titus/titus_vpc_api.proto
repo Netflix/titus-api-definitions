@@ -32,6 +32,7 @@ message GetAllocationRequest {
 
 message GetAllocationResponse {
     AddressAllocation addressAllocation = 1;
+    SignedAddressAllocation signedAddressAllocation = 2;
 };
 
 service UserIPService {

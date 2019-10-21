@@ -4,13 +4,10 @@ syntax = "proto3";
 
 package com.netflix.titus.v4;
 
-import "google/protobuf/any.proto";
-import "google/protobuf/empty.proto";
 import "netflix/titus/titus_base.proto";
 
 option java_multiple_files = true;
-option java_package = "com.netflix.titus.grpc.protogen";
-option java_outer_classname = "CommonProto";
+option java_package = "com.netflix.titus.grpc.protogen.v4";
 
 option go_package = "titus";
 

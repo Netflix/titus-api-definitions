@@ -7,6 +7,7 @@ package com.netflix.titus;
 
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 import "netflix/titus/titus_base.proto";
 
 option java_multiple_files = true;
@@ -105,6 +106,13 @@ message ContainerResources {
 
     /// (Optional) EFS mounts.
     repeated EfsMount efsMounts = 7;
+
+    /// (Optional) Size of shared memory /dev/shm. If not set, a default value will be provided. A provided value
+    // must be less than or equal to amount of memory allocated.
+    uint32 shmSizeMB = 8;
+
+    /// (Optional) IP addresses allocated from Titus VPC IP service to be assigned to tasks.
+    repeated SignedAddressAllocation signedAddressAllocations = 9;
 }
 
 /// Container security profile.
@@ -170,6 +178,17 @@ message Capacity {
 
     // (Required) Desired number of tasks to run (min <= desired <= max)
     uint32 desired = 3;
+}
+
+message JobCapacityWithOptionalAttributes {
+    // (Optional) Minimum number of tasks to run (min >= 0)
+    google.protobuf.UInt32Value min = 1;
+
+    // (Optional) Maximum number of tasks that can be run (max >= desired)
+    google.protobuf.UInt32Value max = 2;
+
+    // (Optional) Desired number of tasks to run (min <= desired <= max)
+    google.protobuf.UInt32Value desired = 3;
 }
 
 /// Job disruption budget, associated (optionally) with a job.
@@ -577,6 +596,25 @@ message JobChangeNotification {
 }
 
 // ----------------------------------------------------------------------------
+// Data model used in the durable storage.
+
+message JobDataRecord {
+
+    DataRecordMetadata metadata = 1;
+
+    Job job = 2;
+}
+
+message TaskDataRecord {
+
+    DataRecordMetadata metadata = 1;
+
+    Job job = 2;
+
+    Task task = 3;
+}
+
+// ----------------------------------------------------------------------------
 // GRPC services
 //
 // The data structures below are wrapper messages that are not part of the
@@ -590,6 +628,8 @@ message JobIds {
     repeated string id = 1;
 }
 
+// Job query request. The query result is limited to the active data set. Finished jobs/tasks are not evaluated
+// when the query is executed.
 message JobQuery {
     /// (Required) Requested page number/size.
     Page page = 1;
@@ -610,10 +650,10 @@ message JobQuery {
     // jobGroupDetail - job group details
     // jobGroupSequence - job group sequence
     // jobType - job type (batch or service)
-    // attributes - comma separated key/value pairs (for example "key1,key2:value2;k3:value3")
-    // attributes.op - logical 'and' or 'or' operators, which should be applied to multiple atrributes specified in the query
+    // attributes - comma separated job attribute key/value pairs (for example "key1,key2:value2;k3:value3")
+    // attributes.op - logical 'and' or 'or' operators, which should be applied to multiple attributes specified in the query
     // jobState - job state (one)
-    // taskStates - task states (multiple, comma separated)
+    // taskStates - task states (multiple, comma separated). Empty value is the same as no value set.
     // taskStateReasons - reasons associated with task states (multiple, comma separated)
     // needsMigration - if set to true, return only jobs with tasks that require migration
     map<string, string> filteringCriteria = 2;
@@ -654,10 +694,10 @@ message ObserveJobsQuery {
     // jobGroupDetail - job group details
     // jobGroupSequence - job group sequence
     // jobType - job type (batch or service)
-    // attributes - comma separated key/value pairs (for example "key1,key2:value2;k3:value3")
-    // attributes.op - logical 'and' or 'or' oeprators, which should be applied to multiple atrributes specified in the query
+    // attributes - comma separated job attribute key/value pairs (for example "key1,key2:value2;k3:value3")
+    // attributes.op - logical 'and' or 'or' operators, which should be applied to multiple attributes specified in the query
     // jobState - job state (one)
-    // taskStates - task states (multiple, comma separated)
+    // taskStates - task states (multiple, comma separated). Empty value is the same as no value set.
     // taskStateReasons - reasons associated with task states (multiple, comma separated)
     // needsMigration - if set to true, return only jobs with tasks that require migration
     map<string, string> filteringCriteria = 1;
@@ -666,6 +706,11 @@ message ObserveJobsQuery {
 message JobCapacityUpdate {
     string jobId = 1;
     Capacity Capacity = 2;
+}
+
+message JobCapacityUpdateWithOptionalAttributes {
+    string jobId = 1;
+    JobCapacityWithOptionalAttributes jobCapacityWithOptionalAttributes = 2;
 }
 
 message JobStatusUpdate {
@@ -701,6 +746,8 @@ message TaskIds {
     repeated string id = 1;
 }
 
+// Task query request. The query result is limited to the active data set. Finished jobs/tasks are not evaluated
+// when the query is executed.
 message TaskQuery {
     /// (Required) Requested page number/size.
     Page page = 1;
@@ -718,10 +765,10 @@ message TaskQuery {
     // jobGroupDetail - job group details
     // jobGroupSequence - job group sequence
     // jobType - job type (batch or service)
-    // attributes - comma separated key/value pairs (for example "key1,key2:value2;k3:value3")
-    // attributes.op - logical 'and' or 'or' oeprators, which should be applied to multiple atrributes specified in the query
+    // attributes - comma separated job attribute key/value pairs (for example "key1,key2:value2;k3:value3")
+    // attributes.op - logical 'and' or 'or' operators, which should be applied to multiple attributes specified in the query
     // jobState - job state (one)
-    // taskStates - task states (multiple, comma separated)
+    // taskStates - task states (multiple, comma separated). Empty value is the same as no value set.
     // taskStateReasons - reasons associated with task states (multiple, comma separated)
     // needsMigration - if set to true, return only tasks that require migration
     map<string, string> filteringCriteria = 2;
@@ -741,6 +788,11 @@ message TaskKillRequest {
 
     /// (Optional) Should job size be reduced
     bool shrink = 2;
+
+    // (Optional) If set to true, and this is a terminate and shrink request ('shrink' set to true), reject
+    // the kill request if it would cause the job size go below the current minimum size. Otherwise, the job
+    // size minimum size is decremented by 1.
+    bool preventMinSizeUpdate = 3;
 }
 
 message TaskAttributesUpdate {
@@ -777,6 +829,10 @@ service JobManagementService {
     rpc UpdateJobCapacity (JobCapacityUpdate) returns (google.protobuf.Empty) {
     }
 
+    /// Modify job capacity for a service job. It allows you to specify only values (min / max / desired) that need to be updated.
+    rpc UpdateJobCapacityWithOptionalAttributes (JobCapacityUpdateWithOptionalAttributes) returns (google.protobuf.Empty) {
+    }
+
     /// Mark a job as enabled or disabled. Disabled jobs are not auto-scaled.
     rpc UpdateJobStatus (JobStatusUpdate) returns (google.protobuf.Empty) {
     }
@@ -789,7 +845,8 @@ service JobManagementService {
     rpc UpdateJobDisruptionBudget (JobDisruptionBudgetUpdate) returns (google.protobuf.Empty) {
     }
 
-    /// Return a collection of jobs matching a given criteria.
+    // Return a collection of jobs matching the given criteria. The query result is limited to the active data set.
+    // Finished jobs/tasks are not evaluated when the query is executed.
     rpc FindJobs (JobQuery) returns (JobQueryResult) {
     }
 
@@ -826,7 +883,8 @@ service JobManagementService {
     rpc FindTask (TaskId) returns (Task) {
     }
 
-    /// Return a collection of tasks belonging to a job specified in the 'TaskQuery' request matching a given criteria.
+    // Return a collection of tasks specified in the 'TaskQuery' request matching the given criteria. The query result is
+    // limited to the active data set. Finished jobs/tasks are not evaluated when the query is executed.
     rpc FindTasks (TaskQuery) returns (TaskQueryResult) {
     }
 

@@ -1,0 +1,53 @@
+syntax = "proto3";
+package com.netflix.titus;
+
+import "google/protobuf/timestamp.proto";
+import "netflix/titus/titus_base.proto";
+
+option go_package = "titus";
+
+enum Family {
+    // Default should never really be used, but we're required to have one due to protobuf
+    FAMILY_DEFAULT = 0;
+    FAMILY_V4 = 1;
+    FAMILY_V6 = 2;
+};
+
+message AllocateAddressRequest {
+    AddressAllocation addressAllocation = 1;
+    Family family = 2;
+    string accountId = 3;
+};
+
+message AllocateAddressResponse {
+    SignedAddressAllocation signedAddressAllocation = 1;
+};
+
+message GetAllocationRequest {
+    oneof searchParameter {
+        string address = 1;
+        string uuid = 2;
+    }
+};
+
+message GetAllocationResponse {
+    AddressAllocation addressAllocation = 1;
+    SignedAddressAllocation signedAddressAllocation = 2;
+};
+
+service UserIPService {
+    // Static IP Address flow
+    rpc AllocateAddress (AllocateAddressRequest) returns (AllocateAddressResponse);
+    rpc GetAllocation (GetAllocationRequest) returns (GetAllocationResponse);
+}
+
+message ValidationRequest {
+    SignedAddressAllocation signedAddressAllocation = 1;
+};
+
+message ValidationResponse {
+};
+
+service ValidatorIPService {
+    rpc ValidateAllocation (ValidationRequest) returns (ValidationResponse);
+}

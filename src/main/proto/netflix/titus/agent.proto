@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package messages;
 
+import "netflix/titus/titus_base.proto";
+
 option java_package = "io.titanframework.messages";
 option java_outer_classname = "TitanProtos";
 
@@ -284,6 +286,12 @@ message ContainerInfo {
 
     // Used internally by the agent to store information about a running container
     optional RunningContainerInfo runState = 39;
+
+    /// (Optional) Amount of shared memory to allocate (must be <= memoryMB)
+    optional uint32 shmSizeMB = 40;
+
+    /// (Optional) IP address allocation for the task
+    optional com.netflix.titus.SignedAddressAllocation signedAddressAllocation = 41;
 }
 
 // For the identity client to query the metadata server to confirm the

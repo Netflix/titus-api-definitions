@@ -28,7 +28,7 @@ message Id {
 message QueryRequest {
     map<string, string> filteringCriteria = 1;
 
-    string fields = 2;
+    repeated string fields = 2;
 
     Page page = 3;
 }

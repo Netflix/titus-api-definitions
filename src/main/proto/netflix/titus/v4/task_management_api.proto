@@ -6,6 +6,7 @@ syntax = "proto3";
 package com.netflix.titus.v4;
 
 import "google/protobuf/empty.proto";
+import "netflix/titus/titus_base.proto";
 import "netflix/titus/v4/common_api.proto";
 
 option java_multiple_files = true;
@@ -483,6 +484,11 @@ service ResourceConsumptionService {
 // -----------------------------------------
 // Resource availability and reporting service
 
+message MachineQueryResult {
+    repeated Machine items = 1;
+    Pagination pagination = 2;
+}
+
 service MachineService {
 
     /// Return machine data.
@@ -491,6 +497,6 @@ service MachineService {
 
     /// Returns machines matching the given criteria:
     //  - 'freeCpu', 'freeMemoryMb', 'freeDiskMb', 'freeNetworkMbps' - only machines with free resources at the expected level
-    rpc GetMachines (QueryRequest) returns (stream Machine) {
+    rpc GetMachines (QueryRequest) returns (MachineQueryResult) {
     }
 }

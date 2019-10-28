@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+package com.netflix.compute;
+
+option java_multiple_files = false;
+option java_package = "com.netflix.titus.protogen";
+option java_outer_classname = "TitusCompliance";
+
+// A unique service instance identifier (EC2 instance or Titus container).
+message ServiceInstance {
+
+    // Service name.
+    string serviceName = 1;
+
+    // Server id, like 'i-XXX' or Titus instance id.
+    string instanceId = 2;
+
+    // Id of an account where the service is running.
+    string accountId = 3;
+
+    // Cloud region.
+    string region = 4;
+
+    // Cloud zone.
+    string zone = 5;
+
+    // Additional data associated with an instance. Might include information like AWS ASG id, IP address, etc.
+    map<string, string> context = 6;
+}
+
+// A caller that created a non compliant action.
+message Caller {
+
+    // Caller kind. Predefined kinds:
+    // * 'user'
+    // * 'application'
+    string kind = 1;
+
+    // A unique caller identifier.
+    string id = 2;
+
+    // Additional data associated with a caller.
+    map<string, string> context = 3;
+}
+message NonComplianceDescriptor {
+
+    // A unique identifier for the feature non-compliance.
+    string nonComplianceId = 1;
+
+    // A unique identifier of a component for which the non-compliance descriptor is defined.
+    string componentId = 2;
+
+    // Time since when the non compliance was checked, but requests are not rejected.
+    uint64 enforcedSoftSince = 3;
+
+    // Time since when the non compliance was checked, and non-compliant requests are rejected.
+    uint64 enforcedHardSince = 4;
+
+    // Compliance check description.
+    string description = 5;
+}
+
+message Correction {
+
+    // Non compliance was found, but no corrective action was executed, and the request was allowed to proceed as is.
+    message None {
+    }
+
+    // Client request rejected due to non compliance.
+    message Rejected {
+    }
+
+    // Client request updated to make it compliant.
+    message Updated {
+
+        // Initial state.
+        string from = 1;
+
+        // State after update.
+        string to = 2;
+
+        // Human readable text.
+        string description = 3;
+    }
+
+    oneof Kind {
+        None none = 1;
+
+        Rejected rejected = 2;
+
+        Updated updated = 3;
+    }
+}
+
+// Non compliance report.
+message NonCompliance {
+
+    // Source of the non compliance report.
+    ServiceInstance serviceInstance = 1;
+
+    // Caller data.
+    Caller caller = 2;
+
+    // Non compliance descriptor for this report.
+    NonComplianceDescriptor nonComplianceDescriptor = 3;
+
+    // A human readable text description of an issue.
+    string issueDescription = 4;
+
+    // Correction description.
+    Correction correction = 5;
+
+    // Additional context.
+    map<string, string> context = 6;
+
+    // Time at which the non compliant action was executed.
+    uint64 timestamp = 7;
+}

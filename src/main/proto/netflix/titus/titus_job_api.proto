@@ -786,7 +786,9 @@ message TaskQuery {
     // taskStateReasons - reasons associated with task states (multiple, comma separated)
     // needsMigration - if set to true, return only tasks that require migration
     // skipSystemFailures - a filter for finished tasks only (does not affect non-finished tasks). If set to true,
-    //                      a finished task that failed due to a system error is filtered out.
+    //                      a finished task that failed due to a system error is filtered out. System error codes
+    //                      are specified in the TaskStatus type definition. These are container failures due to Titus
+    //                      internal issues.
     map<string, string> filteringCriteria = 2;
 
     /// (Optional) If set, only field values explicitly given in this parameter will be returned

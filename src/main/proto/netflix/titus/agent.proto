@@ -316,6 +316,9 @@ message TaskIdentity {
 
     // (Required) IP address of container
     optional string ipv4Address = 4;
+
+    // (Optional) IPv6 address of container
+    optional string ipv6Address = 5;
 }
 
 enum SignatureAlgorithm {

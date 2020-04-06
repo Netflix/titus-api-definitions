@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+package com.netflix.compute.validator;
+
+option java_multiple_files = false;
+option java_package = "com.netflix.compute.validator.protogen";
+option java_outer_classname = "ComputeValidator";
+
+option go_package = "validator";
+
+// ----------------------------------------------------------------------------
+// Data model.
+
+// ----------------------------------------------------------------------------
+// GRPC service
+
+service ValidationService {
+
+    // Validates the given security group. If valid, returns all available representations.
+    rpc ValidateSecurityGroup (SecurityGroupValidationRequest) returns (SecurityGroupValidationResponse) {
+    }
+
+    // Validates IAM role.
+    rpc ValidateIamRole (IamRoleValidationRequest) returns (IamRoleValidationResponse) {
+    }
+
+    // Checks access rights to a bucket with the give IAM role.
+    rpc ValidateS3BucketAccess (S3BucketAccessValidationRequest) returns (S3BucketAccessValidationResponse) {
+    }
+
+    // Validates image.
+    rpc ValidateImage (ImageValidationRequest) returns (ImageValidationResponse) {
+    }
+
+    // Validate static IP.
+    rpc ValidateStaticIp (StaticIpValidationRequest) returns (StaticIpValidationResponse) {
+    }
+}
+
+message SecurityGroupValidationRequest {
+    // A security group value can be:
+    // * a security group id (for example sg-12345678)
+    // * a security group ARN
+    // * a security group name/alias (for example 'titus-sg')
+    string securityGroup = 1;
+}
+
+message SecurityGroupValidationResponse {
+
+    // An alias associated with the given security group or empty string if not defined.
+    string securityGroupAlias = 1;
+
+    // Security group id.
+    string securityGroupId = 2;
+
+    // Security group ARN.
+    string securityGroupArn = 3;
+}
+
+message IamRoleValidationRequest {
+    // IAM role name or ARN.
+    string iamRole = 1;
+}
+
+message IamRoleValidationResponse {
+
+    // IAM role name.
+    string iamRoleName = 1;
+
+    // ARN associated with the give IAM role.
+    string iamRoleArn = 2;
+}
+
+message S3BucketAccessValidationRequest {
+
+    // A bucket identifier, which can be:
+    // * a bucket name
+    // * a bucket ARN
+    // * a bucket access point
+    string bucket = 1;
+
+    // A bucket prefix
+    string bucketPrefix = 2;
+
+    // IAM role for which access is checked.
+    string iamRole = 3;
+}
+
+message S3BucketAccessValidationResponse {
+
+    // True if a bucket can be read.
+    bool readAccess = 1;
+
+    // True if a bucket can be written to.
+    bool writeAccess = 2;
+}
+
+// One of name/tag or digest is expected. If both are set, the name/tag is validated first, and its digest is compared
+// against the provided one. All checks must succeed for the validation to pass.
+message ImageValidationRequest {
+
+    // Image name.
+    string name = 1;
+
+    // Image tag (required if name is set).
+    string tag = 2;
+
+    // Image digest.
+    string digest = 3;
+}
+
+message ImageValidationResponse {
+
+    // If validation was successful, a resolved digest for the image.
+    string digest = 1;
+}
+
+message StaticIpValidationRequest {
+    string ipv4Address = 1;
+}
+
+message StaticIpValidationResponse {
+    // True if the IP address is being used.
+    bool used = 1;
+}

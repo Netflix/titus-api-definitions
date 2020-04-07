@@ -1,0 +1,200 @@
+syntax = "proto3";
+
+package com.netflix.compute.validator;
+
+option java_multiple_files = false;
+option java_package = "com.netflix.compute.validator.protogen";
+option java_outer_classname = "ComputeValidator";
+
+option go_package = "validator";
+
+// ----------------------------------------------------------------------------
+// Data model.
+
+// ----------------------------------------------------------------------------
+// GRPC service
+
+service ValidationService {
+
+    // Validates the given security group. If valid, returns all available representations.
+    rpc ValidateSecurityGroup (SecurityGroupValidationRequest) returns (SecurityGroupValidationResponse) {
+    }
+
+    // Validates IAM role.
+    rpc ValidateIamRole (IamRoleValidationRequest) returns (IamRoleValidationResponse) {
+    }
+
+    // Checks access rights to a bucket with the give IAM role.
+    rpc ValidateS3BucketAccess (S3BucketAccessValidationRequest) returns (S3BucketAccessValidationResponse) {
+    }
+
+    // Validates image.
+    rpc ValidateImage (ImageValidationRequest) returns (ImageValidationResponse) {
+    }
+}
+
+// Information about cached data used in the validation process. Cache is also used for negative results so
+// validation failures have their associated cache entries just like successful validations
+// (for example if a security group is not found, this fact is cached to avoid immediate subsequent queries).
+message CacheMetadata {
+
+    // Authoritative data present.
+    message Authoritative {
+    }
+
+    // Non-authoritative (expired) data present.
+    message NonAuthoritative {
+        // An error encountered when trying to refresh the data in cache.
+        string errorCode = 1;
+
+        string errorMessage = 2;
+    }
+
+    // Data source (external resource from where the data were fetched).
+    string source = 1;
+
+    // Time when data from an external resource were loaded, and stored in the cache.
+    uint32 loadTime = 2;
+
+    // Data expiry time.
+    uint32 expiryTime = 3;
+
+    oneof Decision {
+        Authoritative authoritative = 4;
+
+        Authoritative nonAuthoritative = 5;
+    }
+}
+
+message ValidationFailure {
+
+    // Validation rule specific error code. Common error codes:
+    // * 'notFound' - resource not found
+    // * 'accessDenied' - access denied to the resource
+    // * 'resourceNotAvailable' - connectivity to external resource failure
+    string errorCode = 1;
+
+    // Validation failure details.
+    string errorMessage = 2;
+}
+
+message SecurityGroupValidationRequest {
+    // A security group value can be:
+    // * a security group id (for example sg-12345678)
+    // * a security group ARN
+    // * a security group name/alias (for example 'titus-sg')
+    string securityGroup = 1;
+
+    // A subnet id associated with the given security group. If not set, a default subnet for the given account is used.
+    string subnetId = 2;
+}
+
+message SecurityGroupValidationResponse {
+
+    message Success {
+        // An alias associated with the given security group or empty string if not defined.
+        string securityGroupAlias = 1;
+
+        // Security group id.
+        string securityGroupId = 2;
+
+        // Security group ARN.
+        string securityGroupArn = 3;
+    }
+
+    oneof Result {
+        Success success = 1;
+
+        ValidationFailure failure = 2;
+    }
+
+    CacheMetadata cacheMetadata = 3;
+}
+
+message IamRoleValidationRequest {
+    // IAM role name or ARN.
+    string iamRole = 1;
+}
+
+message IamRoleValidationResponse {
+
+    message Success {
+        // IAM role name.
+        string iamRoleName = 1;
+
+        // ARN associated with the give IAM role.
+        string iamRoleArn = 2;
+    }
+
+    oneof Result {
+        Success success = 1;
+
+        ValidationFailure failure = 2;
+    }
+
+    CacheMetadata cacheMetadata = 3;
+}
+
+message S3BucketAccessValidationRequest {
+
+    // A bucket identifier, which can be:
+    // * a bucket name
+    // * a bucket ARN
+    // * a bucket access point
+    string bucket = 1;
+
+    // A bucket prefix
+    string bucketPrefix = 2;
+
+    // IAM role for which access is checked (short name or ARN).
+    string iamRole = 3;
+}
+
+message S3BucketAccessValidationResponse {
+
+    message Success {
+        // True if a bucket can be read.
+        bool readAccess = 1;
+
+        // True if a bucket can be written to.
+        bool writeAccess = 2;
+    }
+
+    oneof Result {
+        Success success = 1;
+
+        ValidationFailure failure = 2;
+    }
+
+    CacheMetadata cacheMetadata = 3;
+}
+
+// Image name is always required. One of tag or digest must be always set. If both tag and digest is set, the
+// digest resolved for the tag must match the provided digest value.
+message ImageValidationRequest {
+
+    // Image name.
+    string name = 1;
+
+    // Image tag (optional if the digest is set).
+    string tag = 2;
+
+    // Image digest (optional if the tag is set).
+    string digest = 3;
+}
+
+message ImageValidationResponse {
+
+    message Success {
+        // If validation was successful, a resolved digest for the image.
+        string digest = 1;
+    }
+
+    oneof Result {
+        Success success = 1;
+
+        ValidationFailure failure = 2;
+    }
+
+    CacheMetadata cacheMetadata = 3;
+}

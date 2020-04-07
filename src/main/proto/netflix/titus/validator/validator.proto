@@ -146,7 +146,7 @@ message S3BucketAccessValidationRequest {
     // A bucket prefix
     string bucketPrefix = 2;
 
-    // IAM role for which access is checked.
+    // IAM role for which access is checked (short name or ARN).
     string iamRole = 3;
 }
 
@@ -169,17 +169,17 @@ message S3BucketAccessValidationResponse {
     CacheMetadata cacheMetadata = 3;
 }
 
-// One of name/tag or digest is expected. If both are set, the name/tag is validated first, and its digest is compared
-// against the provided one. All checks must succeed for the validation to pass.
+// Image name is always required. One of tag or digest must be always set. If both tag and digest is set, the
+// digest resolved for the tag must match the provided digest value.
 message ImageValidationRequest {
 
     // Image name.
     string name = 1;
 
-    // Image tag (required if name is set).
+    // Image tag (optional if the digest is set).
     string tag = 2;
 
-    // Image digest.
+    // Image digest (optional if the tag is set).
     string digest = 3;
 }
 

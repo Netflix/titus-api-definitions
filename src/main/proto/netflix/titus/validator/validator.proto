@@ -158,6 +158,9 @@ message S3BucketAccessValidationResponse {
 
         // True if a bucket can be written to.
         bool writeAccess = 2;
+
+        // In case of access restriction provides more data on why is that.
+        string details = 3;
     }
 
     oneof Result {

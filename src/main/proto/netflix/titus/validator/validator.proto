@@ -78,6 +78,10 @@ message ValidationFailure {
     string errorMessage = 2;
 }
 
+message ValidationFailures {
+    repeated ValidationFailure failures = 1;
+}
+
 message SecurityGroupValidationRequest {
     // A security group value can be:
     // * a security group id (for example sg-12345678)
@@ -105,7 +109,7 @@ message SecurityGroupValidationResponse {
     oneof Result {
         Success success = 1;
 
-        ValidationFailure failure = 2;
+        ValidationFailures failures = 2;
     }
 
     CacheMetadata cacheMetadata = 3;
@@ -129,7 +133,7 @@ message IamRoleValidationResponse {
     oneof Result {
         Success success = 1;
 
-        ValidationFailure failure = 2;
+        ValidationFailures failures = 2;
     }
 
     CacheMetadata cacheMetadata = 3;
@@ -152,18 +156,14 @@ message S3BucketAccessValidationRequest {
 
 message S3BucketAccessValidationResponse {
 
+    // Returned if an S3 bucket exists and can be accessed by a provided IAM role.
     message Success {
-        // True if a bucket can be read.
-        bool readAccess = 1;
-
-        // True if a bucket can be written to.
-        bool writeAccess = 2;
     }
 
     oneof Result {
         Success success = 1;
 
-        ValidationFailure failure = 2;
+        ValidationFailures failures = 2;
     }
 
     CacheMetadata cacheMetadata = 3;
@@ -193,7 +193,7 @@ message ImageValidationResponse {
     oneof Result {
         Success success = 1;
 
-        ValidationFailure failure = 2;
+        ValidationFailures failures = 2;
     }
 
     CacheMetadata cacheMetadata = 3;

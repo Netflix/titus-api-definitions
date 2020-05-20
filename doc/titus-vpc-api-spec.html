@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Protocol Documentation</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic"/>
+    <style>
+      body {
+        width: 60em;
+        margin: 1em auto;
+        color: #222;
+        font-family: "Ubuntu", sans-serif;
+        padding-bottom: 4em;
+      }
+
+      h1 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      h2 {
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+        margin: 1.5em 0;
+      }
+
+      h3 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      a {
+        text-decoration: none;
+        color: #567e25;
+      }
+
+      table {
+        width: 100%;
+        font-size: 80%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        font-weight: 700;
+        background-color: #dcdcdc;
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #fbfbfb;
+      }
+
+      td {
+        border: 1px solid #ccc;
+        padding: 0.5ex 2ex;
+      }
+
+      td p {
+        text-indent: 1em;
+        margin: 0;
+      }
+
+      td p:nth-child(1) {
+        text-indent: 0;  
+      }
+
+       
+      .field-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .field-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .field-table td:nth-child(3) {  
+        width: 6em;
+      }
+      .field-table td:nth-child(4) {  
+        width: auto;
+      }
+
+       
+      .extension-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(3) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(4) {  
+        width: 5em;
+      }
+      .extension-table td:nth-child(5) {  
+        width: auto;
+      }
+
+       
+      .enum-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .enum-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .enum-table td:nth-child(3) {  
+        width: auto;
+      }
+
+       
+      .scalar-value-types-table tr {
+        height: 3em;
+      }
+
+       
+      #toc-container ul {
+        list-style-type: none;
+        padding-left: 1em;
+        line-height: 180%;
+        margin: 0;
+      }
+      #toc > li > a {
+        font-weight: bold;
+      }
+
+       
+      .file-heading {
+        width: 100%;
+        display: table;
+        border-bottom: 1px solid #aaa;
+        margin: 4em 0 1.5em 0;
+      }
+      .file-heading h2 {
+        border: none;
+        display: table-cell;
+      }
+      .file-heading a {
+        text-align: right;
+        display: table-cell;
+      }
+
+       
+      .badge {
+        width: 1.6em;
+        height: 1.6em;
+        display: inline-block;
+
+        line-height: 1.6em;
+        text-align: center;
+        font-weight: bold;
+        font-size: 60%;
+
+        color: #89ba48;
+        background-color: #dff0c8;
+
+        margin: 0.5ex 1em 0.5ex -1em;
+        border: 1px solid #fbfbfb;
+        border-radius: 1ex;
+      }
+    </style>
+
+    
+    <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+  </head>
+
+  <body>
+
+    <h1 id="title">Protocol Documentation</h1>
+
+    <h2>Table of Contents</h2>
+
+    <div id="toc-container">
+      <ul id="toc">
+        
+          
+          <li>
+            <a href="#src%2fmain%2fproto%2fnetflix%2ftitus%2ftitus_vpc_api.proto">src/main/proto/netflix/titus/titus_vpc_api.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#com.netflix.titus.AddressLocationV2"><span class="badge">M</span>AddressLocationV2</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.AddressSearchParameter"><span class="badge">M</span>AddressSearchParameter</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.AllocateAddressRequest"><span class="badge">M</span>AllocateAddressRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.AllocateAddressResponse"><span class="badge">M</span>AllocateAddressResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.AllocateStaticIPAddressRequest"><span class="badge">M</span>AllocateStaticIPAddressRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.AllocateStaticIPAddressRequest.TagsEntry"><span class="badge">M</span>AllocateStaticIPAddressRequest.TagsEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.AllocateStaticIPAddressResponse"><span class="badge">M</span>AllocateStaticIPAddressResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.CreateTagRequest"><span class="badge">M</span>CreateTagRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.CreateTagResponse"><span class="badge">M</span>CreateTagResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.DeleteTagRequest"><span class="badge">M</span>DeleteTagRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.DeleteTagResponse"><span class="badge">M</span>DeleteTagResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.GetAllocationRequest"><span class="badge">M</span>GetAllocationRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.GetAllocationResponse"><span class="badge">M</span>GetAllocationResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.GetBranchToTrunkENIMappingRequest"><span class="badge">M</span>GetBranchToTrunkENIMappingRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.GetBranchToTrunkENIMappingResponse"><span class="badge">M</span>GetBranchToTrunkENIMappingResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.GetBranchToTrunkENIMappingResponse.BranchENIMappingEntry"><span class="badge">M</span>GetBranchToTrunkENIMappingResponse.BranchENIMappingEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.GetStaticIPAddressRequest"><span class="badge">M</span>GetStaticIPAddressRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.GetStaticIPAddressResponse"><span class="badge">M</span>GetStaticIPAddressResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.GetStaticIPAddressesRequest"><span class="badge">M</span>GetStaticIPAddressesRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.GetStaticIPAddressesResponse"><span class="badge">M</span>GetStaticIPAddressesResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.SetPoolRequest"><span class="badge">M</span>SetPoolRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.SetPoolResponse"><span class="badge">M</span>SetPoolResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.StaticIPAddress"><span class="badge">M</span>StaticIPAddress</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.StaticIPAddress.TagsEntry"><span class="badge">M</span>StaticIPAddress.TagsEntry</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.UpdateTagRequest"><span class="badge">M</span>UpdateTagRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.UpdateTagResponse"><span class="badge">M</span>UpdateTagResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.ValidationRequest"><span class="badge">M</span>ValidationRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.ValidationResponse"><span class="badge">M</span>ValidationResponse</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#com.netflix.titus.Family"><span class="badge">E</span>Family</a>
+                </li>
+              
+              
+              
+                <li>
+                  <a href="#com.netflix.titus.IPService"><span class="badge">S</span>IPService</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.TitusAgentVPCInformationService"><span class="badge">S</span>TitusAgentVPCInformationService</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.UserIPService"><span class="badge">S</span>UserIPService</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.ValidatorIPService"><span class="badge">S</span>ValidatorIPService</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+        <li><a href="#scalar-value-types">Scalar Value Types</a></li>
+      </ul>
+    </div>
+
+    
+      
+      <div class="file-heading">
+        <h2 id="src/main/proto/netflix/titus/titus_vpc_api.proto">src/main/proto/netflix/titus/titus_vpc_api.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="com.netflix.titus.AddressLocationV2">AddressLocationV2</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>accountId</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>availabilityZone</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>availabilityZoneId</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>vpcId</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>subnetId</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.AddressSearchParameter">AddressSearchParameter</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>address</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Either an IPv4 or IPv6 address. If it&#39;s an IPv4 address, then subnetId or vpcId have to be specified </p></td>
+                </tr>
+              
+                <tr>
+                  <td>empty</td>
+                  <td><a href="#google.protobuf.Empty">google.protobuf.Empty</a></td>
+                  <td></td>
+                  <td><p>This can be empty if address is a v6 address, otherwise it must be specified </p></td>
+                </tr>
+              
+                <tr>
+                  <td>subnetId</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>vpcId</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.AllocateAddressRequest">AllocateAddressRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>addressAllocation</td>
+                  <td><a href="#com.netflix.titus.AddressAllocation">AddressAllocation</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>family</td>
+                  <td><a href="#com.netflix.titus.Family">Family</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>accountId</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.AllocateAddressResponse">AllocateAddressResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>signedAddressAllocation</td>
+                  <td><a href="#com.netflix.titus.SignedAddressAllocation">SignedAddressAllocation</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.AllocateStaticIPAddressRequest">AllocateStaticIPAddressRequest</h3>
+        <p>V2 API</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>subnetId</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Required (The subnet where to allocate the address) </p></td>
+                </tr>
+              
+                <tr>
+                  <td>uuid</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Optional. If specified, and an ID with that already exists, it will return an error. 
+/ This allows for idempotent requests. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>pool</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Optional. Pool is an indexed column that can be used to select static IPs by. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>tags</td>
+                  <td><a href="#com.netflix.titus.AllocateStaticIPAddressRequest.TagsEntry">AllocateStaticIPAddressRequest.TagsEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>Optional </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.AllocateStaticIPAddressRequest.TagsEntry">AllocateStaticIPAddressRequest.TagsEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.AllocateStaticIPAddressResponse">AllocateStaticIPAddressResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>staticIPAddress</td>
+                  <td><a href="#com.netflix.titus.StaticIPAddress">StaticIPAddress</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.CreateTagRequest">CreateTagRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>uuid</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>upsert</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>If upsert is false, and the tag exists, this call will fail. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.CreateTagResponse">CreateTagResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="com.netflix.titus.DeleteTagRequest">DeleteTagRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>uuid</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.DeleteTagResponse">DeleteTagResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="com.netflix.titus.GetAllocationRequest">GetAllocationRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>address</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>uuid</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.GetAllocationResponse">GetAllocationResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>addressAllocation</td>
+                  <td><a href="#com.netflix.titus.AddressAllocation">AddressAllocation</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>signedAddressAllocation</td>
+                  <td><a href="#com.netflix.titus.SignedAddressAllocation">SignedAddressAllocation</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.GetBranchToTrunkENIMappingRequest">GetBranchToTrunkENIMappingRequest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="com.netflix.titus.GetBranchToTrunkENIMappingResponse">GetBranchToTrunkENIMappingResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>branchENIMapping</td>
+                  <td><a href="#com.netflix.titus.GetBranchToTrunkENIMappingResponse.BranchENIMappingEntry">GetBranchToTrunkENIMappingResponse.BranchENIMappingEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>This map is branchENI =&gt; trunkENI </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.GetBranchToTrunkENIMappingResponse.BranchENIMappingEntry">GetBranchToTrunkENIMappingResponse.BranchENIMappingEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.GetStaticIPAddressRequest">GetStaticIPAddressRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>uuid</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>addressSearchParameter</td>
+                  <td><a href="#com.netflix.titus.AddressSearchParameter">AddressSearchParameter</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.GetStaticIPAddressResponse">GetStaticIPAddressResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>staticIPAddress</td>
+                  <td><a href="#com.netflix.titus.StaticIPAddress">StaticIPAddress</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.GetStaticIPAddressesRequest">GetStaticIPAddressesRequest</h3>
+        <p>This is really only meant to be used by (the) control plane(s)</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pool</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>addresses</td>
+                  <td><a href="#com.netflix.titus.StaticIPAddressIDs">StaticIPAddressIDs</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.GetStaticIPAddressesResponse">GetStaticIPAddressesResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>staticIPAddresses</td>
+                  <td><a href="#com.netflix.titus.StaticIPAddress">StaticIPAddress</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.SetPoolRequest">SetPoolRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>uuid</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>pool</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>If Pool is unset, it&#39;s equivalent of removing it from that pool </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.SetPoolResponse">SetPoolResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="com.netflix.titus.StaticIPAddress">StaticIPAddress</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>uuid</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>ipv4Address</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>ipv6Address</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>pool</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>tags</td>
+                  <td><a href="#com.netflix.titus.StaticIPAddress.TagsEntry">StaticIPAddress.TagsEntry</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>addressLocation</td>
+                  <td><a href="#com.netflix.titus.AddressLocationV2">AddressLocationV2</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.StaticIPAddress.TagsEntry">StaticIPAddress.TagsEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.UpdateTagRequest">UpdateTagRequest</h3>
+        <p>If the tag is unset, then do not set it</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>uuid</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.UpdateTagResponse">UpdateTagResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="com.netflix.titus.ValidationRequest">ValidationRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>signedAddressAllocation</td>
+                  <td><a href="#com.netflix.titus.SignedAddressAllocation">SignedAddressAllocation</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.ValidationResponse">ValidationResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+
+      
+        <h3 id="com.netflix.titus.Family">Family</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>FAMILY_DEFAULT</td>
+                <td>0</td>
+                <td><p>Default should never really be used, but we&#39;re required to have one due to protobuf</p></td>
+              </tr>
+            
+              <tr>
+                <td>FAMILY_V4</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>FAMILY_V6</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+        <h3 id="com.netflix.titus.IPService">IPService</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>AllocateStaticIPAddress</td>
+                <td><a href="#com.netflix.titus.AllocateStaticIPAddressRequest">AllocateStaticIPAddressRequest</a></td>
+                <td><a href="#com.netflix.titus.AllocateStaticIPAddressResponse">AllocateStaticIPAddressResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>SetPool</td>
+                <td><a href="#com.netflix.titus.SetPoolRequest">SetPoolRequest</a></td>
+                <td><a href="#com.netflix.titus.SetPoolResponse">SetPoolResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CreateTag</td>
+                <td><a href="#com.netflix.titus.CreateTagRequest">CreateTagRequest</a></td>
+                <td><a href="#com.netflix.titus.CreateTagResponse">CreateTagResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>DeleteTag</td>
+                <td><a href="#com.netflix.titus.CreateTagRequest">CreateTagRequest</a></td>
+                <td><a href="#com.netflix.titus.DeleteTagResponse">DeleteTagResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>UpdateTag</td>
+                <td><a href="#com.netflix.titus.UpdateTagRequest">UpdateTagRequest</a></td>
+                <td><a href="#com.netflix.titus.UpdateTagResponse">UpdateTagResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>GetStaticIPAddress</td>
+                <td><a href="#com.netflix.titus.GetStaticIPAddressRequest">GetStaticIPAddressRequest</a></td>
+                <td><a href="#com.netflix.titus.GetStaticIPAddressResponse">GetStaticIPAddressResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>GetStaticIPAddresses</td>
+                <td><a href="#com.netflix.titus.GetStaticIPAddressesRequest">GetStaticIPAddressesRequest</a></td>
+                <td><a href="#com.netflix.titus.GetStaticIPAddressesResponse">GetStaticIPAddressesResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+        <h3 id="com.netflix.titus.TitusAgentVPCInformationService">TitusAgentVPCInformationService</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ListBranchToTrunkENIMapping</td>
+                <td><a href="#com.netflix.titus.GetBranchToTrunkENIMappingRequest">GetBranchToTrunkENIMappingRequest</a></td>
+                <td><a href="#com.netflix.titus.GetBranchToTrunkENIMappingResponse">GetBranchToTrunkENIMappingResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+        <h3 id="com.netflix.titus.UserIPService">UserIPService</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>AllocateAddress</td>
+                <td><a href="#com.netflix.titus.AllocateAddressRequest">AllocateAddressRequest</a></td>
+                <td><a href="#com.netflix.titus.AllocateAddressResponse">AllocateAddressResponse</a></td>
+                <td><p>Static IP Address flow</p></td>
+              </tr>
+            
+              <tr>
+                <td>GetAllocation</td>
+                <td><a href="#com.netflix.titus.GetAllocationRequest">GetAllocationRequest</a></td>
+                <td><a href="#com.netflix.titus.GetAllocationResponse">GetAllocationResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+        <h3 id="com.netflix.titus.ValidatorIPService">ValidatorIPService</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ValidateAllocation</td>
+                <td><a href="#com.netflix.titus.ValidationRequest">ValidationRequest</a></td>
+                <td><a href="#com.netflix.titus.ValidationResponse">ValidationResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+    
+
+    <h2 id="scalar-value-types">Scalar Value Types</h2>
+    <table class="scalar-value-types-table">
+      <thead>
+        <tr><td>.proto Type</td><td>Notes</td><td>C++</td><td>Java</td><td>Python</td><td>Go</td><td>C#</td><td>PHP</td><td>Ruby</td></tr>
+      </thead>
+      <tbody>
+        
+          <tr id="double">
+            <td>double</td>
+            <td></td>
+            <td>double</td>
+            <td>double</td>
+            <td>float</td>
+            <td>float64</td>
+            <td>double</td>
+            <td>float</td>
+            <td>Float</td>
+          </tr>
+        
+          <tr id="float">
+            <td>float</td>
+            <td></td>
+            <td>float</td>
+            <td>float</td>
+            <td>float</td>
+            <td>float32</td>
+            <td>float</td>
+            <td>float</td>
+            <td>Float</td>
+          </tr>
+        
+          <tr id="int32">
+            <td>int32</td>
+            <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="int64">
+            <td>int64</td>
+            <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="uint32">
+            <td>uint32</td>
+            <td>Uses variable-length encoding.</td>
+            <td>uint32</td>
+            <td>int</td>
+            <td>int/long</td>
+            <td>uint32</td>
+            <td>uint</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="uint64">
+            <td>uint64</td>
+            <td>Uses variable-length encoding.</td>
+            <td>uint64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>uint64</td>
+            <td>ulong</td>
+            <td>integer/string</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sint32">
+            <td>sint32</td>
+            <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sint64">
+            <td>sint64</td>
+            <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="fixed32">
+            <td>fixed32</td>
+            <td>Always four bytes. More efficient than uint32 if values are often greater than 2^28.</td>
+            <td>uint32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>uint32</td>
+            <td>uint</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="fixed64">
+            <td>fixed64</td>
+            <td>Always eight bytes. More efficient than uint64 if values are often greater than 2^56.</td>
+            <td>uint64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>uint64</td>
+            <td>ulong</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="sfixed32">
+            <td>sfixed32</td>
+            <td>Always four bytes.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sfixed64">
+            <td>sfixed64</td>
+            <td>Always eight bytes.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="bool">
+            <td>bool</td>
+            <td></td>
+            <td>bool</td>
+            <td>boolean</td>
+            <td>boolean</td>
+            <td>bool</td>
+            <td>bool</td>
+            <td>boolean</td>
+            <td>TrueClass/FalseClass</td>
+          </tr>
+        
+          <tr id="string">
+            <td>string</td>
+            <td>A string must always contain UTF-8 encoded or 7-bit ASCII text.</td>
+            <td>string</td>
+            <td>String</td>
+            <td>str/unicode</td>
+            <td>string</td>
+            <td>string</td>
+            <td>string</td>
+            <td>String (UTF-8)</td>
+          </tr>
+        
+          <tr id="bytes">
+            <td>bytes</td>
+            <td>May contain any arbitrary sequence of bytes.</td>
+            <td>string</td>
+            <td>ByteString</td>
+            <td>str</td>
+            <td>[]byte</td>
+            <td>ByteString</td>
+            <td>string</td>
+            <td>String (ASCII-8BIT)</td>
+          </tr>
+        
+      </tbody>
+    </table>
+  </body>
+</html>
+

@@ -167,3 +167,15 @@ service IPService {
     rpc GetStaticIPAddress (GetStaticIPAddressRequest) returns (GetStaticIPAddressResponse);
     rpc GetStaticIPAddresses (GetStaticIPAddressesRequest) returns (GetStaticIPAddressesResponse);
 };
+
+message GetBranchToTrunkENIMappingRequest {
+}
+
+message GetBranchToTrunkENIMappingResponse {
+    // This map is branchENI => trunkENI
+    map<string, string> branchENIMapping = 1;
+}
+
+service TitusAgentVPCInformationService {
+    rpc ListBranchToTrunkENIMapping (GetBranchToTrunkENIMappingRequest) returns (GetBranchToTrunkENIMappingResponse);
+}

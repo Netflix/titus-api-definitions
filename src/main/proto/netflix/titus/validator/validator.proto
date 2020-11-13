@@ -31,6 +31,10 @@ service ValidationService {
     // Validates image.
     rpc ValidateImage (ImageValidationRequest) returns (ImageValidationResponse) {
     }
+
+    // Validates EBS volume.
+    rpc ValidateEbsVolume (EbsVolumeValidationRequest) returns (EbsVolumeValidationResponse) {
+    }
 }
 
 // Information about cached data used in the validation process. Cache is also used for negative results so
@@ -128,6 +132,30 @@ message IamRoleValidationResponse {
 
         // ARN associated with the give IAM role.
         string iamRoleArn = 2;
+    }
+
+    oneof Result {
+        Success success = 1;
+
+        ValidationFailures failures = 2;
+    }
+
+    CacheMetadata cacheMetadata = 3;
+}
+
+message EbsVolumeValidationRequest {
+    // EBS volume ID
+    string ebsVolumeId = 1;
+}
+
+message EbsVolumeValidationResponse {
+
+    message Success {
+        // The volume's availability zone
+        string ebsVolumeAvailabilityZone = 1;
+
+        // The volume's capacity in GiBs
+        uint32 ebsVolumeCapacityGB = 2;
     }
 
     oneof Result {

@@ -35,6 +35,10 @@ service ValidationService {
     // Validates EBS volume.
     rpc ValidateEbsVolume (EbsVolumeValidationRequest) returns (EbsVolumeValidationResponse) {
     }
+
+    // Validate Subnets and SecurityGroups for a given AccountId.
+    rpc ValidateNetworkParameters (NetworkParametersValidationRequest) returns (NetworkParametersValidationResponse) {
+    }
 }
 
 // Information about cached data used in the validation process. Cache is also used for negative results so
@@ -216,6 +220,31 @@ message ImageValidationResponse {
     message Success {
         // If validation was successful, a resolved digest for the image.
         string digest = 1;
+    }
+
+    oneof Result {
+        Success success = 1;
+
+        ValidationFailures failures = 2;
+    }
+
+    CacheMetadata cacheMetadata = 3;
+}
+
+message NetworkParametersValidationRequest {
+
+    // Account Id network address allocation is being requested in.
+    string accountId = 1;
+
+    // Subnets for network address allocation.
+    repeated string subnets = 2;
+
+    // SecurityGroups to check for existence.
+    repeated string securityGroups = 3;
+}
+
+message NetworkParametersValidationResponse {
+    message Success {
     }
 
     oneof Result {

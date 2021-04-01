@@ -48,8 +48,41 @@ message ValidationRequest {
 message ValidationResponse {
 };
 
+message ValidationFailures {
+    repeated ValidationFailure failures = 1;
+}
+
+message ValidationFailure {
+    // Common error codes.
+    string errorCode = 1;
+
+    // Failure details.
+    string errorMessage = 2;
+}
+
+message ParametersValidationRequest {
+
+    string accountId = 1;
+
+    repeated string subnets = 2;
+
+    repeated string securityGroups = 3;
+};
+
+message ParametersValidationResponse {
+    message Success {
+    };
+
+    oneof Result {
+        Success success = 1;
+
+        ValidationFailures failures = 2;
+    }
+};
+
 service ValidatorIPService {
     rpc ValidateAllocation (ValidationRequest) returns (ValidationResponse);
+    rpc ValidateAllocationParameters (ParametersValidationRequest) returns (ParametersValidationResponse);
 }
 
 // V2 API

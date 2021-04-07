@@ -48,18 +48,6 @@ message ValidationRequest {
 message ValidationResponse {
 };
 
-message ValidationFailures {
-    repeated ValidationFailure failures = 1;
-}
-
-message ValidationFailure {
-    // Common error codes.
-    string errorCode = 1;
-
-    // Failure details.
-    string errorMessage = 2;
-}
-
 message ParametersValidationRequest {
 
     string accountId = 1;
@@ -70,14 +58,36 @@ message ParametersValidationRequest {
 };
 
 message ParametersValidationResponse {
-    message Success {
+
+    enum ValidationErrorCode {
+        Unknown = 0;
+        SubnetNotFound = 1;
+        SecurityGroupNotFound = 2;
+        AccountIdUnsupported = 3;
+        SubnetDoesNotMatchAccountId = 4;
+        SubnetsTooDiverse = 5;
+    }
+
+    message ValidationFailure {
+        // Validation error code.
+        oneof errorCodeOneOf {
+            ValidationErrorCode errorCode = 1;
+        }
+
+        // Failure details.
+        string errorMessage = 2;
     };
 
-    oneof Result {
-        Success success = 1;
+    message ValidationFailures {
 
-        ValidationFailures failures = 2;
+        // One or more validation errors
+        repeated ValidationFailure failure = 1;
+
     }
+
+    // If the following structure does not contain any failure elements, it implies a validation success
+    ValidationFailures failures = 1;
+
 };
 
 service ValidatorIPService {

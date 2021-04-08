@@ -253,5 +253,8 @@ message NetworkParametersValidationResponse {
         ValidationFailures failures = 2;
     }
 
+    // Information about cached data used in the validation process. Some duplicate validation requests
+    // may not be evaluated immediately and a cached response may be served details of which will be
+    // populated in this metadata field.
     CacheMetadata cacheMetadata = 3;
 }

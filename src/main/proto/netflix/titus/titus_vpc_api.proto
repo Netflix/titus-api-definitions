@@ -59,35 +59,38 @@ message ParametersValidationRequest {
 
 message ParametersValidationResponse {
 
-    enum ValidationErrorCode {
-        Unknown = 0;
-        SubnetNotFound = 1;
-        SecurityGroupNotFound = 2;
-        AccountIdUnsupported = 3;
-        SubnetDoesNotMatchAccountId = 4;
-        SubnetsTooDiverse = 5;
-    }
-
-    message ValidationFailure {
-        // Validation error code.
-        oneof errorCodeOneOf {
-            ValidationErrorCode errorCode = 1;
-        }
-
-        // Failure details.
-        string errorMessage = 2;
+    message UnknownFailure {
+        string failure = 1;
+    };
+    message SubnetNotFound {
+        string subnetId = 1;
+    };
+    message SecurityGroupNotFound {
+        string securityGroup = 1;
+    };
+    message AccountIdUnsupported {
+        string accountId = 1;
+    };
+    message SubnetDoesNotMatchAccountId {
+        string subnetId = 1;
+    };
+    message SubnetsTooDiverse {
+        string subnetId = 1;
     };
 
-    message ValidationFailures {
-
-        // One or more validation errors
-        repeated ValidationFailure failure = 1;
-
-    }
+    message ValidationFailure {
+        oneof failureOneOf {
+            UnknownFailure unknownFailure = 1;
+            SubnetNotFound subnetNotFound = 2;
+            SecurityGroupNotFound securityGroupNotFound = 3;
+            AccountIdUnsupported accountIdUnsupported = 4;
+            SubnetDoesNotMatchAccountId subnetDoesNotMatchAccountId = 5;
+            SubnetsTooDiverse subnetsTooDiverse = 6;
+        }
+    };
 
     // If the following structure does not contain any failure elements, it implies a validation success
-    ValidationFailures failures = 1;
-
+    repeated ValidationFailure validationFailures = 1;
 };
 
 service ValidatorIPService {
@@ -99,7 +102,7 @@ service ValidatorIPService {
 message AllocateStaticIPAddressRequest {
     /// Required (The subnet where to allocate the address)
     string subnetId = 1;
-    /// Optional. If specified, and an ID with that already exists, it will return an error. 
+    /// Optional. If specified, and an ID with that already exists, it will return an error.
     /// This allows for idempotent requests.
     string uuid = 2;
     /// Optional. Pool is an indexed column that can be used to select static IPs by.

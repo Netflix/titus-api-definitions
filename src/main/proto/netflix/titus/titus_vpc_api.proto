@@ -48,8 +48,54 @@ message ValidationRequest {
 message ValidationResponse {
 };
 
+message ParametersValidationRequest {
+
+    string accountId = 1;
+
+    repeated string subnets = 2;
+
+    repeated string securityGroups = 3;
+};
+
+message ParametersValidationResponse {
+
+    message UnknownFailure {
+        string failure = 1;
+    };
+    message SubnetNotFound {
+        string subnetId = 1;
+    };
+    message SecurityGroupNotFound {
+        string securityGroup = 1;
+    };
+    message AccountIdUnsupported {
+        string accountId = 1;
+    };
+    message SubnetDoesNotMatchAccountId {
+        string subnetId = 1;
+    };
+    message SubnetsTooDiverse {
+        string subnetId = 1;
+    };
+
+    message ValidationFailure {
+        oneof failureOneOf {
+            UnknownFailure unknownFailure = 1;
+            SubnetNotFound subnetNotFound = 2;
+            SecurityGroupNotFound securityGroupNotFound = 3;
+            AccountIdUnsupported accountIdUnsupported = 4;
+            SubnetDoesNotMatchAccountId subnetDoesNotMatchAccountId = 5;
+            SubnetsTooDiverse subnetsTooDiverse = 6;
+        }
+    };
+
+    // If the following structure does not contain any failure elements, it implies a validation success
+    repeated ValidationFailure validationFailures = 1;
+};
+
 service ValidatorIPService {
     rpc ValidateAllocation (ValidationRequest) returns (ValidationResponse);
+    rpc ValidateAllocationParameters (ParametersValidationRequest) returns (ParametersValidationResponse);
 }
 
 // V2 API

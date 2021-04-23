@@ -383,6 +383,10 @@
                 </li>
               
                 <li>
+                  <a href="#com.netflix.titus.NetworkConfiguration"><span class="badge">M</span>NetworkConfiguration</a>
+                </li>
+              
+                <li>
                   <a href="#com.netflix.titus.ObserveJobsQuery"><span class="badge">M</span>ObserveJobsQuery</a>
                 </li>
               
@@ -473,6 +477,10 @@
               
                 <li>
                   <a href="#com.netflix.titus.JobStatus.JobState"><span class="badge">E</span>JobStatus.JobState</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.NetworkConfiguration.NetworkMode"><span class="badge">E</span>NetworkConfiguration.NetworkMode</a>
                 </li>
               
                 <li>
@@ -1426,6 +1434,13 @@ own unique identifier for a job (see JobGroupInfo for more information). </p></t
                   <td><p>(Optional) Job disruption budget. If not defined, a job type specific (batch or service) default is set. </p></td>
                 </tr>
               
+                <tr>
+                  <td>networkConfiguration</td>
+                  <td><a href="#com.netflix.titus.NetworkConfiguration">NetworkConfiguration</a></td>
+                  <td></td>
+                  <td><p>(Optional) Networking configuration. If not defined, sane defaults are provided by the backend. </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -2309,6 +2324,30 @@ For example: tasks.taskId rule will result in including just this value when enc
 
         
       
+        <h3 id="com.netflix.titus.NetworkConfiguration">NetworkConfiguration</h3>
+        <p>Network settings for tasks launched by this job</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>networkMode</td>
+                  <td><a href="#com.netflix.titus.NetworkConfiguration.NetworkMode">NetworkConfiguration.NetworkMode</a></td>
+                  <td></td>
+                  <td><p>Sets the overall network mode for all containers for a Task launched by this job </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="com.netflix.titus.ObserveJobsQuery">ObserveJobsQuery</h3>
         <p>The filtering criteria is applied to both Job and Task events. If a criteria applies to task fields, the stream will</p><p>include both task events matching it, and events for jobs with tasks that match it. The opposite is also true, e.g.:</p><p>a criteria on applicationName (a job field) will include both job events matching it, and events for tasks belonging</p><p>to a job that matches it.</p><p>---------------------------------------------------</p><p>Filtering criteria</p>
 
@@ -3177,6 +3216,49 @@ skipSystemFailures - a filter for finished tasks only (does not affect non-finis
                 <td>Finished</td>
                 <td>2</td>
                 <td><p>A job has no running tasks, and new tasks cannot be created. Job policy update operations are not allowed.</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="com.netflix.titus.NetworkConfiguration.NetworkMode">NetworkConfiguration.NetworkMode</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>UnknownNetworkMode</td>
+                <td>0</td>
+                <td><p>Unknown, the backend will have to chose a sane default base on other inputs</p></td>
+              </tr>
+            
+              <tr>
+                <td>Ipv4Only</td>
+                <td>1</td>
+                <td><p>IPv4 only means the task will not get an ipv6 address, and will only get a unique v4.</p></td>
+              </tr>
+            
+              <tr>
+                <td>Ipv6AndIpv4</td>
+                <td>2</td>
+                <td><p>IPv6 And IPv4 (True Dual Stack), each task gets a unique v6 and v4 address.</p></td>
+              </tr>
+            
+              <tr>
+                <td>Ipv6AndIpv4Fallback</td>
+                <td>3</td>
+                <td><p>IPv6 and IPv4 Fallback uses the Titus IPv4 &#34;transition mechanism&#34; to give v4
+connectivity transparently without providing every container their own IPv4 address.
+From a spinnaker/task perspective, only an IPv6 address is allocated to the task.</p></td>
+              </tr>
+            
+              <tr>
+                <td>Ipv6Only</td>
+                <td>4</td>
+                <td><p>IPv6 Only is for true believers, no IPv4 connectivity is provided.</p></td>
               </tr>
             
           </tbody>

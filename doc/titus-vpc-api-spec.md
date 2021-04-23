@@ -24,6 +24,15 @@
     - [GetStaticIPAddressResponse](#com.netflix.titus.GetStaticIPAddressResponse)
     - [GetStaticIPAddressesRequest](#com.netflix.titus.GetStaticIPAddressesRequest)
     - [GetStaticIPAddressesResponse](#com.netflix.titus.GetStaticIPAddressesResponse)
+    - [ParametersValidationRequest](#com.netflix.titus.ParametersValidationRequest)
+    - [ParametersValidationResponse](#com.netflix.titus.ParametersValidationResponse)
+    - [ParametersValidationResponse.AccountIdUnsupported](#com.netflix.titus.ParametersValidationResponse.AccountIdUnsupported)
+    - [ParametersValidationResponse.SecurityGroupNotFound](#com.netflix.titus.ParametersValidationResponse.SecurityGroupNotFound)
+    - [ParametersValidationResponse.SubnetDoesNotMatchAccountId](#com.netflix.titus.ParametersValidationResponse.SubnetDoesNotMatchAccountId)
+    - [ParametersValidationResponse.SubnetNotFound](#com.netflix.titus.ParametersValidationResponse.SubnetNotFound)
+    - [ParametersValidationResponse.SubnetsTooDiverse](#com.netflix.titus.ParametersValidationResponse.SubnetsTooDiverse)
+    - [ParametersValidationResponse.UnknownFailure](#com.netflix.titus.ParametersValidationResponse.UnknownFailure)
+    - [ParametersValidationResponse.ValidationFailure](#com.netflix.titus.ParametersValidationResponse.ValidationFailure)
     - [SetPoolRequest](#com.netflix.titus.SetPoolRequest)
     - [SetPoolResponse](#com.netflix.titus.SetPoolResponse)
     - [StaticIPAddress](#com.netflix.titus.StaticIPAddress)
@@ -358,6 +367,148 @@ This is really only meant to be used by (the) control plane(s)
 
 
 
+<a name="com.netflix.titus.ParametersValidationRequest"></a>
+
+### ParametersValidationRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| accountId | [string](#string) |  |  |
+| subnets | [string](#string) | repeated |  |
+| securityGroups | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="com.netflix.titus.ParametersValidationResponse"></a>
+
+### ParametersValidationResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| validationFailures | [ParametersValidationResponse.ValidationFailure](#com.netflix.titus.ParametersValidationResponse.ValidationFailure) | repeated | If the following structure does not contain any failure elements, it implies a validation success |
+
+
+
+
+
+
+<a name="com.netflix.titus.ParametersValidationResponse.AccountIdUnsupported"></a>
+
+### ParametersValidationResponse.AccountIdUnsupported
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| accountId | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="com.netflix.titus.ParametersValidationResponse.SecurityGroupNotFound"></a>
+
+### ParametersValidationResponse.SecurityGroupNotFound
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| securityGroup | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="com.netflix.titus.ParametersValidationResponse.SubnetDoesNotMatchAccountId"></a>
+
+### ParametersValidationResponse.SubnetDoesNotMatchAccountId
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| subnetId | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="com.netflix.titus.ParametersValidationResponse.SubnetNotFound"></a>
+
+### ParametersValidationResponse.SubnetNotFound
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| subnetId | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="com.netflix.titus.ParametersValidationResponse.SubnetsTooDiverse"></a>
+
+### ParametersValidationResponse.SubnetsTooDiverse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| subnetId | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="com.netflix.titus.ParametersValidationResponse.UnknownFailure"></a>
+
+### ParametersValidationResponse.UnknownFailure
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| failure | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="com.netflix.titus.ParametersValidationResponse.ValidationFailure"></a>
+
+### ParametersValidationResponse.ValidationFailure
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| unknownFailure | [ParametersValidationResponse.UnknownFailure](#com.netflix.titus.ParametersValidationResponse.UnknownFailure) |  |  |
+| subnetNotFound | [ParametersValidationResponse.SubnetNotFound](#com.netflix.titus.ParametersValidationResponse.SubnetNotFound) |  |  |
+| securityGroupNotFound | [ParametersValidationResponse.SecurityGroupNotFound](#com.netflix.titus.ParametersValidationResponse.SecurityGroupNotFound) |  |  |
+| accountIdUnsupported | [ParametersValidationResponse.AccountIdUnsupported](#com.netflix.titus.ParametersValidationResponse.AccountIdUnsupported) |  |  |
+| subnetDoesNotMatchAccountId | [ParametersValidationResponse.SubnetDoesNotMatchAccountId](#com.netflix.titus.ParametersValidationResponse.SubnetDoesNotMatchAccountId) |  |  |
+| subnetsTooDiverse | [ParametersValidationResponse.SubnetsTooDiverse](#com.netflix.titus.ParametersValidationResponse.SubnetsTooDiverse) |  |  |
+
+
+
+
+
+
 <a name="com.netflix.titus.SetPoolRequest"></a>
 
 ### SetPoolRequest
@@ -536,6 +687,7 @@ If the tag is unset, then do not set it
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | ValidateAllocation | [ValidationRequest](#com.netflix.titus.ValidationRequest) | [ValidationResponse](#com.netflix.titus.ValidationResponse) |  |
+| ValidateAllocationParameters | [ParametersValidationRequest](#com.netflix.titus.ParametersValidationRequest) | [ParametersValidationResponse](#com.netflix.titus.ParametersValidationResponse) |  |
 
  
 

@@ -1,0 +1,10 @@
+{
+    "protoc": {
+        "options": [
+            "--proto_path=${workspaceRoot}/src/main/proto",
+            "--proto_path=/usr/local/include",
+            "--proto_path=.",
+            "--proto_path=${env.GOPATH}/src"
+        ]
+    }
+}

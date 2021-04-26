@@ -192,7 +192,6 @@ message EntrypointCommandValidationResponse {
         ValidationFailures failures = 2;
     }
 
-    CacheMetadata cacheMetadata = 3;
 }
 
 message S3BucketAccessValidationRequest {

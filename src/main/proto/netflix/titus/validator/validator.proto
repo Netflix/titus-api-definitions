@@ -35,6 +35,10 @@ service ValidationService {
     // Validates EBS volume.
     rpc ValidateEbsVolume (EbsVolumeValidationRequest) returns (EbsVolumeValidationResponse) {
     }
+
+    // Validates Entrypoint and Command
+    rpc ValidateEntrypointCommand (EntrypointCommandValidationRequest) returns (EntrypointCommandValidationResponse) {
+    }
 }
 
 // Information about cached data used in the validation process. Cache is also used for negative results so
@@ -156,6 +160,30 @@ message EbsVolumeValidationResponse {
 
         // The volume's capacity in GiBs
         uint32 ebsVolumeCapacityGB = 2;
+    }
+
+    oneof Result {
+        Success success = 1;
+
+        ValidationFailures failures = 2;
+    }
+
+    CacheMetadata cacheMetadata = 3;
+}
+
+message EntrypointCommandValidationRequest {
+    repeated string entryPoint = 1;
+    repeated string command = 2;
+}
+
+message EntrypointCommandValidationResponse {
+
+    message Success {
+        // Sanitized entrypoint
+        repeated string entryPoint = 1;
+
+        // Sanitized command
+        repeated string command = 2;
     }
 
     oneof Result {

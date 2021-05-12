@@ -14,7 +14,7 @@ option java_multiple_files = true;
 option java_package = "com.netflix.titus.grpc.protogen";
 option java_outer_classname = "JobProto";
 
-option go_package = "titus";
+option go_package = "./netflix/titus";
 
 // ----------------------------------------------------------------------------
 // Job specification core data structures

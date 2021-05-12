@@ -8,6 +8,7 @@ package com.netflix.titus;
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
+import "netflix/titus/titus_base.proto";
 import "netflix/titus/titus_job_api.proto";
 
 option java_multiple_files = true;
@@ -17,25 +18,30 @@ option java_outer_classname = "JobActivityHistoryProto";
 option go_package = "./netflix/titus";
 
 message JobActivityQuery {
-  /// (Required) Requested page number/size.
-  Page page = 1;
-
+    string jobId = 1;
 }
+
 
 message JobActivityRecord {
-  string activityId = 1;
-  string jobId = 2;
-  uint64 timestamp = 3;
-  string reasonMessage = 4;
-  string details = 5;
-  string callerId = 6;
+    string activityId = 1;
+    string jobId = 2;
+    uint64 timestamp = 3;
+    string reasonMessage = 4;
+    string details = 5;
+    string callerId = 6;
 }
+
+message ActivityQueryResult {
+    repeated JobActivityRecord items = 1;
+    Pagination pagination = 2;
+}
+
 service JobActivityHistoryService {
-  // Return a collection of activity records for a given job
-  rpc ViewScalingActivities(JobId) returns (JobActivityQueryResult) {
+    // Return a collection of activity records for a given job
+    rpc ViewScalingActivities(JobId) returns (ActivityQueryResult) {
   }
 
-  // Return a collection of activity records for a given task
-  rpc ViewTaskActivity(TaskId) returns (TaskActivityQueryResult) {
-  }
+    // Return a collection of activity records for a given task
+    rpc ViewTaskActivity(TaskId) returns (ActivityQueryResult) {
+    }
 }

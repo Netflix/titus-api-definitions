@@ -29,19 +29,15 @@ message JobActivityRecord {
     string reasonMessage = 4;
     string details = 5;
     string callerId = 6;
+    string cause = 7;
 }
 
 message ActivityQueryResult {
     repeated JobActivityRecord items = 1;
-    Pagination pagination = 2;
 }
 
 service JobActivityHistoryService {
     // Return a collection of activity records for a given job
     rpc ViewScalingActivities(JobId) returns (ActivityQueryResult) {
-  }
-
-    // Return a collection of activity records for a given task
-    rpc ViewTaskActivity(TaskId) returns (ActivityQueryResult) {
     }
 }

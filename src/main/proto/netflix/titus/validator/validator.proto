@@ -91,22 +91,13 @@ message ValidationFailures {
 }
 
 message SecurityGroupValidationRequest {
-    // A security group value can be:
-    // * a security group id (for example sg-12345678)
-    // * a security group ARN
-    // * a security group name/alias (for example 'titus-sg')
-    // Use securityGroups instead
-    string securityGroup = 1 [deprecated = true];
+    // Security group IDs (sg-[0-9a-f]+), for example: sg-12345678
+    repeated string securityGroups = 1;
 
-    // A subnet id associated with the given security group. If not set, a default subnet for the given account is used.
-    // Use subnetIds instead
-    string subnetId = 2 [deprecated = true];
+    // subnet IDs associated with the given security groups and account ID.
+    repeated string subnetIds = 2;
 
-    repeated string securityGroups = 3;
-
-    repeated string subnetIds = 4;
-
-    string accountId = 5;
+    string accountId = 3;
 }
 
 message SecurityGroupValidationResponse {

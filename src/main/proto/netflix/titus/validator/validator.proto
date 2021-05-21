@@ -92,12 +92,12 @@ message ValidationFailures {
 
 message SecurityGroupValidationRequest {
     // Security group IDs (sg-[0-9a-f]+), for example: sg-12345678
-    repeated string securityGroups = 1;
+    repeated string securityGroups = 3;
 
     // subnet IDs associated with the given security groups and account ID.
-    repeated string subnetIds = 2;
+    repeated string subnetIds = 4;
 
-    string accountId = 3;
+    string accountId = 5;
 }
 
 message SecurityGroupValidationResponse {

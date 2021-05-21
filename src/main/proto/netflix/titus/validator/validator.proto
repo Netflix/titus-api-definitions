@@ -95,10 +95,18 @@ message SecurityGroupValidationRequest {
     // * a security group id (for example sg-12345678)
     // * a security group ARN
     // * a security group name/alias (for example 'titus-sg')
-    string securityGroup = 1;
+    // Use securityGroups instead
+    string securityGroup = 1 [deprecated = true];
 
     // A subnet id associated with the given security group. If not set, a default subnet for the given account is used.
-    string subnetId = 2;
+    // Use subnetIds instead
+    string subnetId = 2 [deprecated = true];
+
+    repeated string securityGroups = 3;
+
+    repeated string subnetIds = 4;
+
+    string accountId = 5;
 }
 
 message SecurityGroupValidationResponse {

@@ -11,10 +11,10 @@ elif [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" != "" ]; then
   echo -e 'Build Branch for Release => Branch ['$TRAVIS_BRANCH']  Tag ['$TRAVIS_TAG']'
   case "$TRAVIS_TAG" in
   *-rc\.*)
-    ./gradlew -Prelease.travisci=true -Prelease.useLastTag=true -PbintrayUser="${bintrayUser}" -PbintrayKey="${bintrayKey}" -PsonatypeUsername="${sonatypeUsername}" -PsonatypePassword="${sonatypePassword}" candidate --stacktrace
+    ./gradlew -Prelease.travisci=true -Prelease.useLastTag=true -PnetflixOssUsername="${netflixOssRepoUsername:-}" -PnetflixOssPassword="${netflixOssRepoPassword:-}" -PsonatypeUsername="${sonatypeUsername:-}" -PsonatypePassword="${sonatypePassword:-}" -PsigningKey="${sonatypeUsername:-}" -PsigningPassword="${sonatypePassword:-}" candidate --stacktrace
     ;;
   *)
-    ./gradlew -Prelease.travisci=true -Prelease.useLastTag=true -PbintrayUser="${bintrayUser}" -PbintrayKey="${bintrayKey}" -PsonatypeUsername="${sonatypeUsername}" -PsonatypePassword="${sonatypePassword}" final --stacktrace
+    ./gradlew -Prelease.travisci=true -Prelease.useLastTag=true -PnetflixOssUsername="${netflixOssRepoUsername:-}" -PnetflixOssPassword="${netflixOssRepoPassword:-}" -PsonatypeUsername="${sonatypeUsername:-}" -PsonatypePassword="${sonatypePassword:-}" -PsigningKey="${sonatypeUsername:-}" -PsigningPassword="${sonatypePassword:-}" final --stacktrace
     ;;
   esac
 else

@@ -99,6 +99,7 @@ message ActivityQueryResult {
     repeated ActivityRecord items = 1;
 }
 
+/// Alpha version, backward compatibility not guaranteed
 service JobActivityHistoryService {
     // Return a collection of activity records for a given job
     rpc ViewScalingActivities(JobId) returns (ActivityQueryResult) {

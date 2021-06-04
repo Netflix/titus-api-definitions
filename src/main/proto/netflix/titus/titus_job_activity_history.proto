@@ -17,6 +17,10 @@ option java_outer_classname = "JobActivityHistoryProto";
 
 option go_package = "./netflix/titus";
 
+/// This is an experimental API for JobActivityHistory service.
+//  It is currently in alpha testing phase.
+// Backward compatibility is NOT guaranteed
+
 message JobActivityQuery {
     string jobId = 1;
 }

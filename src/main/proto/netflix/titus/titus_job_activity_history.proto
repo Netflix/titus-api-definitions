@@ -54,24 +54,45 @@ message ActivityRecord {
         string taskState = 2;
     }
 
+    message Capacity {
+        /// Minimum number of tasks to run (min >= 0)
+        uint32 min = 1;
+
+        /// Maximum number of tasks that can be run (max >= desired)
+        uint32 max = 2;
+
+        // Desired number of tasks to run (min <= desired <= max)
+        uint32 desired = 3;
+    }
+
     /// job id
     string jobId = 1;
+
     /// job state
     string jobState = 2;
+
     /// time when the state transition occurred
     uint64 timestamp = 3;
+
     /// The first item in the list is the original caller, followed by a sequence of intermediaries via which the
     // original call was relayed.
     repeated Caller callers = 4;
+
     /// call reason
     string callReason = 5;
+
     /// (Optional) An identifier of an event that caused a transition to this state. Each job manager can introduce its own
     //  set of reason codes. As of now, there are no common reason codes defined for jobs.
     string reasonCode = 6;
+
     /// (Optional) Textual description accompanying the 'reasonCode'.
     string reasonMessage = 7;
+
+    /// Capacity information
+    Capacity capacity = 8;
+
     /// (Optional) Task info
-    TaskInfo taskInfo = 8;
+    TaskInfo taskInfo = 9;
 }
 
 message ActivityQueryResult {

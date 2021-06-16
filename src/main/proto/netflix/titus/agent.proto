@@ -3,6 +3,7 @@ syntax = "proto2";
 package messages;
 
 import "netflix/titus/titus_base.proto";
+import "google/protobuf/timestamp.proto";
 
 option java_package = "io.titanframework.messages";
 option java_outer_classname = "TitanProtos";
@@ -321,6 +322,29 @@ message TaskIdentity {
     optional string ipv6Address = 5;
 }
 
+// For the identity client to query the metadata server to confirm the
+// currently running task's identity based on the whole pod
+message TaskPodIdentity {
+    // (Required) Current state of the task 
+    required messages.TaskInfo taskInfo = 1;
+
+    // (Required) Pod details in bytes!
+    // > For the same reason, we do not recommend embedding these proto objects within your own proto definitions.
+    // > It is better to store Kubernetes objects as byte arrays, in the wire format, which is self-describing.
+    // > This permits you to use either JSON or binary (proto) wire formats without code changes.
+    // > It will be difficult for you to operate on both Custom Resources and built-in types otherwise.
+    required bytes pod = 2;
+
+    // (Required) Timestamp, in Unix epoch seconds, when request was made.
+    required google.protobuf.Timestamp requestTimestamp = 3;
+
+    // (Optional) IP address of container
+    optional string ipv4Address = 4;
+
+    // (Optional) IPv6 address of container
+    optional string ipv6Address = 5;
+}
+
 enum SignatureAlgorithm {
     SHA256withRSAandMGF1 = 0;
     SHA384withRSAandMGF1 = 1;
@@ -370,4 +394,12 @@ message TaskIdentityStringDocument {
 
     // (Required) Signature produced by signing identity bytes.
     optional CertificateStringSignature signature = 2;
+}
+
+message TaskPodIdentityDocument {
+    // (Required) Serialized form of a TaskIdentity protobuf.
+    optional bytes podIdentity = 1;
+
+    // (Required) Signature produced by signing identity bytes.
+    optional CertificateSignature signature = 2;
 }

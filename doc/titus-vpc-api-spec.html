@@ -259,6 +259,42 @@
                 </li>
               
                 <li>
+                  <a href="#com.netflix.titus.ParametersValidationRequest"><span class="badge">M</span>ParametersValidationRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.ParametersValidationResponse"><span class="badge">M</span>ParametersValidationResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.ParametersValidationResponse.AccountIdUnsupported"><span class="badge">M</span>ParametersValidationResponse.AccountIdUnsupported</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.ParametersValidationResponse.SecurityGroupNotFound"><span class="badge">M</span>ParametersValidationResponse.SecurityGroupNotFound</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.ParametersValidationResponse.SubnetDoesNotMatchAccountId"><span class="badge">M</span>ParametersValidationResponse.SubnetDoesNotMatchAccountId</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.ParametersValidationResponse.SubnetNotFound"><span class="badge">M</span>ParametersValidationResponse.SubnetNotFound</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.ParametersValidationResponse.SubnetsTooDiverse"><span class="badge">M</span>ParametersValidationResponse.SubnetsTooDiverse</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.ParametersValidationResponse.UnknownFailure"><span class="badge">M</span>ParametersValidationResponse.UnknownFailure</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.ParametersValidationResponse.ValidationFailure"><span class="badge">M</span>ParametersValidationResponse.ValidationFailure</a>
+                </li>
+              
+                <li>
                   <a href="#com.netflix.titus.SetPoolRequest"><span class="badge">M</span>SetPoolRequest</a>
                 </li>
               
@@ -912,6 +948,271 @@
 
         
       
+        <h3 id="com.netflix.titus.ParametersValidationRequest">ParametersValidationRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>accountId</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>subnets</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>securityGroups</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.ParametersValidationResponse">ParametersValidationResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>validationFailures</td>
+                  <td><a href="#com.netflix.titus.ParametersValidationResponse.ValidationFailure">ParametersValidationResponse.ValidationFailure</a></td>
+                  <td>repeated</td>
+                  <td><p>If the following structure does not contain any failure elements, it implies a validation success </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.ParametersValidationResponse.AccountIdUnsupported">ParametersValidationResponse.AccountIdUnsupported</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>accountId</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.ParametersValidationResponse.SecurityGroupNotFound">ParametersValidationResponse.SecurityGroupNotFound</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>securityGroup</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.ParametersValidationResponse.SubnetDoesNotMatchAccountId">ParametersValidationResponse.SubnetDoesNotMatchAccountId</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>subnetId</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.ParametersValidationResponse.SubnetNotFound">ParametersValidationResponse.SubnetNotFound</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>subnetId</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.ParametersValidationResponse.SubnetsTooDiverse">ParametersValidationResponse.SubnetsTooDiverse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>subnetId</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.ParametersValidationResponse.UnknownFailure">ParametersValidationResponse.UnknownFailure</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>failure</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.ParametersValidationResponse.ValidationFailure">ParametersValidationResponse.ValidationFailure</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>unknownFailure</td>
+                  <td><a href="#com.netflix.titus.ParametersValidationResponse.UnknownFailure">ParametersValidationResponse.UnknownFailure</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>subnetNotFound</td>
+                  <td><a href="#com.netflix.titus.ParametersValidationResponse.SubnetNotFound">ParametersValidationResponse.SubnetNotFound</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>securityGroupNotFound</td>
+                  <td><a href="#com.netflix.titus.ParametersValidationResponse.SecurityGroupNotFound">ParametersValidationResponse.SecurityGroupNotFound</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>accountIdUnsupported</td>
+                  <td><a href="#com.netflix.titus.ParametersValidationResponse.AccountIdUnsupported">ParametersValidationResponse.AccountIdUnsupported</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>subnetDoesNotMatchAccountId</td>
+                  <td><a href="#com.netflix.titus.ParametersValidationResponse.SubnetDoesNotMatchAccountId">ParametersValidationResponse.SubnetDoesNotMatchAccountId</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>subnetsTooDiverse</td>
+                  <td><a href="#com.netflix.titus.ParametersValidationResponse.SubnetsTooDiverse">ParametersValidationResponse.SubnetsTooDiverse</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="com.netflix.titus.SetPoolRequest">SetPoolRequest</h3>
         <p></p>
 
@@ -1269,6 +1570,13 @@
                 <td>ValidateAllocation</td>
                 <td><a href="#com.netflix.titus.ValidationRequest">ValidationRequest</a></td>
                 <td><a href="#com.netflix.titus.ValidationResponse">ValidationResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ValidateAllocationParameters</td>
+                <td><a href="#com.netflix.titus.ParametersValidationRequest">ParametersValidationRequest</a></td>
+                <td><a href="#com.netflix.titus.ParametersValidationResponse">ParametersValidationResponse</a></td>
                 <td><p></p></td>
               </tr>
             

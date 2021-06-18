@@ -71,6 +71,26 @@ message Image {
     string digest = 3;
 }
 
+// Network settings for tasks launched by this job
+message NetworkConfiguration {
+    enum NetworkMode {
+        // Unknown, the backend will have to chose a sane default base on other inputs
+        UnknownNetworkMode = 0;
+        // IPv4 only means the task will not get an ipv6 address, and will only get a unique v4.
+        Ipv4Only = 1;
+        // IPv6 And IPv4 (True Dual Stack), each task gets a unique v6 and v4 address.
+        Ipv6AndIpv4 = 2;
+        // IPv6 and IPv4 Fallback uses the Titus IPv4 "transition mechanism" to give v4
+        // connectivity transparently without providing every container their own IPv4 address.
+        // From a spinnaker/task perspective, only an IPv6 address is allocated to the task.
+        Ipv6AndIpv4Fallback = 3;
+        // IPv6 Only is for true believers, no IPv4 connectivity is provided.
+        Ipv6Only = 4;
+    }
+    // Sets the overall network mode for all containers for a Task launched by this job
+    NetworkMode networkMode = 1;
+}
+
 message ContainerResources {
     /// (Required) Number of CPUs to allocate (must be always > 0, but the actual limit is configurable).
     double cpu = 1;
@@ -391,6 +411,9 @@ message JobDescriptor {
 
     /// (Optional) Job disruption budget. If not defined, a job type specific (batch or service) default is set.
     JobDisruptionBudget disruptionBudget = 10;
+
+    /// (Optional) Networking configuration. If not defined, sane defaults are provided by the backend.
+    NetworkConfiguration networkConfiguration = 11;
 }
 
 /// Composite data structure holding both job state information and the reason of the transition to this state.

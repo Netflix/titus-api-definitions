@@ -55,6 +55,7 @@
     - [MigrationPolicy](#com.netflix.titus.MigrationPolicy)
     - [MigrationPolicy.SelfManaged](#com.netflix.titus.MigrationPolicy.SelfManaged)
     - [MigrationPolicy.SystemDefault](#com.netflix.titus.MigrationPolicy.SystemDefault)
+    - [NetworkConfiguration](#com.netflix.titus.NetworkConfiguration)
     - [ObserveJobsQuery](#com.netflix.titus.ObserveJobsQuery)
     - [ObserveJobsQuery.FilteringCriteriaEntry](#com.netflix.titus.ObserveJobsQuery.FilteringCriteriaEntry)
     - [Owner](#com.netflix.titus.Owner)
@@ -79,6 +80,7 @@
     - [TaskStatus](#com.netflix.titus.TaskStatus)
   
     - [JobStatus.JobState](#com.netflix.titus.JobStatus.JobState)
+    - [NetworkConfiguration.NetworkMode](#com.netflix.titus.NetworkConfiguration.NetworkMode)
     - [TaskStatus.TaskState](#com.netflix.titus.TaskStatus.TaskState)
   
     - [JobManagementService](#com.netflix.titus.JobManagementService)
@@ -497,6 +499,7 @@ Job descriptor contains the full job specification (batch or service) that is us
 | batch | [BatchJobSpec](#com.netflix.titus.BatchJobSpec) |  | Batch job specific descriptor. |
 | service | [ServiceJobSpec](#com.netflix.titus.ServiceJobSpec) |  | Service job specific descriptor. |
 | disruptionBudget | [JobDisruptionBudget](#com.netflix.titus.JobDisruptionBudget) |  | (Optional) Job disruption budget. If not defined, a job type specific (batch or service) default is set. |
+| networkConfiguration | [NetworkConfiguration](#com.netflix.titus.NetworkConfiguration) |  | (Optional) Networking configuration. If not defined, sane defaults are provided by the backend. |
 
 
 
@@ -958,6 +961,21 @@ The system default migration policy.
 
 
 
+<a name="com.netflix.titus.NetworkConfiguration"></a>
+
+### NetworkConfiguration
+Network settings for tasks launched by this job
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| networkMode | [NetworkConfiguration.NetworkMode](#com.netflix.titus.NetworkConfiguration.NetworkMode) |  | Sets the overall network mode for all containers for a Task launched by this job |
+
+
+
+
+
+
 <a name="com.netflix.titus.ObserveJobsQuery"></a>
 
 ### ObserveJobsQuery
@@ -1341,6 +1359,21 @@ State information associated with a job.
 | Accepted | 0 | A job is persisted in Titus and is ready to be scheduled. |
 | KillInitiated | 1 | A job still has running tasks that were requested to be terminated. No more tasks for this job are deployed. Job policy update operations are not allowed. |
 | Finished | 2 | A job has no running tasks, and new tasks cannot be created. Job policy update operations are not allowed. |
+
+
+
+<a name="com.netflix.titus.NetworkConfiguration.NetworkMode"></a>
+
+### NetworkConfiguration.NetworkMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| UnknownNetworkMode | 0 | Unknown, the backend will have to chose a sane default base on other inputs |
+| Ipv4Only | 1 | IPv4 only means the task will not get an ipv6 address, and will only get a unique v4. |
+| Ipv6AndIpv4 | 2 | IPv6 And IPv4 (True Dual Stack), each task gets a unique v6 and v4 address. |
+| Ipv6AndIpv4Fallback | 3 | IPv6 and IPv4 Fallback uses the Titus IPv4 &#34;transition mechanism&#34; to give v4 connectivity transparently without providing every container their own IPv4 address. From a spinnaker/task perspective, only an IPv6 address is allocated to the task. |
+| Ipv6Only | 4 | IPv6 Only is for true believers, no IPv4 connectivity is provided. |
 
 
 

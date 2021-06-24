@@ -16,5 +16,11 @@ titus-v3-doc:
 		--doc_out=markdown,titus-vpc-api-spec.md:doc \
 		-otitus.protobin --include_imports --include_source_info \
 		src/main/proto/netflix/titus/titus_vpc_api.proto
+	protoc -I/usr/local/include -I. \
+		-Isrc/main/proto \
+		--doc_out=html,titus-agent-api-spec.html:doc \
+		--doc_out=markdown,titus-agent-api-spec.md:doc \
+		-otitus.protobin --include_imports --include_source_info \
+		src/main/proto/netflix/titus/agent.proto
 
 .PHONY: titus-v3-doc

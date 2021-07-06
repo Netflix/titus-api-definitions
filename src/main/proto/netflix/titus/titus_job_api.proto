@@ -500,6 +500,26 @@ message TaskStatus {
 
     /// Time when a transition to a state occurred.
     uint64 timestamp = 4;
+
+    message ContainerState {
+        // Name of the container
+        string containerName = 1;
+
+        enum ContainerHealth {
+            // Unset means we haven't gotten any signal yet about healthiness
+            Unset = 0;
+            // Unhealthy means the container is no longer passing its healthcheck
+            Unhealthy = 1;
+            // Healthy means the container is passing its healthcheck
+            Healthy = 2;
+        };
+
+        // Enum representing if the individual container is healthy
+        ContainerHealth containerHealth = 2;
+    }
+
+    // An array of ContainerStates, reporting the health of individual containers
+    repeated ContainerState containerState = 5;
 }
 
 /// Task log locations

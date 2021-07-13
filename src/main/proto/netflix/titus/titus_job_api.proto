@@ -576,6 +576,10 @@ message Task {
 
     /// (Optional) User defined key/value pairs.
     map<string, string> attributes = 8;
+
+    /// (Optional) Task version associated with the given entity. Revision numbers for jobs and tasks are created
+    // from the same ordered number generator.
+    Version version = 9;
 }
 
 /// Job entity is returned by query operations only.
@@ -592,6 +596,10 @@ message Job {
 
     /// (Required) State transition history.
     repeated JobStatus statusHistory = 4;
+
+    /// (Optional) Job version associated with the given entity. Revision numbers for jobs and tasks are created
+    // from the same ordered number generator.
+    Version version = 5;
 }
 
 // ----------------------------------------------------------------------------
@@ -620,11 +628,23 @@ message JobChangeNotification {
     message SnapshotEnd {
     }
 
+    /// Collection metadata. Metadata events are sent only when requested explicitly by setting `metadata=true` in
+    // the filter criteria. `MetadataUpdate` event is sent as the first record in the `ObserveJobs` stream.
+    // Afterwards it is sent periodically after the snapshot event is emitted if the stream was idle for more than
+    // a configurable amount of time.
+    message MetadataUpdate {
+        CollectionMetadata metadata = 1;
+    }
+
     oneof Notification {
         JobUpdate jobUpdate = 1;
         TaskUpdate taskUpdate = 2;
         SnapshotEnd snapshotEnd = 3;
+        MetadataUpdate metadataUpdate = 4;
     }
+
+    // Event creation timestamp.
+    uint64 timestamp = 5;
 }
 
 // ----------------------------------------------------------------------------
@@ -961,5 +981,12 @@ service JobManagementService {
     // * Any container.attributes not prefixed with `titus.` or `titusParameter.`
     // * All information specific to service jobs (JobSpec): Capacity, RetryPolicy, MigrationPolicy, etc
     rpc MoveTask (TaskMoveRequest) returns (google.protobuf.Empty) {
+    }
+
+    // ------------------------------------------------------------
+    // Other
+
+    /// Return the current job/task collections metadata.
+    rpc GetJobAndTaskMetadata(google.protobuf.Empty) returns (CollectionMetadata) {
     }
 }

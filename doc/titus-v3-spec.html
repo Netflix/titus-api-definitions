@@ -474,6 +474,10 @@
                   <a href="#com.netflix.titus.TaskStatus"><span class="badge">M</span>TaskStatus</a>
                 </li>
               
+                <li>
+                  <a href="#com.netflix.titus.TaskStatus.ContainerState"><span class="badge">M</span>TaskStatus.ContainerState</a>
+                </li>
+              
               
                 <li>
                   <a href="#com.netflix.titus.JobStatus.JobState"><span class="badge">E</span>JobStatus.JobState</a>
@@ -481,6 +485,10 @@
               
                 <li>
                   <a href="#com.netflix.titus.NetworkConfiguration.NetworkMode"><span class="badge">E</span>NetworkConfiguration.NetworkMode</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.TaskStatus.ContainerState.ContainerHealth"><span class="badge">E</span>TaskStatus.ContainerState.ContainerHealth</a>
                 </li>
               
                 <li>
@@ -3182,6 +3190,44 @@ skipSystemFailures - a filter for finished tasks only (does not affect non-finis
                   <td><p>Time when a transition to a state occurred. </p></td>
                 </tr>
               
+                <tr>
+                  <td>containerState</td>
+                  <td><a href="#com.netflix.titus.TaskStatus.ContainerState">TaskStatus.ContainerState</a></td>
+                  <td>repeated</td>
+                  <td><p>An array of ContainerStates, reporting the health of individual containers </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.TaskStatus.ContainerState">TaskStatus.ContainerState</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>containerName</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Name of the container </p></td>
+                </tr>
+              
+                <tr>
+                  <td>containerHealth</td>
+                  <td><a href="#com.netflix.titus.TaskStatus.ContainerState.ContainerHealth">TaskStatus.ContainerState.ContainerHealth</a></td>
+                  <td></td>
+                  <td><p>Enum representing if the individual container is healthy </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -3259,6 +3305,35 @@ From a spinnaker/task perspective, only an IPv6 address is allocated to the task
                 <td>Ipv6Only</td>
                 <td>4</td>
                 <td><p>IPv6 Only is for true believers, no IPv4 connectivity is provided.</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="com.netflix.titus.TaskStatus.ContainerState.ContainerHealth">TaskStatus.ContainerState.ContainerHealth</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>Unset</td>
+                <td>0</td>
+                <td><p>Unset means we haven&#39;t gotten any signal yet about healthiness</p></td>
+              </tr>
+            
+              <tr>
+                <td>Unhealthy</td>
+                <td>1</td>
+                <td><p>Unhealthy means the container is no longer passing its healthcheck</p></td>
+              </tr>
+            
+              <tr>
+                <td>Healthy</td>
+                <td>2</td>
+                <td><p>Healthy means the container is passing its healthcheck</p></td>
               </tr>
             
           </tbody>

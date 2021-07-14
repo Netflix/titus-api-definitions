@@ -78,9 +78,11 @@
     - [TaskQuery.FilteringCriteriaEntry](#com.netflix.titus.TaskQuery.FilteringCriteriaEntry)
     - [TaskQueryResult](#com.netflix.titus.TaskQueryResult)
     - [TaskStatus](#com.netflix.titus.TaskStatus)
+    - [TaskStatus.ContainerState](#com.netflix.titus.TaskStatus.ContainerState)
   
     - [JobStatus.JobState](#com.netflix.titus.JobStatus.JobState)
     - [NetworkConfiguration.NetworkMode](#com.netflix.titus.NetworkConfiguration.NetworkMode)
+    - [TaskStatus.ContainerState.ContainerHealth](#com.netflix.titus.TaskStatus.ContainerState.ContainerHealth)
     - [TaskStatus.TaskState](#com.netflix.titus.TaskStatus.TaskState)
   
     - [JobManagementService](#com.netflix.titus.JobManagementService)
@@ -1341,6 +1343,23 @@ when the query is executed.
 | reasonCode | [string](#string) |  | (Optional) An identifier of an event that caused a transition to this state. Each job manager can introduce its own set of reason codes. Below are the predefined (common) set of reason codes associated with task state &#39;Finished&#39;: * &#39;normal&#39; - task completed with the exit code 0 * &#39;failed&#39; - task completed with a non zero error code * &#39;killed&#39; - task was explicitly terminated by a user * &#39;scaledDown&#39; - task was terminated as a result of job scaling down * &#39;stuckInState&#39; - task was terminated, as it did not progress to the next state in the expected amount of time * &#39;runtimeLimitExceeded&#39; - task was terminated, as its runtime limit was exceeded * &#39;lost&#39; - task was lost, and its final status is unknown * &#39;invalidRequest&#39; - invalid container definition (security group, image name, etc) * &#39;crashed&#39; - container crashed due to some internal system error * &#39;transientSystemError&#39; - transient error, not agent specific (for example AWS rate limiting) * &#39;localSystemError&#39; - an error scoped to an agent instance on which a container was run. The agent should be quarantined or terminated. * &#39;unknownSystemError&#39; - unknown error which cannot be classified either as local/non-local or transient. If there are multiple occurences of this error, the agent should be quarantined or terminated. |
 | reasonMessage | [string](#string) |  | (Optional) Textual description accompanying the &#39;reasonCode&#39;. |
 | timestamp | [uint64](#uint64) |  | Time when a transition to a state occurred. |
+| containerState | [TaskStatus.ContainerState](#com.netflix.titus.TaskStatus.ContainerState) | repeated | An array of ContainerStates, reporting the health of individual containers |
+
+
+
+
+
+
+<a name="com.netflix.titus.TaskStatus.ContainerState"></a>
+
+### TaskStatus.ContainerState
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| containerName | [string](#string) |  | Name of the container |
+| containerHealth | [TaskStatus.ContainerState.ContainerHealth](#com.netflix.titus.TaskStatus.ContainerState.ContainerHealth) |  | Enum representing if the individual container is healthy |
 
 
 
@@ -1374,6 +1393,19 @@ State information associated with a job.
 | Ipv6AndIpv4 | 2 | IPv6 And IPv4 (True Dual Stack), each task gets a unique v6 and v4 address. |
 | Ipv6AndIpv4Fallback | 3 | IPv6 and IPv4 Fallback uses the Titus IPv4 &#34;transition mechanism&#34; to give v4 connectivity transparently without providing every container their own IPv4 address. From a spinnaker/task perspective, only an IPv6 address is allocated to the task. |
 | Ipv6Only | 4 | IPv6 Only is for true believers, no IPv4 connectivity is provided. |
+
+
+
+<a name="com.netflix.titus.TaskStatus.ContainerState.ContainerHealth"></a>
+
+### TaskStatus.ContainerState.ContainerHealth
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| Unset | 0 | Unset means we haven&#39;t gotten any signal yet about healthiness |
+| Unhealthy | 1 | Unhealthy means the container is no longer passing its healthcheck |
+| Healthy | 2 | Healthy means the container is passing its healthcheck |
 
 
 

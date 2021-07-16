@@ -596,6 +596,10 @@ message Task {
 
     /// (Optional) User defined key/value pairs.
     map<string, string> attributes = 8;
+
+    /// (Optional) Task version associated with the given entity. Revision numbers for jobs and tasks are created
+    // from the same ordered number generator.
+    Version version = 9;
 }
 
 /// Job entity is returned by query operations only.
@@ -612,6 +616,10 @@ message Job {
 
     /// (Required) State transition history.
     repeated JobStatus statusHistory = 4;
+
+    /// (Optional) Job version associated with the given entity. Revision numbers for jobs and tasks are created
+    // from the same ordered number generator.
+    Version version = 5;
 }
 
 // ----------------------------------------------------------------------------
@@ -645,6 +653,9 @@ message JobChangeNotification {
         TaskUpdate taskUpdate = 2;
         SnapshotEnd snapshotEnd = 3;
     }
+
+    // Event creation timestamp.
+    uint64 timestamp = 4;
 }
 
 // ----------------------------------------------------------------------------

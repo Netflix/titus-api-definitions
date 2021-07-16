@@ -336,3 +336,20 @@ message DataRecordMetadata {
     // Time of change.
     uint64 timestamp = 3;
 }
+
+// ----------------------------------------------------------------------------
+// Metadata.
+
+// An entity version data.
+message Version {
+    // Entity last update time.
+    uint64 timestamp = 1;
+
+    // TODO Add revisionId once the global ordering concept is clarified.
+    // Discussed options:
+    // - use etcd leader revision id for cell-level version ordering
+    // Revision number associated with the given entity version. Revision numbers are globally increasing within a
+    // collection. For example, a collection of jobs and their tasks will have a single revision counter which is
+    // incremented if some job or task entity is created/updated.
+    // uint64 revision = 2;
+}

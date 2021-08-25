@@ -1,0 +1,538 @@
+/*
+ * Example API for Compute Managed Batch. Please use internal proto definitions for latest versions.
+ */
+
+syntax = "proto3";
+
+package com.netflix.managedbatch;
+
+import "google/protobuf/empty.proto";
+import "netflix/titus/titus_base.proto";
+import "netflix/managedbatch/managedbatch-common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.netflix.managedbatch.protogen";
+option java_outer_classname = "JobServiceProto";
+
+// Ability to operate on items in the queue (submit work, query work, update work, cancel work)
+// Expiry on submitted work that is evaluated after each scheduling iteration
+service JobService {
+
+    // ------------------------------- Job Management ------------------------------
+
+    /// Create a new job.
+    rpc CreateJob (JobDefinition) returns (Job) {
+    }
+
+    /// Terminate a specific running job by ID.
+    rpc TerminateJob (JobId) returns (google.protobuf.Empty) {
+    }
+
+    /// Find jobs that match the query request. Only active data set is searched, which includes all running jobs, and
+    //  recently terminated jobs (kept by a configurable amount of time which should be 15 min to 1 hour).
+    //
+    //  Filterable job query fields are:
+    //  jobId - ID of a specific job
+    //  jobIds - A comma separated list of job IDs
+    //  jobState - A specific job state
+    //  jobStates - A comma separated list of job states
+    //  tenantId - ID of a tenant
+    //  applicationName - Name of the application
+    //  priorityClass - A specific priority class name
+    //  jobGroupStack - job group stack
+    //  jobGroupDetail - job group details
+    //  jobGroupSequence - job group sequence
+    //  attributes - comma separated job attribute key/value pairs (for example "key1,key2:value2;k3:value3")
+    //  attributes.op - logical 'and' or 'or' operators, which should be applied when attributes specified in the query. Defaults to 'and'.
+    //  tenantPath - A tenant pathname prefix
+    rpc FindJobs (QueryRequest) returns (JobQueryResponse) {
+    }
+
+    /// Find tasks that match the query request. Only active data set is searched, which includes all running jobs, and
+    //  recently terminated jobs (kept by a configurable amount of time which should be 15 min to 1 hour).
+    //
+    //  Filterable task query fields are:
+    //  taskId - ID of a specific task
+    //  taskIds - A comma separated list of task IDs
+    //  taskState - A specific task state
+    //  taskStates - A comma separated list of task states
+    //  tenantId - ID of a tenant
+    //  priorityClass - A specific priority class name
+    //  jobGroupStack - job group stack
+    //  jobGroupDetail - job group details
+    //  jobGroupSequence - job group sequence
+    //  tenantPath - A tenant pathname prefix
+    rpc FindTasks (QueryRequest) returns (TaskQueryResponse) {
+    }
+
+    /// Find jobs and tasks that match the query request. Only active data set is searched, which includes all running jobs, and
+    //  recently terminated jobs (kept by a configurable amount of time which should be 15 min to 1 hour).
+    //
+    //  Filterable task query fields are:
+    //  taskId - ID of a specific task
+    //  taskIds - A comma separated list of task IDs
+    //  taskState - A specific task state
+    //  taskStates - A comma separated list of task states
+    //  tenantId - ID of a tenant
+    //  priorityClass - A specific priority class name
+    //  jobGroupStack - job group stack
+    //  jobGroupDetail - job group details
+    //  jobGroupSequence - job group sequence
+    rpc FindJobsAndTasks (QueryRequest) returns (JobsAndTasksQueryResponse) {
+    }
+
+    /// Get a job by id.
+    rpc GetJobById (JobByIdQuery) returns (Job) {
+    }
+
+    /// Get a task by id.
+    rpc GetTaskById (TaskByIdQuery) returns (Task) {
+    }
+
+    /// Get a job by Id.
+    //  Returns JobWithTasks data structure that combines job definition with each of its task information
+    rpc GetJobWithTasks (JobByIdQuery) returns (JobWithTasks) {
+    }
+
+    /// Get tasks of a job with the given id.
+    rpc GetTasksForJob (JobByIdQuery) returns (Tasks) {
+    }
+
+    /// Emit job events. This stream never completes unless the connection is terminated.
+    //
+    //  Filterable query fields include all of those supported by the `FindJobs` and `FindTasks` APIs.
+    rpc Events (EventsQueryRequest) returns (stream JobEvent) {
+    }
+}
+
+// ----------------------------------------------------------------------------
+// Service RPC request and response structures
+
+message JobId {
+    /// Globally unique ID of the job.
+    string id = 1;
+}
+
+message JobByIdQuery {
+    /// Globally unique ID of the job.
+    string id = 1;
+
+    /// If set to true, only check in the active data set, which includes all running jobs, and
+    //  recently terminated jobs (kept by a configurable amount of time which should be 15 min to 1 hour).
+    //  Otherwise a finished job that was archived is loaded from the archive store. Loading from the archive store
+    //  may be many orders of magnitude slower than loading the data from the active data set.
+    bool skipArchive = 2;
+}
+
+message TaskByIdQuery {
+    /// Globally unique ID of the task.
+    string id = 1;
+
+    /// If set to true, only check in the active data set, which includes all running tasks, and
+    //  recently terminated tasks (kept by a configurable amount of time which should be 15 min to 1 hour).
+    //  Otherwise a finished task that was archived is loaded from the archive store. Loading from the archive store
+    //  may be many orders of magnitude slower than loading the data from the active data set.
+    bool skipArchive = 2;
+}
+
+
+message JobQueryResponse {
+    repeated Job items = 1;
+
+    netflix.titus.Pagination pagination = 2;
+}
+
+message TaskQueryResponse {
+    repeated Task items = 1;
+
+    netflix.titus.Pagination pagination = 2;
+}
+
+message JobsAndTasksQueryResponse {
+    repeated JobWithTasks jobWithTasks = 1;
+
+    netflix.titus.Pagination pagination = 2;
+}
+
+message EventsQueryRequest {
+
+    // If set to true, full state is emitted first followed by the snapshot marker message. If set to false, the
+    // snapshot is not emitted nor the snapshot marker.
+    bool includeSnapshot = 1;
+
+    map<string, string> filteringCriteria = 2;
+}
+
+// ----------------------------------------------------------------------------
+// Priority specification core data structures
+
+// Specification for job priority.
+message Priority {
+
+    enum PriorityClass {
+
+        /// The SystemDefault uses the default PriorityClass configured by ManagedBatch when a Class is not selected.
+        SystemDefault = 0;
+
+        BestEffort = 1;
+
+        Normal = 2;
+
+        Preferred = 3;
+
+        Critical = 4;
+    }
+
+    /// The Class that the job will be placed in. The Class corresponds
+    /// to the job's business-level use case.
+    PriorityClass class = 1;
+
+    /// The priority of the job relative to other jobs in the same class and
+    /// tenant namespace.
+    uint32 priorityValue = 2;
+}
+
+// ----------------------------------------------------------------------------
+// Job specification core data structures
+
+/// Specification for run to completion jobs.
+message Batch {
+
+    /// (Required) The number of task instances.
+    /// NOTE: Initially the  only valid size will be 1. Support for more sizes will be added later.
+    uint32 size = 1;
+}
+
+/// Specification for long running batch workers.
+/// NOTE: Support for this job specification will be added later.
+message Worker {
+}
+
+/// Storage mount permission.
+enum MountPermission {
+    /// Read only
+    RO = 0;
+
+    /// Write only
+    WO = 1;
+
+    /// Read/write
+    RW = 2;
+}
+
+/// A remotely attached NFS storage resource.
+message NfsStorage {
+
+    /// (Required) Volume ID
+    string volumeId = 1;
+
+    /// (Required) Location in the container to mount.
+    string mountPoint = 2;
+
+    /// (Required) Storage mount permission.
+    MountPermission mountPermission = 3;
+
+    /// (Optional) Path within the volume to mount.
+    string relativeMountPoint = 4;
+}
+
+/// A Storage resource attached to the container.
+message StorageResource {
+
+    /// Describes the type of storage resource.
+    oneof StorageType {
+
+        /// A remote NFS volume.
+        NfsStorage nfsStorage = 1;
+    }
+}
+
+message ContainerResources {
+
+    /// (Required) Number of CPUs to allocate (must be always > 0, but the actual limit is configurable).
+    double cpu = 1;
+
+    /// (Required) Amount of memory to allocate (must be always > 0, but the actual limit is configurable).
+    uint32 memoryMB = 2;
+
+    /// (Required) Amount of disk space to allocate (must be always > 0, but the actual limit is configurable).
+    uint32 diskMB = 3;
+
+    /// (Required) Amount of network bandwidth to allocate (must be always > 0, but the actual limit is configurable).
+    uint32 networkMbps = 4;
+
+    /// (Optional) Size of shared memory /dev/shm. If not set, a default value will be provided. A provided value
+    // must be less than or equal to amount of memory allocated.
+    uint32 shmSizeMB = 5;
+
+    /// (Optional) Number of GPUs to allocate.
+    uint32 gpu = 6;
+
+    /// (Optional) Storage resources to be mounted into the container.
+    repeated StorageResource storageResources = 7;
+}
+
+/// Container security profile.
+message SecurityProfile {
+
+    /// (Required) Security groups associated with a container. The expected number of security groups is between 1 and 6.
+    repeated string securityGroups = 1;
+
+    /// (Required) IAM role.
+    string iamRole = 2;
+
+    /// (Optional) Security profile related attributes map.
+    map<string, string> attributes = 3;
+}
+
+/// Image specification
+message Image {
+
+    /// (Required) Image name.
+    string name = 1;
+
+    oneof Version {
+
+        /// (Required if digest not set) Image tag.
+        string tag = 2;
+
+        /// (Required if tag not set) Image digest.
+        string digest = 3;
+    }
+}
+
+/// Task placement constraints. Currently supported constraint types are:
+// * exclusiveHost - Exclusive host for a task.
+// * zoneBalance - distributes tasks of a job evenly among the availability zones
+// * uniqueHost - runs each task of a job on a different agent
+// * activeHost - placement restricted to an agent that belongs to active ASG
+// * availabilityZone - placement restricted to a specific availability zone.
+// * machineId - placement restricted to an agent with the given machine id
+// * machineGroup - placement restricted to an agent in the given machine group
+// * machineType - placement restricted to an agent with the given machine type
+// * toleration - Taints that are tolerated on Kubernetes Nodes
+message Constraints {
+    /// (Optional) A map of constraint name/values. If multiple constraints are given, all must be met (logical 'and').
+    map<string, string> constraints = 1;
+
+    /// Not supported yet.
+    // (Optional) An expression combining multiple constraints. For example 'zoneBalance AND serverGroup == "mySG"'.
+    // Available operators: <, <=, ==, >, >=, in, like, AND, OR
+    string expression = 2;
+}
+
+// This definition comes from the titus_job_api.proto, but is intentionally duplicated
+// here in order to make sure that CMB remains independent of the Titus Job API.
+enum NetworkMode {
+    // Unknown, the backend will have to chose a sane default base on other inputs
+    UnknownNetworkMode = 0;
+    // IPv4 only means the task will not get an ipv6 address, and will only get a unique v4.
+    Ipv4Only = 1;
+    // IPv6 And IPv4 (True Dual Stack), each task gets a unique v6 and v4 address.
+    Ipv6AndIpv4 = 2;
+    // IPv6 and IPv4 Fallback uses the Titus IPv4 "transition mechanism" to give v4
+    // connectivity transparently without providing every container their own IPv4 address.
+    // From a spinnaker/task perspective, only an IPv6 address is allocated to the task.
+    Ipv6AndIpv4Fallback = 3;
+    // IPv6 Only is for true believers, no IPv4 connectivity is provided.
+    Ipv6Only = 4;
+}
+
+/// Resource definition for a job.
+message Container {
+
+    /// (Required) Container resources.
+    ContainerResources resources = 1;
+
+    /// (Required) Security specification.
+    SecurityProfile securityProfile = 2;
+
+    /// (Required) Container image.
+    Image image = 3;
+
+    /// (Optional) Override the entry point of the image.
+    repeated string entryPoint = 4;
+
+    /// (Optional) Additional parameters for the entry point defined either here or provided in the container image.
+    repeated string command = 6;
+
+    /// (Optional) A collection of system environment variables passed to the container.
+    map<string, string> env = 7;
+
+    /// (Optional) Attributes to be associated with the job's container.
+    map<string, string> attributes = 8;
+
+    /// (Optional) Constraints that CMB will prefer to fulfill but are not required.
+    Constraints softConstraints = 9;
+
+    /// (Optional) Constraints that have to be met for a CMB task to be scheduled on an agent.
+    Constraints hardConstraints = 10;
+
+    NetworkMode networkMode = 11;
+}
+
+/// Attributes that describe and possibly alter job behavior.
+message Attributes {
+
+    /// (Optional) Arbitrary set of key/value pairs to be applied to the job.
+    map<string, string> attributes = 1;
+
+    /// (Optional) Defines how long a job's task can be enqueued for. If
+    /// a task is enqueued longer than the TTL, it is automatically expired.
+    /// The TTL is specified in seconds in queue.
+    int64 pendingTtlSec = 2;
+
+    /// (Optional) Defines the maximum time a job's task can run for. If
+    /// unset the compute provider's default will be used.
+    int64 runtimeLimitSec = 3;
+}
+
+message JobGroupInfo {
+    /// stack name
+    string stack = 1;
+
+    /// additional group details information
+    string detail = 2;
+
+    /// sequence number
+    string sequenceNumber = 3;
+}
+
+/// Definition of a job, containing all of the details needed for execution.
+message JobDefinition {
+
+    /// The tenant "organization" that the job is attributed to.
+    /// (Optional) ID if the tenant under which this work is submitted.
+    string tenantId = 1;
+
+    /// Describes a process to run (e.g., Image, Entrypoint, CPU, GPU, Memory, IAM, etc...)
+    Container container = 2;
+
+    /// Attributes to be associated with the job.
+    Attributes attributes = 3;
+
+    /// Describes the type of job this is.
+    oneof JobType {
+
+        /// A Batch is a simple run to completion processor.
+        Batch batch = 4;
+
+        /// A Worker is a long running processor that can be scaled horizontally.
+        Worker worker = 5;
+    }
+
+    /// Describes the priority level for the job
+    Priority priority = 6;
+
+    string applicationName = 7;
+
+    JobGroupInfo jobGroupInfo = 8;
+}
+
+message Task {
+
+    string id = 1;
+
+    string jobId = 2;
+
+    repeated TaskStatus status = 3;
+
+    map<string, string> attributes = 4;
+
+    map<string, string> providerMetadata = 5;
+}
+
+message Tasks {
+    repeated Task items = 1;
+}
+
+message JobStatus {
+
+    enum JobState {
+        Accepted = 0;
+
+        Stopping = 1;
+
+        Stopped = 2;
+
+        Finished = 3;
+    }
+
+    JobState state = 1;
+    string message = 2;
+    uint64 timestamp = 3;
+}
+
+message TaskStatus {
+    enum TaskState {
+        Created = 0;
+        Queued = 1;
+        Starting = 2;
+        Running = 3;
+        Stopping = 4;
+        Stopped = 5;
+        Expired = 6;
+        Failed = 7;
+        Finished = 8;
+    }
+
+    TaskState state = 1;
+    string message = 2;
+    uint64 timestamp = 3;
+}
+
+message Job {
+    string jobId = 1;
+    JobDefinition jobDefinition = 2;
+    repeated JobStatus status = 3;
+}
+
+message JobWithTasks {
+    Job job = 1;
+    repeated Task tasks = 2;
+}
+
+message JobEvent {
+
+    enum EventKind {
+        CREATED = 0;
+        UPDATED = 1;
+        REMOVED = 2;
+    }
+
+    message SnapshotMarker {
+    }
+
+    message JobUpdate {
+        EventKind eventKind = 1;
+        Job job = 2;
+    }
+
+    message TaskUpdate {
+        EventKind eventKind = 1;
+        Task task = 2;
+    }
+
+    oneof Event {
+        SnapshotMarker snapshotMarker = 1;
+        JobUpdate jobUpdate = 2;
+        TaskUpdate taskUpdate = 3;
+    }
+}
+
+// ----------------------------------------------------------------------------
+// Data model used in the durable storage.
+
+message JobDataRecord {
+
+    netflix.titus.DataRecordMetadata metadata = 1;
+
+    Job job = 2;
+}
+
+message TaskDataRecord {
+
+    netflix.titus.DataRecordMetadata metadata = 1;
+
+    Task task = 2;
+}

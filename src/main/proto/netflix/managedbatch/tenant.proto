@@ -1,0 +1,304 @@
+/*
+ * Example API for Compute Managed Batch. Please use internal proto definitions for latest versions.
+ */
+
+syntax = "proto3";
+
+package com.netflix.managedbatch;
+
+import "google/protobuf/empty.proto";
+import "netflix/titus/titus_base.proto";
+import "netflix/managedbatch/managedbatch-common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.netflix.managedbatch.protogen";
+option java_outer_classname = "TenantProto";
+
+// Ability to view a queue by tenant
+service TenantService {
+
+    // ------------------------------- Tenant Management ------------------------------
+
+    /// Create a new tenant.
+    rpc CreateTenant (TenantDefinition) returns (Tenant) {
+    }
+
+    /// Get a tenant with a specific ID.
+    /// (Deprecated) Use GetTenantById instead.
+    rpc GetTenant (TenantId) returns (Tenant) {
+        option deprecated = true;
+    }
+
+    /// Get a tenant with a specific ID.
+    rpc GetTenantById(TenantByIdQuery) returns (Tenant) {
+    }
+
+    /// Find tenants that match the query request. Only active tenants are searched.
+    //
+    //  Filterable tenant query fields are:
+    //  tenantIds - A comma separated list of tenant IDs
+    //  tenantNames - A comma separated list of tenant names
+    //  tenantParentIds - A comma separated list of tenant parent IDs
+    //  tenantPath - A tenant pathname prefix. The pathname uses '/' delimiters.
+    rpc FindTenants (QueryRequest) returns (TenantQueryResponse) {
+    }
+
+    /// Remove an existing tenant. The tenant will be marked for removal and
+    /// removed when all work is completed.
+    rpc RemoveTenant (TenantId) returns (google.protobuf.Empty) {
+    }
+
+    /// Create a new tenant capacity request. The request will be pending
+    /// administrator review and approval.
+    rpc CreateTenantCapacity (CreateCapacityRequest) returns (TenantCapacityId) {
+    }
+
+    /// Get the currently configured capacity for an existing tenant.
+    rpc GetTenantCapacity (TenantId) returns (TenantCapacity) {
+    }
+
+    /// Cancels a pending tenant capacity request. An already applied request cannot be cancelled.
+    rpc CancelPendingTenantCapacity (RemoveCapacityRequest) returns (google.protobuf.Empty) {
+    }
+
+    /// Get a specific capacity request by capacity ID.
+    /// (Deprecated) Use GetCapacityRequestById instead.
+    rpc GetCapacityStatus (TenantCapacityId) returns (CapacityRequest) {
+        option deprecated = true;
+    }
+
+    /// Get a specific capacity request by capacity ID.
+    rpc GetCapacityRequestById (CapacityRequestByIdQuery) returns (CapacityRequest) {
+    }
+
+    /// Approve a pending tenant capacity request. This endpoint is secured and only meant to be called by operators.
+    rpc ApproveTenantCapacity (TenantCapacityId) returns (google.protobuf.Empty) {
+    }
+}
+
+// ----------------------------------------------------------------------------
+// Service RPC request and response structures
+
+message TenantQueryResponse {
+    repeated Tenant items = 1;
+
+    netflix.titus.Pagination pagination = 2;
+}
+
+message CreateCapacityRequest {
+
+    /// (Required) ID of an existing tenant.
+    string tenantId = 1;
+
+    /// (Required) CapacityDefinition update
+    CapacityDefinition capacity = 2;
+}
+
+message RemoveCapacityRequest {
+
+    /// ID of the tenant to remove capacity from.
+    string tenantId = 1;
+
+    /// ID of the capacity request to remove.
+    string capacityRequestId = 2;
+}
+
+message CapacityStatus {
+
+    enum CapacityState {
+
+        /// CapacityDefinition request is under review by operators.
+        UnderReview = 0;
+
+        /// CapacityDefinition request is approved and being applied.
+        Approved = 1;
+
+        /// CapacityDefinition request has been applied and is ready to use.
+        Applied = 2;
+
+        /// CapacityDefinition request has been denied and will not be applied.
+        Declined = 3;
+
+        /// CapacityDefiniton request has deleted or replaced.
+        Deleted = 4;
+    }
+
+    CapacityState state = 1;
+
+    string message = 2;
+
+    uint64 timestamp = 3;
+}
+
+message CapacityRequest {
+
+    /// ID of the capacity request.
+    string capacityRequestId = 1;
+
+    /// ID of the tenant associated with the request.
+    string tenantId = 2;
+
+    /// The capacity update being applied. May be unset if no current capacity update.
+    CapacityDefinition capacity = 3;
+
+    /// The status history of a capacity request.
+    repeated CapacityStatus capacityStatus = 4;
+}
+
+message TenantCapacity {
+
+    /// The currently applied capacity request.
+    CapacityRequest appliedCapacity = 1;
+
+    /// The current update capacity request. May be unset if no current update request.
+    CapacityRequest capacityRequest = 2;
+}
+
+// ----------------------------------------------------------------------------
+// Tenant specification core data structures
+
+message TenantId {
+    /// Globally unique ID of the tenant.
+    string id = 1;
+}
+
+message TenantByIdQuery {
+    /// Globally unique ID of the tenant.
+    string id = 1;
+
+    /// If set to true, only check in the active data set, which includes all active tenants, and
+    //  recently removed tenants (kept by a configurable amount of time which should be 15 min to 1 hour).
+    //  Otherwise a removed tenant that was archived is loaded from the archive store. Loading from the archive store
+    //  may be many orders of magnitude slower than loading the data from the active data set.
+    bool skipArchive = 2;
+}
+
+/// Attributes that describe and possibly alter tenant behavior.
+message TenantAttributes {
+
+    /// (Optional) Arbitrary set of key/value metadata to be applied to the tenant.
+    map<string, string> attributes = 1;
+
+    /// (Optional) Defines how many tasks this tenant or its sub-tree can have running concurrently.
+    //  If unset/equals 0, no limit is applied.
+    uint32 concurrencyLimit = 2;
+}
+
+/// Definition of a new tenant.
+message TenantDefinition {
+
+    /// (Required) Name of the tenant or organization
+    string tenantName = 1;
+
+    /// (Required) Email contact for the tenant
+    string tenantEmailAddress = 2;
+
+    /// (Required) Description of tenant and purpose.
+    string tenantDescription = 3;
+
+    enum TenantType {
+
+        /// A tenant that is meant to accept and process jobs. A leaf tenant has associated queues for
+        //  for jobs and cannot have child tenants.
+        Leaf = 0;
+
+        /// A tenant that is meant to be the root of a tenant sub-tree. An internal tenant can have
+        //  child tenants and distribute capacity to them and cannot accept jobs.
+        Internal = 1;
+    }
+
+    /// (Required) Whether the tenant is a internal node is the root of a tenant sub-tree or meant to execute work.
+    TenantType tenantType = 4;
+
+    /// (Optional) Tenant ID of parent for this tenant.
+    string parentTenantId = 5;
+
+    /// (Deprecated) Use tenantAttributes instead. This field is ignored.
+    map<string, string> attributes = 6 [deprecated = true];
+
+    /// (Optional) Attributes to be associated with the tenant.
+    TenantAttributes tenantAttributes = 7;
+}
+
+message TenantCapacityId {
+    /// Globally unique ID of the tenant capacity request.
+    string id = 1;
+}
+
+message CapacityRequestByIdQuery {
+    /// Globally unique ID of the tenant capacity request.
+    string id = 1;
+
+    /// If set to true, only check in the active data set, which includes all active tenant capacities, and
+    //  recently removed capacities (kept by a configurable amount of time which should be 15 min to 1 hour).
+    //  Otherwise a removed tenant capacity that was archived is loaded from the archive store. Loading from the archive
+    //  store may be many orders of magnitude slower than loading the data from the active data set.
+    bool skipArchive = 2;
+}
+
+// Ability to configure capacity/resources for a tenant
+message CapacityDefinition {
+
+    /// (Optional) CapacityDefinition to reserve for this tenant.
+    ReservedCapacity reservedCapacity = 1;
+
+    /// (Optional) Weighted share of unreserved resources.
+    uint32 weight = 2;
+}
+
+/// CapacityDefinition reservation profile.
+message ReservedCapacity {
+
+    /// (Required) The number of CPUs per instance.
+    uint32 cpu = 1;
+
+    /// (Required) The amount of memory per instance.
+    uint32 memoryMB = 2;
+
+    /// (Required) The amount of disk capacity per instance.
+    uint32 diskMB = 3;
+
+    /// (Required) The amount of network bandwidth per instance.
+    uint32 networkMbps = 4;
+
+    /// (Required) The number of instances.
+    uint32 instanceCount = 5;
+
+}
+
+/// Description of a single tenant status
+message TenantStatus {
+
+    enum TenantState {
+        Accepted = 0;
+
+        Removed = 1;
+
+        Removing = 2;
+    }
+
+    TenantState state = 1;
+
+    string message = 2;
+
+    uint64 timestamp = 3;
+}
+
+/// Description of an created tenant
+message Tenant {
+
+    /// ID of the tenant
+    string tenantId = 1;
+
+    /// The definition describing the tenant
+    TenantDefinition tenantDefinition = 2;
+
+    /// The current tenant capacity settings
+    TenantCapacity capacityStatus = 3;
+
+    /// The status history of the tenant
+    repeated TenantStatus tenantStatus = 4;
+
+    /// The tenant path in the tenant tree.
+    string path = 5;
+}

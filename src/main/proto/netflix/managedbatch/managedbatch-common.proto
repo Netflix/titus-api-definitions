@@ -1,0 +1,23 @@
+/*
+ * Example API for Compute Managed Batch. Please use internal proto definitions for latest versions.
+ */
+
+syntax = "proto3";
+
+package com.netflix.managedbatch;
+
+import "netflix/titus/titus_base.proto";
+
+option java_multiple_files = true;
+option java_package = "com.netflix.managedbatch.protogen";
+option java_outer_classname = "ManagedBatchCommonProto";
+
+// ----------------------------------------------------------------------------
+// Common ManagedBatch data structures.
+
+message QueryRequest {
+
+    netflix.titus.Page page = 1;
+
+    map<string, string> filteringCriteria = 2;
+}

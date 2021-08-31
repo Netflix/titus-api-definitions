@@ -19,18 +19,18 @@ option go_package = "titus";
 // ----------------------------------------------------------------------------
 // Eviction core data structures
 
-/// Current eviction quota at the system, tier, capacity group, and job level.
-/// The total amount of tasks that
+// Current eviction quota at the system, tier, capacity group, and job level.
+// The total amount of tasks that
 //  can be evicted at a given point in time is constraint by this number.
 message EvictionQuota {
-  /// System layer/entity refrence.
+  // System layer/entity refrence.
   Reference target = 1;
 
-  /// (Required) Total number of tasks that can be evicted at a given point in
-  /// time.
+  // (Required) Total number of tasks that can be evicted at a given point in
+  // time.
   uint32 quota = 2;
 
-  /// (Optional) Additional information associated with the current quota level.
+  // (Optional) Additional information associated with the current quota level.
   string message = 3;
 }
 
@@ -44,23 +44,23 @@ message TierId { Tier tier = 1; }
 message TaskTerminateRequest {
   string taskId = 1;
 
-  /// Textual description of why a task termination was requested.
+  // Textual description of why a task termination was requested.
   string reason = 2;
 }
 
 message TaskTerminateResponse {
-  /// Set to true if the termination request was accepted.
+  // Set to true if the termination request was accepted.
   bool allowed = 1;
 
-  /// If a termination request is not accepted, this field contains the reason
-  /// code explaining why:
+  // If a termination request is not accepted, this field contains the reason
+  // code explaining why:
   //  * aboveSystemDisruptionBudget
   //  * aboveTierDisruptionBudget
   //  * aboveCapacityGroupDisruptionBudget
   //  * jobRelocationPolicyViolation
   string reasonCode = 2;
 
-  /// If a termination request is not accepted, contains explanation why.
+  // If a termination request is not accepted, contains explanation why.
   string reasonMessage = 3;
 }
 
@@ -92,11 +92,11 @@ service EvictionService {
 
   rpc GetEvictionQuota(Reference) returns (EvictionQuota) {}
 
-  /// Terminate a task.
+  // Terminate a task.
   rpc TerminateTask(TaskTerminateRequest) returns (TaskTerminateResponse) {}
 
-  /// Event stream with the disruption budge updates and task termination
-  /// requests.
+  // Event stream with the disruption budge updates and task termination
+  // requests.
   rpc ObserveEvents(ObserverEventRequest)
       returns (stream EvictionServiceEvent) {}
 }

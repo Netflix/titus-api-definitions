@@ -37,8 +37,8 @@ service JobAccumulatorService {
   rpc GetJobAccumulatorWithExecution(GetJobAccumulatorExecutionRequest)
       returns (JobAccumulatorWithExecution) {}
 
-  /// Find job accumulators that match the query request. Only active data set
-  /// is searched, which includes all
+  // Find job accumulators that match the query request. Only active data set
+  // is searched, which includes all
   //  non-completed job accumulators and, and recently terminated (kept by a
   //  configurable amount of time which should be 15 min to 1 hour).
   //
@@ -72,7 +72,7 @@ service JobAccumulatorService {
 // Service RPC request and response structures
 
 message JobAccumulatorId {
-  /// Globally unique ID of the job accumulator.
+  // Globally unique ID of the job accumulator.
   string id = 1;
 }
 
@@ -84,7 +84,7 @@ message CreateJobAccumulatorRequest {
 }
 
 message UpdateJobAccumulatorTargetRequest {
-  /// Globally unique ID of the job accumulator.
+  // Globally unique ID of the job accumulator.
   string id = 1;
 
   // Additional number of jobs that should be added to the job accumulator.
@@ -102,11 +102,11 @@ message JobAccumulatorWithExecution {
 }
 
 message JobAccumulatorByIdQuery {
-  /// Globally unique ID of the job accumulator.
+  // Globally unique ID of the job accumulator.
   string id = 1;
 
-  /// If set to true, only check in the active data set, which includes all
-  /// running, and
+  // If set to true, only check in the active data set, which includes all
+  // running, and
   //  recently terminated job accumulators (kept by a configurable amount of
   //  time which should be 15 min to 1 hour). Otherwise a finished job
   //  accumulator that was archived is loaded from the archive store. Loading
@@ -120,8 +120,8 @@ message GetJobAccumulatorExecutionRequest {
 
   bool includeCmbJobIds = 2;
 
-  /// If set to true, only check in the active data set, which includes all
-  /// running, and
+  // If set to true, only check in the active data set, which includes all
+  // running, and
   //  recently terminated job accumulators (kept by a configurable amount of
   //  time which should be 15 min to 1 hour). Otherwise a finished job
   //  accumulator that was archived is loaded from the archive store. Loading

@@ -17,183 +17,183 @@ option go_package = "titus";
 // ----------------------------------------------------------------------------
 // Agent cluster management data structures
 
-/// Agent instance deployment state.
+// Agent instance deployment state.
 enum InstanceLifecycleState {
   // Initial state of an agent, set when first discovered.
   StartInitiated = 0;
 
-  /// An agent instance can move to this state only from the 'StartInitiated'
-  /// state. This happens as soon as all
+  // An agent instance can move to this state only from the 'StartInitiated'
+  // state. This happens as soon as all
   //  healthcheck indicators for the agent are ok. At this point, the agent can
   //  accept containers, provided that other criteria are fullfiled.
   Started = 1;
 
-  /// An agent instance is terminating. No new work is accepted.
+  // An agent instance is terminating. No new work is accepted.
   KillInitiated = 2;
 
-  /// An agent instance is not running anymore.
+  // An agent instance is not running anymore.
   Stopped = 3;
 
-  /// An agent instance state is unknown.
+  // An agent instance state is unknown.
   InstanceStateUnknown = 4;
 }
 
-/// Agent instance deployment status.
+// Agent instance deployment status.
 message InstanceLifecycleStatus {
-  /// Agent instance state.
+  // Agent instance state.
   InstanceLifecycleState state = 1;
 
-  /// Instance launch timestamp (EC2 API provides only launch time, with no
-  /// information about time of subsequent state changes).
+  // Instance launch timestamp (EC2 API provides only launch time, with no
+  // information about time of subsequent state changes).
   uint64 launchTimestamp = 3;
 }
 
-/// An agent health state.
+// An agent health state.
 enum HealthState {
-  /// Health state is unknown.
+  // Health state is unknown.
   Unknown = 0;
 
-  /// An agent is healthy.
+  // An agent is healthy.
   Healthy = 1;
 
-  /// An agent is unhealthy.
+  // An agent is unhealthy.
   Unhealthy = 2;
 }
 
-/// Agent health status.
+// Agent health status.
 message HealthStatus {
-  /// Source id
+  // Source id
   string sourceId = 1;
 
-  /// Agent health state.
+  // Agent health state.
   HealthState state = 2;
 
-  /// If agent is in bad state, contains more information about the problem.
+  // If agent is in bad state, contains more information about the problem.
   string detail = 3;
 
-  /// Time at which an agent went into the given state.
+  // Time at which an agent went into the given state.
   uint64 timestamp = 4;
 
-  /// Health status from individual components, which this state aggregates.
+  // Health status from individual components, which this state aggregates.
   repeated HealthStatus components = 5;
 }
 
-/// Agent server group lifecycle state.
+// Agent server group lifecycle state.
 enum InstanceGroupLifecycleState {
-  /// Server group is not accepting any traffic or auto-scale actions.
+  // Server group is not accepting any traffic or auto-scale actions.
   Inactive = 0;
 
-  /// Server group is open for traffic, and auto-scaling.
+  // Server group is open for traffic, and auto-scaling.
   Active = 1;
 
-  /// Server group is open for traffic, and auto-scaling, but other server
-  /// groups are preferred.
+  // Server group is open for traffic, and auto-scaling, but other server
+  // groups are preferred.
   PhasedOut = 2;
 
-  /// Server group is not accepting any traffic. All idle instances will be
-  /// terminated.
+  // Server group is not accepting any traffic. All idle instances will be
+  // terminated.
   Removable = 3;
 }
 
-/// Agent server group status.
+// Agent server group status.
 message InstanceGroupLifecycleStatus {
-  /// Lifecycle state.
+  // Lifecycle state.
   InstanceGroupLifecycleState state = 1;
 
-  /// A reason for moving into this state.
+  // A reason for moving into this state.
   string detail = 2;
 
-  /// Time at which agent server group went into the given state.
+  // Time at which agent server group went into the given state.
   uint64 timestamp = 3;
 }
 
-/// An agent server.
+// An agent server.
 message AgentInstance {
-  /// A unique id of the agent server.
+  // A unique id of the agent server.
   string id = 1;
 
-  /// A server group, to which the agent belongs to.
+  // A server group, to which the agent belongs to.
   string instanceGroupId = 2;
 
-  /// IP address of the agent.
+  // IP address of the agent.
   string ipAddress = 3;
 
-  /// Hostname of the agent.
+  // Hostname of the agent.
   string hostname = 4;
 
-  /// Current deployment status.
+  // Current deployment status.
   InstanceLifecycleStatus lifecycleStatus = 5;
 
-  /// Current health status.
+  // Current health status.
   HealthStatus healthStatus = 6;
 
-  /// Arbitrary set of key/value pairs. Keys starting with 'titus' prefix are
-  /// reserved for Titus.
+  // Arbitrary set of key/value pairs. Keys starting with 'titus' prefix are
+  // reserved for Titus.
   map<string, string> attributes = 7;
 }
 
-/// An agent instance group.
+// An agent instance group.
 message AgentInstanceGroup {
-  /// A unique id of the server group.
+  // A unique id of the server group.
   string id = 1;
 
-  /// An id of the server type (for example AWS instance type id).
+  // An id of the server type (for example AWS instance type id).
   string instanceType = 2;
 
-  /// Instance resources (cpu, memory, etc).
+  // Instance resources (cpu, memory, etc).
   ResourceDimension instanceResources = 3;
 
-  /// Tier to which the given server group is attached.
+  // Tier to which the given server group is attached.
   Tier tier = 4;
 
-  /// Minimum number of servers in the server group.
+  // Minimum number of servers in the server group.
   uint32 min = 5;
 
-  /// Desired number of servers in the server group.
+  // Desired number of servers in the server group.
   uint32 desired = 6;
 
-  /// Current number of servers in the server group.
+  // Current number of servers in the server group.
   uint32 current = 7;
 
-  /// Maximum number of servers in the server group.
+  // Maximum number of servers in the server group.
   uint32 max = 8;
 
-  /// Set to true, if a new servers can be started in this server group.
+  // Set to true, if a new servers can be started in this server group.
   bool isLaunchEnabled = 9;
 
-  /// Set to true, if servers can be terminated in this server group.
+  // Set to true, if servers can be terminated in this server group.
   bool isTerminateEnabled = 10;
 
-  /// Current lifecycle state.
+  // Current lifecycle state.
   InstanceGroupLifecycleStatus lifecycleStatus = 11;
 
-  /// Time at wich the server group was created.
+  // Time at wich the server group was created.
   uint64 launchTimestamp = 12;
 
-  /// Arbitrary set of key/value pairs. Keys starting with 'titus' prefix are
-  /// reserved for Titus.
+  // Arbitrary set of key/value pairs. Keys starting with 'titus' prefix are
+  // reserved for Titus.
   map<string, string> attributes = 13;
 }
 
-/// Events emitted for agent topology changes (new ASG created, new instance
-/// launched, etc).
+// Events emitted for agent topology changes (new ASG created, new instance
+// launched, etc).
 message AgentChangeEvent {
-  /// Sent whenever 'AgentInstanceGroup' state changes, excluding agent
-  /// instances.
+  // Sent whenever 'AgentInstanceGroup' state changes, excluding agent
+  // instances.
   message InstanceGroupUpdate { AgentInstanceGroup instanceGroup = 1; }
 
-  /// Sent whenever 'AgentInstanceGroup' is removed.
+  // Sent whenever 'AgentInstanceGroup' is removed.
   message InstanceGroupRemoved { string instanceGroupId = 1; }
 
-  /// Sent whenever 'AgentInstance' state changes, including initial (add)/final
-  /// (terminate) updates.
+  // Sent whenever 'AgentInstance' state changes, including initial (add)/final
+  // (terminate) updates.
   message InstanceUpdate { AgentInstance instance = 1; }
 
-  /// Sent whenever 'AgentInstance' is removed.
+  // Sent whenever 'AgentInstance' is removed.
   message InstanceRemoved { string instanceId = 1; }
 
-  /// A marker notification, indicating that all known agent state was streamed
-  /// to the client.
+  // A marker notification, indicating that all known agent state was streamed
+  // to the client.
   message SnapshotEnd {}
 
   oneof Event {
@@ -212,13 +212,13 @@ message AgentChangeEvent {
 // the core data model.
 
 message AgentQuery {
-  /// (Required) Requested page number/size.
+  // (Required) Requested page number/size.
   Page page = 1;
 
   // ---------------------------------------------------
   // Filtering criteria
 
-  /// (Optional) Collection of fields and their values for filtering.
+  // (Optional) Collection of fields and their values for filtering.
   // Available query criteria:
   // instanceIds - list of agent instance ids
   // instanceGroupIds - list of server group ids
@@ -230,8 +230,8 @@ message AgentQuery {
   // ---------------------------------------------------
   // Output
 
-  /// (Optional) If set, only field values explicitly given in this parameter
-  /// will be returned
+  // (Optional) If set, only field values explicitly given in this parameter
+  // will be returned
   // This does not include certain attributes like 'id', 'instanceGroupId' which
   // are always returned. If nested field value is provided, only the explicitly
   // listed nested fields will be returned.
@@ -278,44 +278,44 @@ message DeleteAgentInstanceAttributesRequest {
 }
 
 service AgentManagementService {
-  /// Return all known Titus agent server groups.
+  // Return all known Titus agent server groups.
   rpc GetInstanceGroups(google.protobuf.Empty) returns (AgentInstanceGroups) {}
 
-  /// Return an agent server group with the given id.
+  // Return an agent server group with the given id.
   rpc GetInstanceGroup(Id) returns (AgentInstanceGroup) {}
 
-  /// Return an agent instance with the given id.
+  // Return an agent instance with the given id.
   rpc GetAgentInstance(Id) returns (AgentInstance) {}
 
-  /// Return all agents matching the provided query criteria.
+  // Return all agents matching the provided query criteria.
   rpc FindAgentInstances(AgentQuery) returns (AgentInstances) {}
 
-  /// Update tier assignment of an agent instance group.
+  // Update tier assignment of an agent instance group.
   rpc UpdateInstanceGroupTier(TierUpdate) returns (google.protobuf.Empty) {}
 
-  /// Change lifecycle state of an agent instance group.
+  // Change lifecycle state of an agent instance group.
   rpc UpdateInstanceGroupLifecycleState(InstanceGroupLifecycleStateUpdate)
       returns (google.protobuf.Empty) {}
 
-  /// Update the attributes of an instance group. This will either create new
-  /// attributes or replacing existing ones with the same key.
+  // Update the attributes of an instance group. This will either create new
+  // attributes or replacing existing ones with the same key.
   rpc UpdateInstanceGroupAttributes(InstanceGroupAttributesUpdate)
       returns (google.protobuf.Empty) {}
 
-  /// Delete the attributes of an instance group.
+  // Delete the attributes of an instance group.
   rpc DeleteInstanceGroupAttributes(DeleteInstanceGroupAttributesRequest)
       returns (google.protobuf.Empty) {}
 
-  /// Update the attributes of an agent instance. This will either create new
-  /// attributes or replacing existing ones with the same key.
+  // Update the attributes of an agent instance. This will either create new
+  // attributes or replacing existing ones with the same key.
   rpc UpdateAgentInstanceAttributes(AgentInstanceAttributesUpdate)
       returns (google.protobuf.Empty) {}
 
-  /// Delete the attributes of an agent instance.
+  // Delete the attributes of an agent instance.
   rpc DeleteAgentInstanceAttributes(DeleteAgentInstanceAttributesRequest)
       returns (google.protobuf.Empty) {}
 
-  /// Sends first current snapshot of the agent topology, and next an event for
-  /// each topology change.
+  // Sends first current snapshot of the agent topology, and next an event for
+  // each topology change.
   rpc ObserveAgents(google.protobuf.Empty) returns (stream AgentChangeEvent) {}
 }

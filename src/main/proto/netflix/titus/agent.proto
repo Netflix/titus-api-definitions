@@ -294,14 +294,14 @@ message ContainerInfo {
   // Used internally by the agent to store information about a running container
   optional RunningContainerInfo runState = 39;
 
-  /// (Optional) Amount of shared memory to allocate (must be <= memoryMB)
+  // (Optional) Amount of shared memory to allocate (must be <= memoryMB)
   optional uint32 shmSizeMB = 40;
 
-  /// (Optional) IP address allocation for the task
+  // (Optional) IP address allocation for the task
   optional com.netflix.titus.SignedAddressAllocation signedAddressAllocation =
       41;
 
-  /// Timestamp in epoch millis of when the task's job was Accepted
+  // Timestamp in epoch millis of when the task's job was Accepted
   optional uint64 jobAcceptedTimestampMs = 42;
 }
 

@@ -125,8 +125,8 @@ message ClusterMembershipQueryRequest {
   // * 'since' - events at or after the given timestamp (epoch)
   map<string, string> filteringCriteria = 1;
 
-  /// (Optional) If set, only field values explicitly specified in this
-  /// parameter will be returned.
+  // (Optional) If set, only field values explicitly specified in this
+  // parameter will be returned.
   repeated string fields = 2;
 }
 

@@ -17,56 +17,56 @@ option go_package = "titus";
 // Task relocation core data structures
 
 message TaskRelocationPlan {
-  /// (Required) Id of a task to relocate.
+  // (Required) Id of a task to relocate.
   string taskId = 1;
 
-  /// (Required) Relocation reason code. Currently defined reason codes are:
+  // (Required) Relocation reason code. Currently defined reason codes are:
   //  * TODO
   string reasonCode = 2;
 
-  /// (Optional) Human readable text providing more details on why the
-  /// relocation is needed.
+  // (Optional) Human readable text providing more details on why the
+  // relocation is needed.
   string reasonMessage = 3;
 
-  /// (Optional) The earliest time (epoch in milliseconds) at which the
-  /// relocation may happen. Until that time,
+  // (Optional) The earliest time (epoch in milliseconds) at which the
+  // relocation may happen. Until that time,
   //  an owner of the task may chose to do the relocation themselve.
   uint64 relocationTime = 4;
 
-  /// (Optional) The time at which the decision about relocating the task was
-  /// made.
+  // (Optional) The time at which the decision about relocating the task was
+  // made.
   uint64 decisionTime = 5;
 }
 
 message TaskRelocationStatus {
   enum TaskRelocationState {
-    /// Reason codes:
+    // Reason codes:
     //  * 'normal'
     Success = 0;
 
-    /// Reason codes:
+    // Reason codes:
     //  * 'noDisruptionBudget'
     Failure = 1;
   }
 
-  /// (Required) Task relocation execution state.
+  // (Required) Task relocation execution state.
   TaskRelocationState state = 1;
 
-  /// (Required) Execution result. Each task relocation state is associated with
-  /// a different set of the status codes.
+  // (Required) Execution result. Each task relocation state is associated with
+  // a different set of the status codes.
   string statusCode = 2;
 
-  /// (Required) Execution result details.
+  // (Required) Execution result details.
   string statusMessage = 3;
 }
 
-/// An execution status for a single relocation plan.
+// An execution status for a single relocation plan.
 message TaskRelocationExecution {
-  /// (Required) Executed task relocation plan.
+  // (Required) Executed task relocation plan.
   TaskRelocationPlan taskRelocationPlan = 1;
 
-  /// (Required) An ordered list of relocation attempts, starting from the
-  /// oldest one to the latest.
+  // (Required) An ordered list of relocation attempts, starting from the
+  // oldest one to the latest.
   repeated TaskRelocationStatus relocationAttempts = 2;
 }
 
@@ -82,10 +82,10 @@ message TaskRelocationExecutions {
 }
 
 message TaskRelocationQuery {
-  /// (Required) Requested page number/size.
+  // (Required) Requested page number/size.
   Page page = 1;
 
-  /// (Optional) Collection of fields and their values for a filter.
+  // (Optional) Collection of fields and their values for a filter.
   //  Query criteria common for all operations:
   //  * jobIds - list of comma separated job ids
   //  * taskIds - list of comma separated task ids
@@ -93,8 +93,8 @@ message TaskRelocationQuery {
   //  * capacityGroup - job assigned capacity group
   map<string, string> filteringCriteria = 2;
 
-  /// (Optional) If set, only field values explicitly given in this parameter
-  /// will be returned
+  // (Optional) If set, only field values explicitly given in this parameter
+  // will be returned
   repeated string fields = 3;
 }
 
@@ -117,21 +117,21 @@ message RelocationEvent {
 
 service TaskRelocationService {
 
-  /// Get the current relocation plan.
+  // Get the current relocation plan.
   rpc GetCurrentTaskRelocationPlans(TaskRelocationQuery)
       returns (TaskRelocationPlans) {}
 
-  /// Get task relocation results for all tasks, optionally filtered, which are
-  /// currently being processed.
+  // Get task relocation results for all tasks, optionally filtered, which are
+  // currently being processed.
   rpc GetLatestTaskRelocationResults(TaskRelocationQuery)
       returns (TaskRelocationExecutions) {}
 
-  /// Returns task relocation result for a task with the given id. Both active
-  /// and archived data sets are checked.
+  // Returns task relocation result for a task with the given id. Both active
+  // and archived data sets are checked.
   rpc GetTaskRelocationResult(RelocationTaskId)
       returns (TaskRelocationExecution) {}
 
-  /// Observe relocation plans and their execution status.
+  // Observe relocation plans and their execution status.
   rpc ObserveRelocationEvents(TaskRelocationQuery)
       returns (stream RelocationEvent) {}
 }

@@ -90,15 +90,15 @@ service ValidatorIPService {
 
 // V2 API
 message AllocateStaticIPAddressRequest {
-  /// Required (The subnet where to allocate the address)
+  // Required (The subnet where to allocate the address)
   string subnetId = 1;
-  /// Optional. If specified, and an ID with that already exists, it will return
-  /// an error. This allows for idempotent requests.
+  // Optional. If specified, and an ID with that already exists, it will return
+  // an error. This allows for idempotent requests.
   string uuid = 2;
-  /// Optional. Pool is an indexed column that can be used to select static IPs
-  /// by.
+  // Optional. Pool is an indexed column that can be used to select static IPs
+  // by.
   string pool = 3;
-  /// Optional
+  // Optional
   map<string, string> tags = 4;
 };
 
@@ -158,8 +158,8 @@ message UpdateTagRequest {
 message UpdateTagResponse {};
 
 message AddressSearchParameter {
-  /// Either an IPv4 or IPv6 address. If it's an IPv4 address, then subnetId or
-  /// vpcId have to be specified
+  // Either an IPv4 or IPv6 address. If it's an IPv4 address, then subnetId or
+  // vpcId have to be specified
   string address = 1;
   oneof location {
     // This can be empty if address is a v6 address, otherwise it must be

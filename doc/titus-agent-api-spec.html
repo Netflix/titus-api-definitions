@@ -345,7 +345,8 @@ private key of the titus agent’s certificate. </p></td>
                   <td>certChain</td>
                   <td><a href="#bytes">bytes</a></td>
                   <td>repeated</td>
-                  <td><p>(Required) The agent’s public certificate in DER form, followed by its trust chain. </p></td>
+                  <td><p>(Required) The agent’s public certificate in DER form, followed by its
+trust chain. </p></td>
                 </tr>
               
             </tbody>
@@ -356,7 +357,7 @@ private key of the titus agent’s certificate. </p></td>
         
       
         <h3 id="messages.CertificateStringSignature">CertificateStringSignature</h3>
-        <p>Version of CertificateSignature that encodes all byte[]s as human-readable strings</p>
+        <p>Version of CertificateSignature that encodes all byte[]s as human-readable</p><p>strings</p>
 
         
           <table class="field-table">
@@ -384,7 +385,8 @@ private key of the titus agent’s certificate. </p></td>
                   <td>certChain</td>
                   <td><a href="#string">string</a></td>
                   <td>repeated</td>
-                  <td><p>(Required) The agent’s public certificate in DER form, followed by its trust chain. </p></td>
+                  <td><p>(Required) The agent’s public certificate in DER form, followed by its
+trust chain. </p></td>
                 </tr>
               
             </tbody>
@@ -645,15 +647,16 @@ of CPU, less frequently? </p></td>
                   <td>oomScoreAdj</td>
                   <td><a href="#int32">int32</a></td>
                   <td>optional</td>
-                  <td><p>This influences the value of oom_score_adj for the PID 1 (tini) of the container
+                  <td><p>This influences the value of oom_score_adj for the PID 1 (tini) of the
+container
 
-The value of /proc/&lt;pid&gt;/oom_score_adj is added to the badness score before it
-is used to determine which task to kill.  Acceptable values range from -1000
-(OOM_SCORE_ADJ_MIN) to &#43;1000 (OOM_SCORE_ADJ_MAX).  This allows userspace to
-polarize the preference for oom killing either by always preferring a certain
-task or completely disabling it.  The lowest possible value, -1000, is
-equivalent to disabling oom killing entirely for that task since it will always
-report a badness score of 0.
+The value of /proc/&lt;pid&gt;/oom_score_adj is added to the badness score before
+it is used to determine which task to kill.  Acceptable values range from
+-1000 (OOM_SCORE_ADJ_MIN) to &#43;1000 (OOM_SCORE_ADJ_MAX).  This allows
+userspace to polarize the preference for oom killing either by always
+preferring a certain task or completely disabling it.  The lowest possible
+value, -1000, is equivalent to disabling oom killing entirely for that task
+since it will always report a badness score of 0.
 
 If this value is unset, it will be set to &#43;1000 as default. </p></td>
                 </tr>
@@ -669,7 +672,8 @@ If this value is unset, it will be set to &#43;1000 as default. </p></td>
                   <td>passthroughAttributes</td>
                   <td><a href="#messages.ContainerInfo.PassthroughAttributesEntry">ContainerInfo.PassthroughAttributesEntry</a></td>
                   <td>repeated</td>
-                  <td><p>passthrough attributes are an arbitrary set of key / value pairs that are passed from API to executor </p></td>
+                  <td><p>passthrough attributes are an arbitrary set of key / value pairs that are
+passed from API to executor </p></td>
                 </tr>
               
                 <tr>
@@ -924,7 +928,8 @@ If this value is unset, it will be set to &#43;1000 as default. </p></td>
                   <td>eniLabel</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p>this should be required, but it was added later (typo fix) and is optional for backwards compatibility </p></td>
+                  <td><p>this should be required, but it was added later (typo fix) and is
+optional for backwards compatibility </p></td>
                 </tr>
               
                 <tr>
@@ -1001,7 +1006,7 @@ If this value is unset, it will be set to &#43;1000 as default. </p></td>
         
       
         <h3 id="messages.ContainerInfo.Process">ContainerInfo.Process</h3>
-        <p>entrypoint and command follow Docker semantics, and can be used to override what is baked into the Docker image:</p><p>https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact</p><p>Both CMD and ENTRYPOINT baked into the image can be explicitly cleared with a single empty value (i.e.: `[""]`).</p>
+        <p>entrypoint and command follow Docker semantics, and can be used to override</p><p>what is baked into the Docker image:</p><p>https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact</p><p>Both CMD and ENTRYPOINT baked into the image can be explicitly cleared with</p><p>a single empty value (i.e.: `[""]`).</p>
 
         
           <table class="field-table">
@@ -1014,7 +1019,8 @@ If this value is unset, it will be set to &#43;1000 as default. </p></td>
                   <td>entrypoint</td>
                   <td><a href="#string">string</a></td>
                   <td>repeated</td>
-                  <td><p>when set, will override ENTRYPOINT baked into the image, and cause CMD from the image to be ignored </p></td>
+                  <td><p>when set, will override ENTRYPOINT baked into the image, and cause CMD
+from the image to be ignored </p></td>
                 </tr>
               
                 <tr>
@@ -1320,7 +1326,7 @@ If this value is unset, it will be set to &#43;1000 as default. </p></td>
         
       
         <h3 id="messages.TaskIdentityStringDocument">TaskIdentityStringDocument</h3>
-        <p>Version of TaskIdentityDocument that encodes all byte[]s as human-readable strings</p>
+        <p>Version of TaskIdentityDocument that encodes all byte[]s as human-readable</p><p>strings</p>
 
         
           <table class="field-table">
@@ -1469,10 +1475,12 @@ If this value is unset, it will be set to &#43;1000 as default. </p></td>
                   <td><a href="#bytes">bytes</a></td>
                   <td>required</td>
                   <td><p>(Required) Pod details in bytes!
-&gt; For the same reason, we do not recommend embedding these proto objects within your own proto definitions.
-&gt; It is better to store Kubernetes objects as byte arrays, in the wire format, which is self-describing.
-&gt; This permits you to use either JSON or binary (proto) wire formats without code changes.
-&gt; It will be difficult for you to operate on both Custom Resources and built-in types otherwise. </p></td>
+&gt; For the same reason, we do not recommend embedding these proto objects
+within your own proto definitions. &gt; It is better to store Kubernetes
+objects as byte arrays, in the wire format, which is self-describing. &gt;
+This permits you to use either JSON or binary (proto) wire formats without
+code changes. &gt; It will be difficult for you to operate on both Custom
+Resources and built-in types otherwise. </p></td>
                 </tr>
               
                 <tr>
@@ -1845,7 +1853,8 @@ If this value is unset, it will be set to &#43;1000 as default. </p></td>
               <tr>
                 <td>IfNotPresent</td>
                 <td>1</td>
-                <td><p>Only pull if we don&#39;t have an image with that given tag / digest (guarantees freshness, as it requires digest)</p></td>
+                <td><p>Only pull if we don&#39;t have an image with that given tag / digest
+(guarantees freshness, as it requires digest)</p></td>
               </tr>
             
               <tr>

@@ -2,7 +2,8 @@ syntax = "proto3";
 
 // Titus job management API extensions.
 //
-// The extension schema, defines experimental features not officially supported yet
+// The extension schema, defines experimental features not officially supported
+// yet
 
 package com.netflix.titus;
 
@@ -16,13 +17,13 @@ option go_package = "titus";
 
 message ContainerExt {
 
-    message EBS {
-        string ebsARN = 1;
+  message EBS {
+    string ebsARN = 1;
 
-        string mountPoint =2;
+    string mountPoint = 2;
 
-        MountPerm mountPerm = 3;
-    }
+    MountPerm mountPerm = 3;
+  }
 
-    repeated EBS ebsMounts = 1;
+  repeated EBS ebsMounts = 1;
 }

@@ -2,15 +2,11 @@
   "paths": {
     "jobsOperations": {
       "post": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Create a new job",
         "description": "Sending job description document to this endpoint creates a new job.",
         "operationId": "createJob",
-        "consumes": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -35,15 +31,11 @@
         }
       },
       "get": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Get all jobs",
         "description": "At least one query criteria (any of the available) must be given. If 'taskState' is not set, any state matches, but archived tasks are not included. To include archived tasks, set 'taskState' to 'ANY'.",
         "operationId": "getJobs",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "name": "taskState",
@@ -142,15 +134,11 @@
     },
     "jobOperations": {
       "get": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Get job with a specified id",
         "description": "Extract information about a specific job",
         "operationId": "getJobById",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "name": "jobId",
@@ -182,18 +170,12 @@
     },
     "killJob": {
       "post": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Kill a job with the given id",
         "description": "Kill a job with the given id. Job id is provided in POST request body.",
         "operationId": "killJob",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "name": "jobKillCmd",
@@ -217,15 +199,11 @@
     },
     "setJobInstanceCounts": {
       "post": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Change instance counts for a given job",
         "description": "Change instance counts for a given job.",
         "operationId": "setJobInstanceCounts",
-        "consumes": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
         "parameters": [
           {
             "name": "jobCounters",
@@ -249,15 +227,11 @@
     },
     "killTask": {
       "post": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Kill a task with the given id",
         "description": "Kill a task with the given id. Task id is provided in POST request body.",
         "operationId": "killTask",
-        "consumes": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
         "parameters": [
           {
             "name": "taskKillCmd",
@@ -281,15 +255,11 @@
     },
     "setInService": {
       "post": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Change job in-service status",
         "description": "Change job in-service status",
         "operationId": "setInService",
-        "consumes": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
         "parameters": [
           {
             "name": "inServiceUpdate",
@@ -319,15 +289,11 @@
     },
     "getTaskById": {
       "get": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Get information about a running task",
         "description": "Get information about a running task",
         "operationId": "getTaskById",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "name": "taskId",
@@ -352,15 +318,11 @@
     },
     "getTasksWithHeartbeatTimeout": {
       "get": {
-        "tags": [
-          "Internal"
-        ],
+        "tags": ["Internal"],
         "summary": "Get information about task/container heartbeat timeout/delay",
         "description": "Get information about task/container heartbeat timeout/delay. If query parameter 'delay' is not given, tasks with heartbeat timeout are returned.",
         "operationId": "getTasksWithHeartbeatTimeout",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "name": "delay",
@@ -388,15 +350,11 @@
     },
     "titusExecutorHeartbeat": {
       "post": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Container/task heartbeat from Titus agent",
         "description": "Container/task heartbeat from Titus agent. This is internal API used between Titus Agent, and Titus Master",
         "operationId": "titusExecutorHeartbeat",
-        "consumes": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
         "parameters": [
           {
             "name": "heartbeatCmd",

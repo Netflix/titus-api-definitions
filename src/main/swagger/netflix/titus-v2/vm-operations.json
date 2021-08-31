@@ -2,15 +2,11 @@
   "paths": {
     "listServerInfos": {
       "get": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "List all known server types",
         "description": "List all known server types",
         "operationId": "listServerInfos",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "OK",
@@ -29,15 +25,11 @@
     },
     "listAgents": {
       "get": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "List all agent ASGs",
         "description": "Fetch all known Titus ASGs with their server pools, and available resources.",
         "operationId": "listAgents",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "query",
@@ -65,15 +57,11 @@
     },
     "listClusters": {
       "get": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "List Titus clusters",
         "description": "List Titus clusters, and their auto scaling rules",
         "operationId": "listClusters",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "OK",
@@ -92,15 +80,11 @@
     },
     "listJobsOnAgents": {
       "get": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "List jobs running on a specific Virtual Machines",
         "description": "List jobs running on a specific Virtual Machines",
         "operationId": "listJobsOnAgents",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "query",
@@ -140,15 +124,11 @@
     },
     "serverGroupsOperations": {
       "get": {
-        "tags": [
-          "Agent management"
-        ],
+        "tags": ["Agent management"],
         "summary": "Get all known Titus agent server groups",
         "description": "Get all known Titus agent server groups",
         "operationId": "getServerGroups",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "OK",
@@ -165,18 +145,12 @@
         }
       },
       "post": {
-        "tags": [
-          "Agent management"
-        ],
+        "tags": ["Agent management"],
         "summary": "Change Titus server group lifecycle state",
         "description": "Change Titus server group lifecycle state",
         "operationId": "updateServerGroup",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -199,15 +173,11 @@
     },
     "serverGroupOperations": {
       "get": {
-        "tags": [
-          "Agent management"
-        ],
+        "tags": ["Agent management"],
         "summary": "Get Titus server group by name",
         "description": "Get Titus server group by name",
         "operationId": "getServerGroup",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "name": "name",
@@ -229,15 +199,11 @@
         }
       },
       "delete": {
-        "tags": [
-          "Agent management"
-        ],
+        "tags": ["Agent management"],
         "summary": "(Deprecated) Remove Titus server group.",
         "description": "This operation is provided for backward compatibility when server group auto-discovery was not present.",
         "operationId": "removeServerGroup",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "name": "name",

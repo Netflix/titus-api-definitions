@@ -2,15 +2,11 @@
   "paths": {
     "getLogs": {
       "get": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Get log location information of a given task",
         "description": "Get log location information of a given task",
         "operationId": "getLogs",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "name": "taskId",
@@ -39,15 +35,11 @@
     },
     "downloadLogs": {
       "get": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Returns live and S3 storage URLs to container log files.",
         "description": "Returns live and S3 storage URLs to container log files. The result is a map where a key is a file name (or 'stdout-live' for live stream), and a value log location URL.",
         "operationId": "downloadLogs",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "name": "taskId",

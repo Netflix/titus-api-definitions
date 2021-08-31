@@ -1,5 +1,6 @@
 /*
- * Example API for Compute Managed Batch. Please use internal proto definitions for latest versions.
+ * Example API for Compute Managed Batch. Please use internal proto definitions
+ * for latest versions.
  */
 
 syntax = "proto3";
@@ -16,231 +17,241 @@ option java_outer_classname = "JobAccumulatorProto";
 
 service JobAccumulatorService {
 
-    // Creates a new job accumulator.
-    rpc CreateJobAccumulator (CreateJobAccumulatorRequest) returns (JobAccumulator) {
-    }
+  // Creates a new job accumulator.
+  rpc CreateJobAccumulator(CreateJobAccumulatorRequest)
+      returns (JobAccumulator) {}
 
-    // Changes the job accumulator target by the provided amount.
-    rpc UpdateJobAccumulatorTarget (UpdateJobAccumulatorTargetRequest) returns (JobAccumulator) {
-    }
+  // Changes the job accumulator target by the provided amount.
+  rpc UpdateJobAccumulatorTarget(UpdateJobAccumulatorTargetRequest)
+      returns (JobAccumulator) {}
 
-    // Closes an accumulator. This does not affect CMB jobs created by this accumulator.
-    rpc CloseJobAccumulator (JobAccumulatorId) returns (JobAccumulator) {
-    }
+  // Closes an accumulator. This does not affect CMB jobs created by this
+  // accumulator.
+  rpc CloseJobAccumulator(JobAccumulatorId) returns (JobAccumulator) {}
 
-    rpc GetJobAccumulator (JobAccumulatorByIdQuery) returns (JobAccumulator) {
-    }
+  rpc GetJobAccumulator(JobAccumulatorByIdQuery) returns (JobAccumulator) {}
 
-    rpc GetJobAccumulatorExecution (GetJobAccumulatorExecutionRequest) returns (JobAccumulatorExecution) {
-    }
+  rpc GetJobAccumulatorExecution(GetJobAccumulatorExecutionRequest)
+      returns (JobAccumulatorExecution) {}
 
-    rpc GetJobAccumulatorWithExecution (GetJobAccumulatorExecutionRequest) returns (JobAccumulatorWithExecution) {
-    }
+  rpc GetJobAccumulatorWithExecution(GetJobAccumulatorExecutionRequest)
+      returns (JobAccumulatorWithExecution) {}
 
-    /// Find job accumulators that match the query request. Only active data set is searched, which includes all
-    //  non-completed job accumulators and, and recently terminated (kept by a configurable amount of time which should be 15 min to 1 hour).
-    //
-    //  Filterable job accumulator query fields are:
-    //  jobAccumulatorId - id of a specific job accumulator
-    //  jobAccumulatorIds - a comma separated list of job accumulator ids
-    //  jobAccumulatorState - a specific job accumulator state
-    //  tenantId - id of a tenant
-    //  applicationName - name of the application
-    //  priorityClass - a specific priority class name
-    //  jobGroupStack - job group stack
-    //  jobGroupDetail - job group details
-    //  jobGroupSequence - job group sequence
-    rpc FindJobAccumulators (QueryRequest) returns (JobAccumulatorsQueryResponse) {
-    }
+  /// Find job accumulators that match the query request. Only active data set
+  /// is searched, which includes all
+  //  non-completed job accumulators and, and recently terminated (kept by a
+  //  configurable amount of time which should be 15 min to 1 hour).
+  //
+  //  Filterable job accumulator query fields are:
+  //  jobAccumulatorId - id of a specific job accumulator
+  //  jobAccumulatorIds - a comma separated list of job accumulator ids
+  //  jobAccumulatorState - a specific job accumulator state
+  //  tenantId - id of a tenant
+  //  applicationName - name of the application
+  //  priorityClass - a specific priority class name
+  //  jobGroupStack - job group stack
+  //  jobGroupDetail - job group details
+  //  jobGroupSequence - job group sequence
+  rpc FindJobAccumulators(QueryRequest) returns (JobAccumulatorsQueryResponse) {
+  }
 
-    // For query fields documentation see `FindJobAccumulators`
-    rpc FindJobAccumulatorExecutions (JobAccumulatorExecutionQueryRequest) returns (JobAccumulatorExecutionsQueryResponse) {
-    }
+  // For query fields documentation see `FindJobAccumulators`
+  rpc FindJobAccumulatorExecutions(JobAccumulatorExecutionQueryRequest)
+      returns (JobAccumulatorExecutionsQueryResponse) {}
 
-    // For query fields documentation see `FindJobAccumulators`
-    rpc FindJobAccumulatorsWithExecutions (JobAccumulatorExecutionQueryRequest) returns (JobAccumulatorsWithExecutionsQueryResponse) {
-    }
+  // For query fields documentation see `FindJobAccumulators`
+  rpc FindJobAccumulatorsWithExecutions(JobAccumulatorExecutionQueryRequest)
+      returns (JobAccumulatorsWithExecutionsQueryResponse) {}
 
-    // Emit job accumulator events. This stream never completes unless the connection is terminated.
-    rpc Events (EventsQueryRequest) returns (stream JobAccumulatorEvent) {
-    }
+  // Emit job accumulator events. This stream never completes unless the
+  // connection is terminated.
+  rpc Events(EventsQueryRequest) returns (stream JobAccumulatorEvent) {}
 }
 
 // ----------------------------------------------------------------------------
 // Service RPC request and response structures
 
 message JobAccumulatorId {
-    /// Globally unique ID of the job accumulator.
-    string id = 1;
+  /// Globally unique ID of the job accumulator.
+  string id = 1;
 }
 
 message CreateJobAccumulatorRequest {
-    JobAccumulatorDefinition definition = 1;
+  JobAccumulatorDefinition definition = 1;
 
-    // Initial target value.
-    uint32 target = 2;
+  // Initial target value.
+  uint32 target = 2;
 }
 
 message UpdateJobAccumulatorTargetRequest {
-    /// Globally unique ID of the job accumulator.
-    string id = 1;
+  /// Globally unique ID of the job accumulator.
+  string id = 1;
 
-    // Additional number of jobs that should be added to the job accumulator.
-    uint32 amount = 2;
+  // Additional number of jobs that should be added to the job accumulator.
+  uint32 amount = 2;
 
-    // If true, the `amount` is a new target value. Otherwise it is a delta, and may be both
-    // negative and positive.
-    bool absolute = 3;
+  // If true, the `amount` is a new target value. Otherwise it is a delta, and
+  // may be both negative and positive.
+  bool absolute = 3;
 }
 
 message JobAccumulatorWithExecution {
-    JobAccumulator jobAccumulator = 1;
+  JobAccumulator jobAccumulator = 1;
 
-    JobAccumulatorExecution execution = 2;
+  JobAccumulatorExecution execution = 2;
 }
 
 message JobAccumulatorByIdQuery {
-    /// Globally unique ID of the job accumulator.
-    string id = 1;
+  /// Globally unique ID of the job accumulator.
+  string id = 1;
 
-    /// If set to true, only check in the active data set, which includes all running, and
-    //  recently terminated job accumulators (kept by a configurable amount of time which should be 15 min to 1 hour).
-    //  Otherwise a finished job accumulator that was archived is loaded from the archive store. Loading from the archive store
-    //  may be many orders of magnitude slower than loading the data from the active data set.
-    bool skipArchive = 2;
+  /// If set to true, only check in the active data set, which includes all
+  /// running, and
+  //  recently terminated job accumulators (kept by a configurable amount of
+  //  time which should be 15 min to 1 hour). Otherwise a finished job
+  //  accumulator that was archived is loaded from the archive store. Loading
+  //  from the archive store may be many orders of magnitude slower than loading
+  //  the data from the active data set.
+  bool skipArchive = 2;
 }
 
 message GetJobAccumulatorExecutionRequest {
-    string jobAccumulatorId = 1;
+  string jobAccumulatorId = 1;
 
-    bool includeCmbJobIds = 2;
+  bool includeCmbJobIds = 2;
 
-    /// If set to true, only check in the active data set, which includes all running, and
-    //  recently terminated job accumulators (kept by a configurable amount of time which should be 15 min to 1 hour).
-    //  Otherwise a finished job accumulator that was archived is loaded from the archive store. Loading from the archive store
-    //  may be many orders of magnitude slower than loading the data from the active data set.
-    bool skipArchive = 3;
+  /// If set to true, only check in the active data set, which includes all
+  /// running, and
+  //  recently terminated job accumulators (kept by a configurable amount of
+  //  time which should be 15 min to 1 hour). Otherwise a finished job
+  //  accumulator that was archived is loaded from the archive store. Loading
+  //  from the archive store may be many orders of magnitude slower than loading
+  //  the data from the active data set.
+  bool skipArchive = 3;
 }
 
 message JobAccumulatorExecutionQueryRequest {
-    QueryRequest query = 1;
+  QueryRequest query = 1;
 
-    bool includeCmbJobs = 2;
+  bool includeCmbJobs = 2;
 }
 
 message JobAccumulatorsQueryResponse {
-    repeated JobAccumulator items = 1;
+  repeated JobAccumulator items = 1;
 
-    netflix.titus.Pagination pagination = 2;
+  netflix.titus.Pagination pagination = 2;
 }
 
 message JobAccumulatorExecutionsQueryResponse {
-    repeated JobAccumulatorExecution items = 1;
+  repeated JobAccumulatorExecution items = 1;
 
-    netflix.titus.Pagination pagination = 2;
+  netflix.titus.Pagination pagination = 2;
 }
 
 message JobAccumulatorsWithExecutionsQueryResponse {
-    repeated JobAccumulatorWithExecution items = 1;
+  repeated JobAccumulatorWithExecution items = 1;
 
-    netflix.titus.Pagination pagination = 2;
+  netflix.titus.Pagination pagination = 2;
 }
 
 // ----------------------------------------------------------------------------
 // Data model
 
 message JobAccumulatorDefinition {
-    // A CMB job template. Number of CMB jobs to create is specified by the `Accumulator` target
-    // field.
-    JobDefinition jobTemplate = 1;
+  // A CMB job template. Number of CMB jobs to create is specified by the
+  // `Accumulator` target field.
+  JobDefinition jobTemplate = 1;
 
-    // If set to true, the job accumulator is closed when there are no more jobs to process.
-    // If false, it stays in the `OPEN` state thus allowing more work to be added.
-    bool closeWhenDone = 2;
+  // If set to true, the job accumulator is closed when there are no more jobs
+  // to process. If false, it stays in the `OPEN` state thus allowing more work
+  // to be added.
+  bool closeWhenDone = 2;
 
-    // Maximum amount of time a job accumulator may stay in the `OPEN` state. If that time
-    // passes it transitions immediately to the `CLOSING` state.
-    uint64 openTimeLimitMs = 3;
+  // Maximum amount of time a job accumulator may stay in the `OPEN` state. If
+  // that time passes it transitions immediately to the `CLOSING` state.
+  uint64 openTimeLimitMs = 3;
 
-    // Attributes. Prefix 'managedbatch.*' is reserved for internal use.
-    map<string, string> attributes = 4;
+  // Attributes. Prefix 'managedbatch.*' is reserved for internal use.
+  map<string, string> attributes = 4;
 }
 
 message JobAccumulatorStatus {
 
-    enum JobAccumulatorState {
-        OPEN = 0;
+  enum JobAccumulatorState {
+    OPEN = 0;
 
-        // No new CMB jobs are created (waiting -> aborted & waiting = 0).
-        // No more updates are accepted. Running jobs are allowed to be completed.
-        CLOSING = 1;
+    // No new CMB jobs are created (waiting -> aborted & waiting = 0).
+    // No more updates are accepted. Running jobs are allowed to be completed.
+    CLOSING = 1;
 
-        // All jobs associated with the given accumulator finished.
-        CLOSED = 2;
-    }
+    // All jobs associated with the given accumulator finished.
+    CLOSED = 2;
+  }
 
-    JobAccumulatorState state = 1;
+  JobAccumulatorState state = 1;
 
-    string message = 2;
+  string message = 2;
 
-    uint64 timestamp = 3;
+  uint64 timestamp = 3;
 }
 
 message JobAccumulator {
-    // A unique id. This id is attached to each CMB job created by this accumulator.
-    string id = 1;
+  // A unique id. This id is attached to each CMB job created by this
+  // accumulator.
+  string id = 1;
 
-    JobAccumulatorDefinition definition = 2;
+  JobAccumulatorDefinition definition = 2;
 
-    repeated JobAccumulatorStatus status = 3;
+  repeated JobAccumulatorStatus status = 3;
 
-    // Total number of jobs (processed, aborted, running and waiting for processing).
-    // At all times target == waiting + running + completed + aborted.
-    uint32 target = 4;
+  // Total number of jobs (processed, aborted, running and waiting for
+  // processing). At all times target == waiting + running + completed +
+  // aborted.
+  uint32 target = 4;
 }
 
 message JobAccumulatorExecution {
-    // A job accumulator id for which the execution state is returned.
-    string jobAccumulatorId = 1;
+  // A job accumulator id for which the execution state is returned.
+  string jobAccumulatorId = 1;
 
-    uint32 target = 2;
+  uint32 target = 2;
 
-    // Total number of jobs waiting for processing (for which CMB jobs were not created yet).
-    uint32 waiting = 3;
+  // Total number of jobs waiting for processing (for which CMB jobs were not
+  // created yet).
+  uint32 waiting = 3;
 
-    // Number of created and not finished CMB jobs instantiated for this queue.
-    uint32 active = 4;
+  // Number of created and not finished CMB jobs instantiated for this queue.
+  uint32 active = 4;
 
-    // Number of completed CMB jobs.
-    uint32 completed = 5;
+  // Number of completed CMB jobs.
+  uint32 completed = 5;
 
-    // Number of aborted jobs
-    uint32 aborted = 6;
+  // Number of aborted jobs
+  uint32 aborted = 6;
 
-    // Ids of all created CMB job by this job accumulator.
-    repeated string cmbJobIds = 7;
+  // Ids of all created CMB job by this job accumulator.
+  repeated string cmbJobIds = 7;
 }
 
 message JobAccumulatorEvent {
 
-    enum EventKind {
-        CREATED = 0;
-        UPDATED = 1;
-        REMOVED = 2;
-    }
+  enum EventKind {
+    CREATED = 0;
+    UPDATED = 1;
+    REMOVED = 2;
+  }
 
-    message SnapshotMarker {
-    }
+  message SnapshotMarker {}
 
-    message JobAccumulatorUpdate {
-        EventKind eventKind = 1;
-        JobAccumulator jobAccumulator = 2;
-    }
+  message JobAccumulatorUpdate {
+    EventKind eventKind = 1;
+    JobAccumulator jobAccumulator = 2;
+  }
 
-    oneof Event {
-        SnapshotMarker snapshotMarker = 1;
-        JobAccumulatorUpdate jobAccumulatorUpdate = 2;
-    }
+  oneof Event {
+    SnapshotMarker snapshotMarker = 1;
+    JobAccumulatorUpdate jobAccumulatorUpdate = 2;
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -248,7 +259,7 @@ message JobAccumulatorEvent {
 
 message JobAccumulatorDataRecord {
 
-    netflix.titus.DataRecordMetadata metadata = 1;
+  netflix.titus.DataRecordMetadata metadata = 1;
 
-    JobAccumulator jobAccumulator = 2;
+  JobAccumulator jobAccumulator = 2;
 }

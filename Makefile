@@ -2,6 +2,10 @@
 # If you have a Go environment:
 # go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc
 
+.PHONY: build
+build:
+	./buildViaTravis.sh
+
 .PHONY: fmt
 fmt:
 	# prettier covers json stuff

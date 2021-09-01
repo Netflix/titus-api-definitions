@@ -109,23 +109,23 @@ message NetworkConfiguration {
 }
 
 message ContainerResources {
-  // (Required) Number of CPUs to allocate (must be always > 0, but the actual
-  // limit is configurable).
+  // (Required) Number of CPUs to allocate to a task
+  // (must be always > 0, but the actual limit is configurable).
   double cpu = 1;
 
-  // (Optional) Number of GPUs to allocate.
+  // (Optional) Number of GPUs to allocate to a task.
   uint32 gpu = 2;
 
-  // (Required) Amount of memory to allocate (must be always > 0, but the
-  // actual limit is configurable).
+  // (Required) Amount of memory to allocate to a task
+  // (must be always > 0, but the actual limit is configurable).
   uint32 memoryMB = 3;
 
-  // (Required) Amount of disk space to allocate (must be always > 0, but the
-  // actual limit is configurable).
+  // (Required) Amount of ephemeral disk space to allocate to a task
+  // (must be always > 0, but the actual limit is configurable).
   uint32 diskMB = 4;
 
-  // (Required) Amount of network bandwidth to allocate (must be always > 0,
-  // but the actual limit is configurable).
+  // (Required) Amount of network bandwidth to allocate to an individual task
+  // (must be always > 0, but the actual limit is configurable).
   uint32 networkMbps = 5;
 
   // (Deprecated) IP always allocated.
@@ -184,7 +184,7 @@ message SecurityProfile {
 
 // Container descriptor.
 message Container {
-  // (Required) Container resources.
+  // (Required) Resources for the whole task.
   ContainerResources resources = 1;
 
   // (Required) Container security profile: IAM role, security groups,
@@ -198,17 +198,17 @@ message Container {
   // 'titus.' are reserved by Titus.
   map<string, string> attributes = 4;
 
-  // (Optional) Override the entry point of the image.
+  // (Optional) Override the entrypoint of the image.
   // If set, the command baked into the image (if any) is always ignored.
-  // Interactions between the entry point and command are the same as specified
+  // Interactions between the entrypoint and command are the same as specified
   // by Docker:
   // https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact
   //
-  //  To clear (unset) the entry point of the image, pass a single empty string
+  //  To clear (unset) the entrypoint of the image, pass a single empty string
   //  value: [""]
   repeated string entryPoint = 5;
 
-  // (Optional) Additional parameters for the entry point defined either here
+  // (Optional) Additional parameters for the entrypoint defined either here
   // or provided in the container image.
   // To clear (unset) the command of the image, pass a single empty string
   // value: [""]
@@ -219,15 +219,45 @@ message Container {
   map<string, string> env = 7;
 
   // (Optional) Constraints that Titus will prefer to fulfill but are not
-  // required.
+  // required. These constraints apply to the whole task.
   Constraints softConstraints = 8;
 
   // (Optional) Constraints that have to be met for a task to be scheduled on
-  // an agent.
+  // an agent. These constraints apply to the whole task.
   Constraints hardConstraints = 9;
 
   // (Optional) Experimental features
   google.protobuf.Any experimental = 10;
+}
+
+// BasicContainer stores the minimal data required to declare extra containers
+// to a job. This is in contrast to the Container message, which has other data
+// that are not strictly tied to the main container. For example,
+// *resources* (ram/cpu/etc) for the whole *task* are declared in the main
+// Container message, not in a basic container.
+message BasicContainer {
+  // (Required) the Name of this container
+  string name = 1;
+
+  // (Required) Image reference.
+  Image image = 2;
+
+  // (Optional) Override the entrypoint of the image.
+  // If set, the command baked into the image (if any) is always ignored.
+  // Interactions between the entrypoint and command are the same as specified
+  // by Docker:
+  // https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact
+  // Note that, unlike the main container, no string splitting occurs.
+  repeated string entryPoint = 3;
+
+  // (Optional) Additional parameters for the entrypoint defined either here
+  // or provided in the container image.
+  // Note that, unlike the main container, no string splitting occurs.
+  repeated string command = 4;
+
+  // (Optional) A collection of system environment variables passed to the
+  // container.
+  map<string, string> env = 5;
 }
 
 // This data structure is associated with a service job and specifies the
@@ -472,6 +502,12 @@ message JobDescriptor {
   // (Optional) Networking configuration. If not defined, sane defaults are
   // provided by the backend.
   NetworkConfiguration networkConfiguration = 11;
+
+  // (Optional) Extra Containers can be specificed to run alongside the main
+  // container in a "pod" (similar to k8s pods). Additional containers
+  // can be specified in this field, and they will be launched together with
+  // the main container, sharing its resources (network/ram/cpu/gpu/etc).
+  repeated BasicContainer extraContainers = 12;
 }
 
 // Composite data structure holding both job state information and the reason

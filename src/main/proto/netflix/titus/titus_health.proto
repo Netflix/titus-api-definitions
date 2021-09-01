@@ -15,7 +15,8 @@ option java_outer_classname = "HealthProto";
 option go_package = "titus";
 
 message HealthCheckRequest {
-  // reserved for future use as per the GRPC Health Checking protocol, but currently ignored.
+  // reserved for future use as per the GRPC Health Checking protocol, but
+  // currently ignored.
   string service = 1;
 }
 
@@ -56,7 +57,8 @@ message HealthCheckResponse {
     repeated ServiceActivation serviceActivationTimes = 9;
   }
 
-  // individual hosts return single details, while proxies (titus-gateway, titus-federation) may return multiple
+  // individual hosts return single details, while proxies (titus-gateway,
+  // titus-federation) may return multiple
   repeated ServerStatus details = 2;
 }
 
@@ -65,6 +67,4 @@ message ServiceActivation {
   google.protobuf.Duration activationTime = 2;
 }
 
-service Health {
-  rpc Check(HealthCheckRequest) returns (HealthCheckResponse);
-}
+service Health { rpc Check(HealthCheckRequest) returns (HealthCheckResponse); }

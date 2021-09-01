@@ -11,9 +11,7 @@
       "name": ""
     }
   },
-  "schemes": [
-    "http"
-  ],
+  "schemes": ["http"],
   "host": "__titus_api__host__",
   "basePath": "",
   "tags": [

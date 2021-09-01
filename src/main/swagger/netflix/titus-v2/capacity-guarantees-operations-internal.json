@@ -2,15 +2,11 @@
   "paths": {
     "getConsumption": {
       "get": {
-        "tags": [
-          "Internal"
-        ],
+        "tags": ["Internal"],
         "summary": "Get current resource consumption",
         "description": "Get current resource consumption",
         "operationId": "getConsumption",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "OK",

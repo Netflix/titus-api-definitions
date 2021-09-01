@@ -2,15 +2,11 @@
   "paths": {
     "getQueues": {
       "get": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Get fenzo queue content",
         "description": "Get fenzo queue content",
         "operationId": "getQueues",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "query",
@@ -42,15 +38,11 @@
     },
     "getTaskFailures": {
       "get": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Get task placement evaluations",
         "description": "Get task placement evaluations",
         "operationId": "getTaskFailures",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "path",

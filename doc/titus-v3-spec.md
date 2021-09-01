@@ -119,9 +119,11 @@ Batch job specification.
 <a name="com.netflix.titus.Capacity"></a>
 
 ### Capacity
-This data structure is associated with a service job and specifies the number of tasks to run (desired).
-At any point in time, the condition min &lt;= desired &lt;= max must hold true. The desired state may be changed by a user,
-but also may be changed as a result of an auto-scaling action.
+This data structure is associated with a service job and specifies the
+number of tasks to run (desired).
+At any point in time, the condition min &lt;= desired &lt;= max must hold true. The
+desired state may be changed by a user, but also may be changed as a result
+of an auto-scaling action.
 
 
 | Field | Type | Label | Description |
@@ -139,9 +141,11 @@ but also may be changed as a result of an auto-scaling action.
 
 ### Constraints
 Task placement constraints. Currently supported constraint types are:
-* zoneBalance - distributes tasks of a job evenly among the availability zones
+* zoneBalance - distributes tasks of a job evenly among the availability
+zones
 * uniqueHost - runs each task of a job on a different agent
-* exclusiveHost - ensures that an agent is exclusively assigned to a given job
+* exclusiveHost - ensures that an agent is exclusively assigned to a given
+job
 
 
 | Field | Type | Label | Description |
@@ -274,12 +278,14 @@ Container descriptor.
 <a name="com.netflix.titus.Image"></a>
 
 ### Image
-To reference an image, a user has to provide an image name and a version. A user may specify a version either with
-a tag value (for example &#39;latest&#39;) or a digest. When submitting a job, a user should provide either a tag or a digest value
-only (not both of them).
+To reference an image, a user has to provide an image name and a version. A
+user may specify a version either with
+a tag value (for example &#39;latest&#39;) or a digest. When submitting a job, a user
+should provide either a tag or a digest value only (not both of them).
 
-For example, docker images can be referenced by {name=titus-examples, tag=latest}.
-A user could also choose to provide only the digest without a tag. In this case, the tag value would be empty.
+For example, docker images can be referenced by {name=titus-examples,
+tag=latest}. A user could also choose to provide only the digest without a
+tag. In this case, the tag value would be empty.
 
 
 | Field | Type | Label | Description |
@@ -305,6 +311,7 @@ Job entity is returned by query operations only.
 | jobDescriptor | [JobDescriptor](#com.netflix.titus.JobDescriptor) |  | (Required) Job descriptor. |
 | status | [JobStatus](#com.netflix.titus.JobStatus) |  | (Required) Last known job state. |
 | statusHistory | [JobStatus](#com.netflix.titus.JobStatus) | repeated | (Required) State transition history. |
+| version | [Version](#com.netflix.titus.Version) |  | (Optional) Job version associated with the given entity. Revision numbers for jobs and tasks are created from the same ordered number generator. |
 
 
 
@@ -411,9 +418,11 @@ Job entity is returned by query operations only.
 <a name="com.netflix.titus.JobChangeNotification"></a>
 
 ### JobChangeNotification
-Job event stream consists of two phases. In the first phase, a snapshot of the current state (a job and its tasks) is
- streamed, and it is followed by the SnapshotEnd notification marker. In the second phase, job/task state updates are
- sent. When a job is terminated, the stream completes.
+Job event stream consists of two phases. In the first phase, a snapshot of
+the current state (a job and its tasks) is
+ streamed, and it is followed by the SnapshotEnd notification marker. In the
+ second phase, job/task state updates are sent. When a job is terminated, the
+ stream completes.
 
 
 | Field | Type | Label | Description |
@@ -421,6 +430,7 @@ Job event stream consists of two phases. In the first phase, a snapshot of the c
 | jobUpdate | [JobChangeNotification.JobUpdate](#com.netflix.titus.JobChangeNotification.JobUpdate) |  |  |
 | taskUpdate | [JobChangeNotification.TaskUpdate](#com.netflix.titus.JobChangeNotification.TaskUpdate) |  |  |
 | snapshotEnd | [JobChangeNotification.SnapshotEnd](#com.netflix.titus.JobChangeNotification.SnapshotEnd) |  |  |
+| timestamp | [uint64](#uint64) |  | Event creation timestamp. |
 
 
 
@@ -430,7 +440,8 @@ Job event stream consists of two phases. In the first phase, a snapshot of the c
 <a name="com.netflix.titus.JobChangeNotification.JobUpdate"></a>
 
 ### JobChangeNotification.JobUpdate
-Emitted when a new job is created or when any of the job&#39;s attributes change.
+Emitted when a new job is created or when any of the job&#39;s attributes
+change.
 
 
 | Field | Type | Label | Description |
@@ -445,7 +456,8 @@ Emitted when a new job is created or when any of the job&#39;s attributes change
 <a name="com.netflix.titus.JobChangeNotification.SnapshotEnd"></a>
 
 ### JobChangeNotification.SnapshotEnd
-A notification marker that indicates that all known jobs were streamed to the client.
+A notification marker that indicates that all known jobs were streamed to
+the client.
 
 
 
@@ -487,7 +499,8 @@ Emitted when a task is created or its state has changed.
 <a name="com.netflix.titus.JobDescriptor"></a>
 
 ### JobDescriptor
-Job descriptor contains the full job specification (batch or service) that is used to run a job.
+Job descriptor contains the full job specification (batch or service) that
+is used to run a job.
 
 
 | Field | Type | Label | Description |
@@ -551,7 +564,8 @@ Job disruption budget, associated (optionally) with a job.
 <a name="com.netflix.titus.JobDisruptionBudget.AvailabilityPercentageLimit"></a>
 
 ### JobDisruptionBudget.AvailabilityPercentageLimit
-The minimum required percentage of tasks in a healthy state. Tasks will not be terminated by the eviction service
+The minimum required percentage of tasks in a healthy state. Tasks will
+not be terminated by the eviction service
  if this limit would be violated.
 
 
@@ -598,12 +612,16 @@ Allow up to the given percentage of tasks to be relocated within an hour.
 <a name="com.netflix.titus.JobDisruptionBudget.RatePercentagePerInterval"></a>
 
 ### JobDisruptionBudget.RatePercentagePerInterval
-Percentage of containers that can be relocated within a time interval. The number of containers is determined
- during each evaluation, and the number is based on the current desired job size. If the job size changes, the percentage of containers
- changes accordingly. For example, setting / interval to 60000 (1 minute) and ratePercentagePerInterval to 5 (5%)
- would allow only for up to 5% of all containers to be relocated every minute, given the other criteria are met.
- For a job with a desired size of 100, 5 container relocations per minute would be allowed. If the desired job size changes
- to 200, the relocation rate increases to 10 containers per minute.
+Percentage of containers that can be relocated within a time interval. The
+number of containers is determined
+ during each evaluation, and the number is based on the current desired job
+ size. If the job size changes, the percentage of containers changes
+ accordingly. For example, setting / interval to 60000 (1 minute) and
+ ratePercentagePerInterval to 5 (5%) would allow only for up to 5% of all
+ containers to be relocated every minute, given the other criteria are met.
+ For a job with a desired size of 100, 5 container relocations per minute
+ would be allowed. If the desired job size changes to 200, the relocation
+ rate increases to 10 containers per minute.
 
 
 | Field | Type | Label | Description |
@@ -619,7 +637,8 @@ Percentage of containers that can be relocated within a time interval. The numbe
 <a name="com.netflix.titus.JobDisruptionBudget.RateUnlimited"></a>
 
 ### JobDisruptionBudget.RateUnlimited
-No limits on how many containers in a job may be relocated, provided the other disruption budget constraints are not violated.
+No limits on how many containers in a job may be relocated, provided the
+other disruption budget constraints are not violated.
 
 
 
@@ -629,7 +648,8 @@ No limits on how many containers in a job may be relocated, provided the other d
 <a name="com.netflix.titus.JobDisruptionBudget.RelocationLimit"></a>
 
 ### JobDisruptionBudget.RelocationLimit
-Maximum number of times a task can be relocated (only batch tasks, which have a maximum execution time).
+Maximum number of times a task can be relocated (only batch tasks, which
+have a maximum execution time).
 
 
 | Field | Type | Label | Description |
@@ -644,9 +664,10 @@ Maximum number of times a task can be relocated (only batch tasks, which have a 
 <a name="com.netflix.titus.JobDisruptionBudget.SelfManaged"></a>
 
 ### JobDisruptionBudget.SelfManaged
-Self managed task relocation policy for users that would like to orchestrate custom termination logic.
- If the containers are not terminated within the confgured amount of time, the system default migration
- policy is assumed instead.
+Self managed task relocation policy for users that would like to
+orchestrate custom termination logic.
+ If the containers are not terminated within the confgured amount of time,
+ the system default migration policy is assumed instead.
 
 
 | Field | Type | Label | Description |
@@ -661,7 +682,8 @@ Self managed task relocation policy for users that would like to orchestrate cus
 <a name="com.netflix.titus.JobDisruptionBudget.UnhealthyTasksLimit"></a>
 
 ### JobDisruptionBudget.UnhealthyTasksLimit
-The maximum required amount of tasks in an unhealthy state. Tasks will not be terminated by the eviction service
+The maximum required amount of tasks in an unhealthy state. Tasks will not
+be terminated by the eviction service
  if this limit would be violated.
 
 
@@ -693,10 +715,13 @@ The maximum required amount of tasks in an unhealthy state. Tasks will not be te
 <a name="com.netflix.titus.JobGroupInfo"></a>
 
 ### JobGroupInfo
-Additional information for building a supplementary job identifier, as the &#39;applicationName&#39; can be shared by
-many jobs running at the same time in Titus. By setting &#39;JobGroupInfo&#39;, a user may create a job id that is guaranteed
-to be unique accross all currently running Titus jobs. The uniquness is checked if any of the attributes
-in this record is a non empty string. The full name is built as: &#39;&lt;application_name&gt;-&lt;stack&gt;-&lt;detail&gt;-&lt;sequence&gt;.
+Additional information for building a supplementary job identifier, as the
+&#39;applicationName&#39; can be shared by
+many jobs running at the same time in Titus. By setting &#39;JobGroupInfo&#39;, a
+user may create a job id that is guaranteed to be unique accross all
+currently running Titus jobs. The uniquness is checked if any of the
+attributes in this record is a non empty string. The full name is built as:
+&#39;&lt;application_name&gt;-&lt;stack&gt;-&lt;detail&gt;-&lt;sequence&gt;.
 
 
 | Field | Type | Label | Description |
@@ -759,8 +784,8 @@ in this record is a non empty string. The full name is built as: &#39;&lt;applic
 <a name="com.netflix.titus.JobQuery"></a>
 
 ### JobQuery
-Job query request. The query result is limited to the active data set. Finished jobs/tasks are not evaluated
-when the query is executed.
+Job query request. The query result is limited to the active data set.
+Finished jobs/tasks are not evaluated when the query is executed.
 
 
 | Field | Type | Label | Description |
@@ -809,7 +834,8 @@ when the query is executed.
 <a name="com.netflix.titus.JobStatus"></a>
 
 ### JobStatus
-Composite data structure holding both job state information and the reason of the transition to this state.
+Composite data structure holding both job state information and the reason
+of the transition to this state.
 
 
 | Field | Type | Label | Description |
@@ -860,11 +886,14 @@ Task log locations
 <a name="com.netflix.titus.LogLocation.LiveStream"></a>
 
 ### LogLocation.LiveStream
-URL address to a container log service. When a container is running, its stdout/stderr or any other file in the
- &#39;/logs&#39; folder can be acccessed via this endpoint. The endpoint becomes unavailable when the container terminates.
+URL address to a container log service. When a container is running, its
+stdout/stderr or any other file in the
+ &#39;/logs&#39; folder can be acccessed via this endpoint. The endpoint becomes
+ unavailable when the container terminates.
 
- A user should provide the &#39;f&#39; query parameter to specify a file to download. If the &#39;f&#39; query parameter is net set,
- it defaults to &#39;stdout&#39;. The file path must be relative to the &#39;/logs&#39; folder.
+ A user should provide the &#39;f&#39; query parameter to specify a file to
+ download. If the &#39;f&#39; query parameter is net set, it defaults to &#39;stdout&#39;.
+ The file path must be relative to the &#39;/logs&#39; folder.
 
 
 | Field | Type | Label | Description |
@@ -919,8 +948,8 @@ Migration details
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | needsMigration | [bool](#bool) |  | true when the the task needs to be migrated to another agent. |
-| deadline | [uint64](#uint64) |  | The deadline time that the owner must migrate their task by or the system will automatically do it. / This value is irrelevant if &#39;needsMigration&#39; is set to false and will default to the value &#39;0&#39;. |
-| started | [uint64](#uint64) |  | Time at which the migration decision was made. / This value is irrelevant if &#39;needsMigration&#39; is set to false and will default to the value &#39;0&#39;. |
+| deadline | [uint64](#uint64) |  | The deadline time that the owner must migrate their task by or the system will automatically do it. This value is irrelevant if &#39;needsMigration&#39; is set to false and will default to the value &#39;0&#39;. |
+| started | [uint64](#uint64) |  | Time at which the migration decision was made. This value is irrelevant if &#39;needsMigration&#39; is set to false and will default to the value &#39;0&#39;. |
 
 
 
@@ -981,10 +1010,11 @@ Network settings for tasks launched by this job
 <a name="com.netflix.titus.ObserveJobsQuery"></a>
 
 ### ObserveJobsQuery
-The filtering criteria is applied to both Job and Task events. If a criteria applies to task fields, the stream will
-include both task events matching it, and events for jobs with tasks that match it. The opposite is also true, e.g.:
-a criteria on applicationName (a job field) will include both job events matching it, and events for tasks belonging
-to a job that matches it.
+The filtering criteria is applied to both Job and Task events. If a criteria
+applies to task fields, the stream will include both task events matching it,
+and events for jobs with tasks that match it. The opposite is also true,
+e.g.: a criteria on applicationName (a job field) will include both job
+events matching it, and events for tasks belonging to a job that matches it.
 
 ---------------------------------------------------
 Filtering criteria
@@ -1114,6 +1144,7 @@ Task is an entity representing a running container.
 | logLocation | [LogLocation](#com.netflix.titus.LogLocation) |  | (Required) Container logs. |
 | migrationDetails | [MigrationDetails](#com.netflix.titus.MigrationDetails) |  | (Required) Migration details. |
 | attributes | [Task.AttributesEntry](#com.netflix.titus.Task.AttributesEntry) | repeated | (Optional) User defined key/value pairs. |
+| version | [Version](#com.netflix.titus.Version) |  | (Optional) Task version associated with the given entity. Revision numbers for jobs and tasks are created from the same ordered number generator. |
 
 
 
@@ -1284,8 +1315,8 @@ Task is an entity representing a running container.
 <a name="com.netflix.titus.TaskQuery"></a>
 
 ### TaskQuery
-Task query request. The query result is limited to the active data set. Finished jobs/tasks are not evaluated
-when the query is executed.
+Task query request. The query result is limited to the active data set.
+Finished jobs/tasks are not evaluated when the query is executed.
 
 
 | Field | Type | Label | Description |

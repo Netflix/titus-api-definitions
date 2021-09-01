@@ -1,5 +1,6 @@
 /*
- * Example API for Compute Managed Batch. Please use internal proto definitions for latest versions.
+ * Example API for Compute Managed Batch. Please use internal proto definitions
+ * for latest versions.
  */
 
 syntax = "proto3";
@@ -17,7 +18,7 @@ option java_outer_classname = "ManagedBatchCommonProto";
 
 message QueryRequest {
 
-    netflix.titus.Page page = 1;
+  netflix.titus.Page page = 1;
 
-    map<string, string> filteringCriteria = 2;
+  map<string, string> filteringCriteria = 2;
 }

@@ -67,7 +67,8 @@
 <a name="messages.CertificateStringSignature"></a>
 
 ### CertificateStringSignature
-Version of CertificateSignature that encodes all byte[]s as human-readable strings
+Version of CertificateSignature that encodes all byte[]s as human-readable
+strings
 
 
 | Field | Type | Label | Description |
@@ -243,10 +244,12 @@ deprecated: use userProvidedEnv and titusProvidedEnv instead
 <a name="messages.ContainerInfo.Process"></a>
 
 ### ContainerInfo.Process
-entrypoint and command follow Docker semantics, and can be used to override what is baked into the Docker image:
+entrypoint and command follow Docker semantics, and can be used to override
+what is baked into the Docker image:
 https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact
 
-Both CMD and ENTRYPOINT baked into the image can be explicitly cleared with a single empty value (i.e.: `[&#34;&#34;]`).
+Both CMD and ENTRYPOINT baked into the image can be explicitly cleared with
+a single empty value (i.e.: `[&#34;&#34;]`).
 
 
 | Field | Type | Label | Description |
@@ -396,7 +399,8 @@ currently running task&#39;s identity
 <a name="messages.TaskIdentityStringDocument"></a>
 
 ### TaskIdentityStringDocument
-Version of TaskIdentityDocument that encodes all byte[]s as human-readable strings
+Version of TaskIdentityDocument that encodes all byte[]s as human-readable
+strings
 
 
 | Field | Type | Label | Description |

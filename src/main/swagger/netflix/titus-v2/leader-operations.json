@@ -2,15 +2,11 @@
   "paths": {
     "getLeader": {
       "get": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "current titus master leader",
         "description": "Finds current leader node for titus master cluster from zk.",
         "operationId": "getLeader",
-        "produces": [
-          "application/json"
-        ],
+        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "Leader information returned",

@@ -138,7 +138,7 @@ V2 API
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | subnetId | [string](#string) |  | Required (The subnet where to allocate the address) |
-| uuid | [string](#string) |  | Optional. If specified, and an ID with that already exists, it will return an error. / This allows for idempotent requests. |
+| uuid | [string](#string) |  | Optional. If specified, and an ID with that already exists, it will return an error. This allows for idempotent requests. |
 | pool | [string](#string) |  | Optional. Pool is an indexed column that can be used to select static IPs by. |
 | tags | [AllocateStaticIPAddressRequest.TagsEntry](#com.netflix.titus.AllocateStaticIPAddressRequest.TagsEntry) | repeated | Optional |
 

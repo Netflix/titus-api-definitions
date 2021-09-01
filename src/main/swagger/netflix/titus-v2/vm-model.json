@@ -96,9 +96,9 @@
           "type": "array",
           "items": {
             "type": "object",
-            "properties" : {
-              "jobId" : {
-                "type" : "string"
+            "properties": {
+              "jobId": {
+                "type": "string"
               }
             }
           }

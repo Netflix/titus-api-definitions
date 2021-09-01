@@ -2,6 +2,14 @@
 # If you have a Go environment:
 # go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc
 
+.PHONY: fmt
+fmt:
+	# prettier covers json stuff
+	prettier --write src/
+	# clang-format can fmt proto files
+	find src/ | grep \\.proto | xargs clang-format -i
+
+.PHONY: titus-v3-doc
 titus-v3-doc:
 	@echo "Generating documentation for Titus v3 API.."
 	protoc -I/usr/local/include -I. \
@@ -23,4 +31,3 @@ titus-v3-doc:
 		-otitus.protobin --include_imports --include_source_info \
 		src/main/proto/netflix/titus/agent.proto
 
-.PHONY: titus-v3-doc

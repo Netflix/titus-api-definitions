@@ -2,18 +2,12 @@
   "paths": {
     "applicationsOperations": {
       "get": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Get all application SLAs",
         "description": "Get all application SLAs",
         "operationId": "getApplicationSLAs",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [],
         "responses": {
           "200": {
@@ -31,18 +25,12 @@
         }
       },
       "post": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Add new application SLA",
         "description": "Add new application SLA. If an application SLA exists, use PUT operation to update it.",
         "operationId": "addApplicationSLA",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -65,18 +53,12 @@
     },
     "applicationOperations": {
       "get": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Get all application SLAs",
         "description": "Get all application SLAs",
         "operationId": "getApplicationSLA",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "name": "applicationName",
@@ -98,18 +80,12 @@
         }
       },
       "put": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Update an application SLAs",
         "description": "Update an application SLAs",
         "operationId": "updateApplicationSLA",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "name": "applicationName",
@@ -136,18 +112,12 @@
         }
       },
       "delete": {
-        "tags": [
-          "Titus"
-        ],
+        "tags": ["Titus"],
         "summary": "Remove an application SLAs",
         "description": "Remove an application SLAs",
         "operationId": "removeApplicationSLA",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "name": "applicationName",

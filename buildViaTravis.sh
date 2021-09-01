@@ -2,7 +2,10 @@
 # This script will build the project.
 set -e
 
-find src/main/proto | grep \\.proto | xargs -n1 protoc -I src/main/proto -o /dev/null | grep -v warning
+if find src/main/proto | grep \\.proto | xargs -n1 protoc -I src/main/proto -o /dev/null | grep warning; then
+  echo "Warnings found, exiting"
+  exit 1
+fi
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo -e "Build Pull Request #$TRAVIS_PULL_REQUEST => Branch [$TRAVIS_BRANCH]"

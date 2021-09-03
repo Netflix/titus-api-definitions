@@ -4,7 +4,7 @@
 
 .PHONY: build
 build:
-	./buildViaTravis.sh
+	./build.sh
 
 .PHONY: fmt
 fmt:

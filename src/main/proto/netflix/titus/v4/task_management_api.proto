@@ -331,10 +331,10 @@ message TaskDescriptor {
 
   string allocationId = 1;
 
-  // (Optional) Override the entry point of the image.
+  // (Optional) Override the entrypoint of the image.
   repeated string entryPoint = 2;
 
-  // (Optional) Additional parameters for the entry point defined either here
+  // (Optional) Additional parameters for the entrypoint defined either here
   // or provided in the container image.
   repeated string command = 3;
 

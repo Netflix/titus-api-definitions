@@ -4,6 +4,8 @@
 ## Table of Contents
 
 - [src/main/proto/netflix/titus/titus_job_api.proto](#src/main/proto/netflix/titus/titus_job_api.proto)
+    - [BasicContainer](#com.netflix.titus.BasicContainer)
+    - [BasicContainer.EnvEntry](#com.netflix.titus.BasicContainer.EnvEntry)
     - [BatchJobSpec](#com.netflix.titus.BatchJobSpec)
     - [Capacity](#com.netflix.titus.Capacity)
     - [Constraints](#com.netflix.titus.Constraints)
@@ -98,6 +100,45 @@
 
 
 
+<a name="com.netflix.titus.BasicContainer"></a>
+
+### BasicContainer
+BasicContainer stores the minimal data required to declare extra containers
+to a job. This is in contrast to the Container message, which has other data
+that are not strictly tied to the main container. For example,
+*resources* (ram/cpu/etc) for the whole *task* are declared in the main
+Container message, not in a basic container.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  | (Required) the Name of this container |
+| image | [Image](#com.netflix.titus.Image) |  | (Required) Image reference. |
+| entryPoint | [string](#string) | repeated | (Optional) Override the entrypoint of the image. If set, the command baked into the image (if any) is always ignored. Interactions between the entrypoint and command are the same as specified by Docker: https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact Note that, unlike the main container, no string splitting occurs. |
+| command | [string](#string) | repeated | (Optional) Additional parameters for the entrypoint defined either here or provided in the container image. Note that, unlike the main container, no string splitting occurs. |
+| env | [BasicContainer.EnvEntry](#com.netflix.titus.BasicContainer.EnvEntry) | repeated | (Optional) A collection of system environment variables passed to the container. |
+
+
+
+
+
+
+<a name="com.netflix.titus.BasicContainer.EnvEntry"></a>
+
+### BasicContainer.EnvEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
+
+
+
+
+
+
 <a name="com.netflix.titus.BatchJobSpec"></a>
 
 ### BatchJobSpec
@@ -182,17 +223,17 @@ Container descriptor.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| resources | [ContainerResources](#com.netflix.titus.ContainerResources) |  | (Required) Container resources. |
+| resources | [ContainerResources](#com.netflix.titus.ContainerResources) |  | (Required) Resources for the whole task. |
 | securityProfile | [SecurityProfile](#com.netflix.titus.SecurityProfile) |  | (Required) Container security profile: IAM role, security groups, container roles. |
 | image | [Image](#com.netflix.titus.Image) |  | (Required) Image reference. |
 | attributes | [Container.AttributesEntry](#com.netflix.titus.Container.AttributesEntry) | repeated | (Optional) Arbitrary set of key/value pairs. Key names starting with &#39;titus.&#39; are reserved by Titus. |
-| entryPoint | [string](#string) | repeated | (Optional) Override the entry point of the image. If set, the command baked into the image (if any) is always ignored. Interactions between the entry point and command are the same as specified by Docker: https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact
+| entryPoint | [string](#string) | repeated | (Optional) Override the entrypoint of the image. If set, the command baked into the image (if any) is always ignored. Interactions between the entrypoint and command are the same as specified by Docker: https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact
 
- To clear (unset) the entry point of the image, pass a single empty string value: [&#34;&#34;] |
-| command | [string](#string) | repeated | (Optional) Additional parameters for the entry point defined either here or provided in the container image. To clear (unset) the command of the image, pass a single empty string value: [&#34;&#34;] |
+ To clear (unset) the entrypoint of the image, pass a single empty string value: [&#34;&#34;] |
+| command | [string](#string) | repeated | (Optional) Additional parameters for the entrypoint defined either here or provided in the container image. To clear (unset) the command of the image, pass a single empty string value: [&#34;&#34;] |
 | env | [Container.EnvEntry](#com.netflix.titus.Container.EnvEntry) | repeated | (Optional) A collection of system environment variables passed to the container. |
-| softConstraints | [Constraints](#com.netflix.titus.Constraints) |  | (Optional) Constraints that Titus will prefer to fulfill but are not required. |
-| hardConstraints | [Constraints](#com.netflix.titus.Constraints) |  | (Optional) Constraints that have to be met for a task to be scheduled on an agent. |
+| softConstraints | [Constraints](#com.netflix.titus.Constraints) |  | (Optional) Constraints that Titus will prefer to fulfill but are not required. These constraints apply to the whole task. |
+| hardConstraints | [Constraints](#com.netflix.titus.Constraints) |  | (Optional) Constraints that have to be met for a task to be scheduled on an agent. These constraints apply to the whole task. |
 | experimental | [google.protobuf.Any](#google.protobuf.Any) |  | (Optional) Experimental features |
 
 
@@ -240,11 +281,11 @@ Container descriptor.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| cpu | [double](#double) |  | (Required) Number of CPUs to allocate (must be always &gt; 0, but the actual limit is configurable). |
-| gpu | [uint32](#uint32) |  | (Optional) Number of GPUs to allocate. |
-| memoryMB | [uint32](#uint32) |  | (Required) Amount of memory to allocate (must be always &gt; 0, but the actual limit is configurable). |
-| diskMB | [uint32](#uint32) |  | (Required) Amount of disk space to allocate (must be always &gt; 0, but the actual limit is configurable). |
-| networkMbps | [uint32](#uint32) |  | (Required) Amount of network bandwidth to allocate (must be always &gt; 0, but the actual limit is configurable). |
+| cpu | [double](#double) |  | (Required) Number of CPUs to allocate to a task (must be always &gt; 0, but the actual limit is configurable). |
+| gpu | [uint32](#uint32) |  | (Optional) Number of GPUs to allocate to a task. |
+| memoryMB | [uint32](#uint32) |  | (Required) Amount of memory to allocate to a task (must be always &gt; 0, but the actual limit is configurable). |
+| diskMB | [uint32](#uint32) |  | (Required) Amount of ephemeral disk space to allocate to a task (must be always &gt; 0, but the actual limit is configurable). |
+| networkMbps | [uint32](#uint32) |  | (Required) Amount of network bandwidth to allocate to an individual task (must be always &gt; 0, but the actual limit is configurable). |
 | allocateIP | [bool](#bool) |  | (Deprecated) IP always allocated. |
 | efsMounts | [ContainerResources.EfsMount](#com.netflix.titus.ContainerResources.EfsMount) | repeated | (Optional) EFS mounts. |
 | shmSizeMB | [uint32](#uint32) |  | (Optional) Size of shared memory /dev/shm. If not set, a default value will be provided. A provided value must be less than or equal to amount of memory allocated. |
@@ -515,6 +556,7 @@ is used to run a job.
 | service | [ServiceJobSpec](#com.netflix.titus.ServiceJobSpec) |  | Service job specific descriptor. |
 | disruptionBudget | [JobDisruptionBudget](#com.netflix.titus.JobDisruptionBudget) |  | (Optional) Job disruption budget. If not defined, a job type specific (batch or service) default is set. |
 | networkConfiguration | [NetworkConfiguration](#com.netflix.titus.NetworkConfiguration) |  | (Optional) Networking configuration. If not defined, sane defaults are provided by the backend. |
+| extraContainers | [BasicContainer](#com.netflix.titus.BasicContainer) | repeated | (Optional) Extra Containers can be specificed to run alongside the main container in a &#34;pod&#34; (similar to k8s pods). Additional containers can be specified in this field, and they will be launched together with the main container, sharing its resources (network/ram/cpu/gpu/etc). |
 
 
 

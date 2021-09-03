@@ -371,10 +371,10 @@ message Container {
   // (Required) Container image.
   Image image = 3;
 
-  // (Optional) Override the entry point of the image.
+  // (Optional) Override the entrypoint of the image.
   repeated string entryPoint = 4;
 
-  // (Optional) Additional parameters for the entry point defined either here
+  // (Optional) Additional parameters for the entrypoint defined either here
   // or provided in the container image.
   repeated string command = 6;
 

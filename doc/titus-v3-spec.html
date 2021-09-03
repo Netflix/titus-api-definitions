@@ -179,6 +179,14 @@
             <ul>
               
                 <li>
+                  <a href="#com.netflix.titus.BasicContainer"><span class="badge">M</span>BasicContainer</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.BasicContainer.EnvEntry"><span class="badge">M</span>BasicContainer.EnvEntry</a>
+                </li>
+              
+                <li>
                   <a href="#com.netflix.titus.BatchJobSpec"><span class="badge">M</span>BatchJobSpec</a>
                 </li>
               
@@ -516,6 +524,97 @@
       <p></p>
 
       
+        <h3 id="com.netflix.titus.BasicContainer">BasicContainer</h3>
+        <p>BasicContainer stores the minimal data required to declare extra containers</p><p>to a job. This is in contrast to the Container message, which has other data</p><p>that are not strictly tied to the main container. For example,</p><p>*resources* (ram/cpu/etc) for the whole *task* are declared in the main</p><p>Container message, not in a basic container.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>(Required) the Name of this container </p></td>
+                </tr>
+              
+                <tr>
+                  <td>image</td>
+                  <td><a href="#com.netflix.titus.Image">Image</a></td>
+                  <td></td>
+                  <td><p>(Required) Image reference. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>entryPoint</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p>(Optional) Override the entrypoint of the image.
+If set, the command baked into the image (if any) is always ignored.
+Interactions between the entrypoint and command are the same as specified
+by Docker:
+https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact
+Note that, unlike the main container, no string splitting occurs. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>command</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p>(Optional) Additional parameters for the entrypoint defined either here
+or provided in the container image.
+Note that, unlike the main container, no string splitting occurs. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>env</td>
+                  <td><a href="#com.netflix.titus.BasicContainer.EnvEntry">BasicContainer.EnvEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>(Optional) A collection of system environment variables passed to the
+container. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.BasicContainer.EnvEntry">BasicContainer.EnvEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="com.netflix.titus.BatchJobSpec">BatchJobSpec</h3>
         <p>Batch job specification.</p>
 
@@ -683,7 +782,7 @@ given, all must be met (logical &#39;and&#39;). </p></td>
                   <td>resources</td>
                   <td><a href="#com.netflix.titus.ContainerResources">ContainerResources</a></td>
                   <td></td>
-                  <td><p>(Required) Container resources. </p></td>
+                  <td><p>(Required) Resources for the whole task. </p></td>
                 </tr>
               
                 <tr>
@@ -713,13 +812,13 @@ container roles. </p></td>
                   <td>entryPoint</td>
                   <td><a href="#string">string</a></td>
                   <td>repeated</td>
-                  <td><p>(Optional) Override the entry point of the image.
+                  <td><p>(Optional) Override the entrypoint of the image.
 If set, the command baked into the image (if any) is always ignored.
-Interactions between the entry point and command are the same as specified
+Interactions between the entrypoint and command are the same as specified
 by Docker:
 https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact
 
- To clear (unset) the entry point of the image, pass a single empty string
+ To clear (unset) the entrypoint of the image, pass a single empty string
  value: [&#34;&#34;] </p></td>
                 </tr>
               
@@ -727,7 +826,7 @@ https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypo
                   <td>command</td>
                   <td><a href="#string">string</a></td>
                   <td>repeated</td>
-                  <td><p>(Optional) Additional parameters for the entry point defined either here
+                  <td><p>(Optional) Additional parameters for the entrypoint defined either here
 or provided in the container image.
 To clear (unset) the command of the image, pass a single empty string
 value: [&#34;&#34;] </p></td>
@@ -746,7 +845,7 @@ container. </p></td>
                   <td><a href="#com.netflix.titus.Constraints">Constraints</a></td>
                   <td></td>
                   <td><p>(Optional) Constraints that Titus will prefer to fulfill but are not
-required. </p></td>
+required. These constraints apply to the whole task. </p></td>
                 </tr>
               
                 <tr>
@@ -754,7 +853,7 @@ required. </p></td>
                   <td><a href="#com.netflix.titus.Constraints">Constraints</a></td>
                   <td></td>
                   <td><p>(Optional) Constraints that have to be met for a task to be scheduled on
-an agent. </p></td>
+an agent. These constraints apply to the whole task. </p></td>
                 </tr>
               
                 <tr>
@@ -847,39 +946,39 @@ an agent. </p></td>
                   <td>cpu</td>
                   <td><a href="#double">double</a></td>
                   <td></td>
-                  <td><p>(Required) Number of CPUs to allocate (must be always &gt; 0, but the actual
-limit is configurable). </p></td>
+                  <td><p>(Required) Number of CPUs to allocate to a task
+(must be always &gt; 0, but the actual limit is configurable). </p></td>
                 </tr>
               
                 <tr>
                   <td>gpu</td>
                   <td><a href="#uint32">uint32</a></td>
                   <td></td>
-                  <td><p>(Optional) Number of GPUs to allocate. </p></td>
+                  <td><p>(Optional) Number of GPUs to allocate to a task. </p></td>
                 </tr>
               
                 <tr>
                   <td>memoryMB</td>
                   <td><a href="#uint32">uint32</a></td>
                   <td></td>
-                  <td><p>(Required) Amount of memory to allocate (must be always &gt; 0, but the
-actual limit is configurable). </p></td>
+                  <td><p>(Required) Amount of memory to allocate to a task
+(must be always &gt; 0, but the actual limit is configurable). </p></td>
                 </tr>
               
                 <tr>
                   <td>diskMB</td>
                   <td><a href="#uint32">uint32</a></td>
                   <td></td>
-                  <td><p>(Required) Amount of disk space to allocate (must be always &gt; 0, but the
-actual limit is configurable). </p></td>
+                  <td><p>(Required) Amount of ephemeral disk space to allocate to a task
+(must be always &gt; 0, but the actual limit is configurable). </p></td>
                 </tr>
               
                 <tr>
                   <td>networkMbps</td>
                   <td><a href="#uint32">uint32</a></td>
                   <td></td>
-                  <td><p>(Required) Amount of network bandwidth to allocate (must be always &gt; 0,
-but the actual limit is configurable). </p></td>
+                  <td><p>(Required) Amount of network bandwidth to allocate to an individual task
+(must be always &gt; 0, but the actual limit is configurable). </p></td>
                 </tr>
               
                 <tr>
@@ -1490,6 +1589,16 @@ own unique identifier for a job (see JobGroupInfo for more information). </p></t
                   <td></td>
                   <td><p>(Optional) Networking configuration. If not defined, sane defaults are
 provided by the backend. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>extraContainers</td>
+                  <td><a href="#com.netflix.titus.BasicContainer">BasicContainer</a></td>
+                  <td>repeated</td>
+                  <td><p>(Optional) Extra Containers can be specificed to run alongside the main
+container in a &#34;pod&#34; (similar to k8s pods). Additional containers
+can be specified in this field, and they will be launched together with
+the main container, sharing its resources (network/ram/cpu/gpu/etc). </p></td>
                 </tr>
               
             </tbody>

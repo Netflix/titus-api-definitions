@@ -1,0 +1,28 @@
+# Generated with protoc-gen-openapi
+# https://github.com/googleapis/gnostic/tree/master/apps/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: JobManagementService
+    version: 0.0.1
+paths:
+    /api/v3/jobs/{jobId}:
+        delete:
+            summary: Terminate all running tasks of a job, and than terminate the job.
+            operationId: JobManagementService_KillJob
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/JobId'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+components:
+    schemas:
+        JobId:
+            properties:
+                id:
+                    type: string

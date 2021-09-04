@@ -35,3 +35,31 @@ titus-v3-doc:
 		-otitus.protobin --include_imports --include_source_info \
 		src/main/proto/netflix/titus/agent.proto
 
+# Requires this plugin:
+# https://github.com/google/gnostic/tree/master/apps/protoc-gen-openapi
+# TODO: Automate the installation of this with a Make target
+#
+.PHONY: titus-v3-swagger
+titus-v3-swagger:
+	@echo "Generating openapi files for Titus v3 API.."
+	protoc -I/usr/local/include -I. \
+		-Isrc/main/proto \
+		--openapi_out=. \
+		-otitus.pb --include_imports --include_source_info \
+		src/main/proto/netflix/titus/titus_job_api.proto
+	mv openapi.yaml src/main/swagger/netflix/titus-v3/titus-job-api.yaml
+	protoc -I/usr/local/include -I. \
+		-Isrc/main/proto \
+		--openapi_out=. \
+		-otitus.pb --include_imports --include_source_info \
+		src/main/proto/netflix/titus/titus_vpc_api.proto
+	mv openapi.yaml src/main/swagger/netflix/titus-v3/titus-vpc-api.yaml
+	protoc -I/usr/local/include -I. \
+		-Isrc/main/proto \
+		--openapi_out=. \
+		-otitus.pb --include_imports --include_source_info \
+		src/main/proto/netflix/titus/agent.proto
+	mv openapi.yaml src/main/swagger/netflix/titus-v3/titus-agent-api.yaml
+
+# TODO: vendor this better instead of gitignore maybe
+#src/main/proto/google:

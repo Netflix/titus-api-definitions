@@ -73,3 +73,7 @@ bin/
 
 # publishing secrets
 secrets/signing-key
+
+# OpenAPI generation stuff
+src/main/proto/google/
+openapi.yaml

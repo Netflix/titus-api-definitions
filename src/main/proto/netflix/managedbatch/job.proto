@@ -396,6 +396,36 @@ message Container {
   NetworkMode networkMode = 11;
 }
 
+// BasicContainer stores the minimal data required to declare extra containers
+// to a job. This is in contrast to the Container message, which has other data
+// that are not strictly tied to the main container. For example,
+// *resources* (ram/cpu/etc) for the whole *task* are declared in the main
+// Container message, not in a basic container.
+message BasicContainer {
+  // (Required) the Name of this container
+  string name = 1;
+
+  // (Required) Image reference.
+  Image image = 2;
+
+  // (Optional) Override the entrypoint of the image.
+  // If set, the command baked into the image (if any) is always ignored.
+  // Interactions between the entrypoint and command are the same as specified
+  // by Docker:
+  // https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact
+  // Note that, unlike the main container, no string splitting occurs.
+  repeated string entryPoint = 3;
+
+  // (Optional) Additional parameters for the entrypoint defined either here
+  // or provided in the container image.
+  // Note that, unlike the main container, no string splitting occurs.
+  repeated string command = 4;
+
+  // (Optional) A collection of system environment variables passed to the
+  // container.
+  map<string, string> env = 5;
+}
+
 // Attributes that describe and possibly alter job behavior.
 message Attributes {
 
@@ -453,6 +483,12 @@ message JobDefinition {
   string applicationName = 7;
 
   JobGroupInfo jobGroupInfo = 8;
+
+  // (Optional) Extra Containers can be specificed to run alongside the main
+  // container in a "pod" (similar to k8s pods). Additional containers
+  // can be specified in this field, and they will be launched together with
+  // the main container, sharing its resources (network/ram/cpu/gpu/etc).
+  repeated BasicContainer extraContainers = 9;
 }
 
 message Task {

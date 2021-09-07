@@ -1,5 +1,5 @@
 # Titus API Definitions
-[![Build Status](https://travis-ci.org/Netflix/titus-api-definitions.svg?branch=master)](https://travis-ci.org/Netflix/titus-api-definitions)
+[![Build Status](https://github.com/Netflix/titus-api-definitions/actions/workflows/nebula.yml/badge.svg)](https://github.com/Netflix/titus-api-definitions/actions/workflows/nebula.yml)
 [![Apache 2.0](https://img.shields.io/github/license/nebula-plugins/gradle-lint-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
 ## Overview

@@ -228,6 +228,13 @@ message Container {
 
   // (Optional) Experimental features
   google.protobuf.Any experimental = 10;
+
+  // (Optional) An array of VolumeMounts. These VolumeMounts will be mounted in
+  // the container, and must reference one of the volumes declared for the Job.
+  // See the k8s docs
+  // https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core
+  // for more technical details.
+  repeated VolumeMount volumeMounts = 11;
 }
 
 // BasicContainer stores the minimal data required to declare extra containers
@@ -258,6 +265,71 @@ message BasicContainer {
   // (Optional) A collection of system environment variables passed to the
   // container.
   map<string, string> env = 5;
+
+  // (Optional) An array of VolumeMounts. These VolumeMounts will be mounted in
+  // the container, and must reference one of the volumes declared for the Job.
+  // See the k8s docs
+  // https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core
+  // for more technical details.
+  repeated VolumeMount volumeMounts = 6;
+}
+
+// Volumes define some sort of storage for a Task (pod) that is later referenced
+// by individual containers via VolumeMount declarations.
+// https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volume-v1-core
+// Note that Titus only supports a subset of storage drivers.
+message Volume {
+  // (Required) the name of the volume. This is what is referenced by
+  // VolumeMount requests for individual containers.
+  string name = 1;
+
+  // (Optional) A SharedContainerVolumeSource is a volume that exists on the
+  // one container that is exported. Such a volume can be used later via a
+  // VolumeMount and shared with other containers in the task (pod)
+  SharedContainerVolumeSource sharedContainerVolumeSource = 2;
+}
+
+// VolumeMounts are used to define how to mount a Volume in a container
+// Modeled after k8s volumeMounts:
+// https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core
+message VolumeMount {
+  // (Required) mountPath is the location inside the container where the volume
+  // will be mounted
+  string mountPath = 1;
+
+  // mountPropagation determines how mounts are propagated from the host to
+  // container and the other way around. When not set, MountPropagationNone is
+  // used.
+  string mountPropagation = 2;
+
+  // This must match the Name of a Volume.
+  string volumeName = 3;
+
+  // Mounted read-only if true, read-write otherwise (false or unspecified).
+  // Defaults to false.
+  bool readOnly = 4;
+
+  // Path within the volume from which the container's volume should be mounted.
+  // Defaults to "" (volume's root).
+  string subPath = 5;
+}
+
+message SharedContainerVolumeSource {
+  // The sourceContainer is the name of the container with the
+  // path to be shared with other containers. For example:
+  //
+  //     sourceContainer="main"
+  //     sourcePath="/mnt/data"
+  //
+  // combined with an associated VolumeMount on another container, would
+  // be one way to allow the main container to share some of its files
+  // (which may be just baked into the image, or provided by another storage
+  // system) with some other extraContainer for the task.
+  string sourceContainer = 0;
+  // The path in the container to be shared.
+  // This path may contain existing data to share, or it can simply
+  // not exist, and it will be created.
+  string sourcePath = 1;
 }
 
 // This data structure is associated with a service job and specifies the
@@ -508,6 +580,13 @@ message JobDescriptor {
   // can be specified in this field, and they will be launched together with
   // the main container, sharing its resources (network/ram/cpu/gpu/etc).
   repeated BasicContainer extraContainers = 12;
+
+  // (Optional) An array of Volumes to be used by one or more of the
+  // containers.
+  // See
+  // https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volume-v1-core
+  // Note that Titus only supports a subset of storage drivers.
+  repeated Volume volumes = 13;
 }
 
 // Composite data structure holding both job state information and the reason

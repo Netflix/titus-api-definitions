@@ -325,11 +325,11 @@ message SharedContainerVolumeSource {
   // be one way to allow the main container to share some of its files
   // (which may be just baked into the image, or provided by another storage
   // system) with some other extraContainer for the task.
-  string sourceContainer = 0;
+  string sourceContainer = 1;
   // The path in the container to be shared.
   // This path may contain existing data to share, or it can simply
   // not exist, and it will be created.
-  string sourcePath = 1;
+  string sourcePath = 2;
 }
 
 // This data structure is associated with a service job and specifies the

@@ -411,10 +411,6 @@
                 </li>
               
                 <li>
-                  <a href="#com.netflix.titus.PlatformSidecar.ArgumentsEntry"><span class="badge">M</span>PlatformSidecar.ArgumentsEntry</a>
-                </li>
-              
-                <li>
                   <a href="#com.netflix.titus.SecurityProfile"><span class="badge">M</span>SecurityProfile</a>
                 </li>
               
@@ -428,6 +424,10 @@
               
                 <li>
                   <a href="#com.netflix.titus.ServiceJobSpec.ServiceJobProcesses"><span class="badge">M</span>ServiceJobSpec.ServiceJobProcesses</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.SharedContainerVolumeSource"><span class="badge">M</span>SharedContainerVolumeSource</a>
                 </li>
               
                 <li>
@@ -492,6 +492,14 @@
               
                 <li>
                   <a href="#com.netflix.titus.TaskStatus.ContainerState"><span class="badge">M</span>TaskStatus.ContainerState</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.Volume"><span class="badge">M</span>Volume</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.VolumeMount"><span class="badge">M</span>VolumeMount</a>
                 </li>
               
               
@@ -583,6 +591,17 @@ Note that, unlike the main container, no string splitting occurs. </p></td>
                   <td>repeated</td>
                   <td><p>(Optional) A collection of system environment variables passed to the
 container. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>volumeMounts</td>
+                  <td><a href="#com.netflix.titus.VolumeMount">VolumeMount</a></td>
+                  <td>repeated</td>
+                  <td><p>(Optional) An array of VolumeMounts. These VolumeMounts will be mounted in
+the container, and must reference one of the volumes declared for the Job.
+See the k8s docs
+https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core
+for more technical details. </p></td>
                 </tr>
               
             </tbody>
@@ -869,6 +888,17 @@ an agent. These constraints apply to the whole task. </p></td>
                   <td><a href="#google.protobuf.Any">google.protobuf.Any</a></td>
                   <td></td>
                   <td><p>(Optional) Experimental features </p></td>
+                </tr>
+              
+                <tr>
+                  <td>volumeMounts</td>
+                  <td><a href="#com.netflix.titus.VolumeMount">VolumeMount</a></td>
+                  <td>repeated</td>
+                  <td><p>(Optional) An array of VolumeMounts. These VolumeMounts will be mounted in
+the container, and must reference one of the volumes declared for the Job.
+See the k8s docs
+https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core
+for more technical details. </p></td>
                 </tr>
               
             </tbody>
@@ -1612,6 +1642,17 @@ Startup ordering happens in the following way:
 2. Platform Sidecars (configured below)
 3A. extraContiners (this field)
 3B. The main container (`container` field) </p></td>
+                </tr>
+              
+                <tr>
+                  <td>volumes</td>
+                  <td><a href="#com.netflix.titus.Volume">Volume</a></td>
+                  <td>repeated</td>
+                  <td><p>(Optional) An array of Volumes to be used by one or more of the
+containers.
+See
+https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volume-v1-core
+Note that Titus only supports a subset of storage drivers. </p></td>
                 </tr>
               
                 <tr>
@@ -2680,40 +2721,9 @@ only jobs with tasks that require migration </p></td>
               
                 <tr>
                   <td>arguments</td>
-                  <td><a href="#com.netflix.titus.PlatformSidecar.ArgumentsEntry">PlatformSidecar.ArgumentsEntry</a></td>
-                  <td>repeated</td>
+                  <td><a href="#google.protobuf.Struct">google.protobuf.Struct</a></td>
+                  <td></td>
                   <td><p>(Optional) Arguments, KV pairs for configuring the sidecar </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="com.netflix.titus.PlatformSidecar.ArgumentsEntry">PlatformSidecar.ArgumentsEntry</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>key</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>value</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
                 </tr>
               
             </tbody>
@@ -2875,6 +2885,48 @@ such as the process exiting will still be replaced. </p></td>
                   <td></td>
                   <td><p>Prevents decreasing the Job&#39;s desired capacity. Existing tasks that exit
 such as the process exiting will still be replaced. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.SharedContainerVolumeSource">SharedContainerVolumeSource</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>sourceContainer</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The sourceContainer is the name of the container with the
+path to be shared with other containers. For example:
+
+    sourceContainer=&#34;main&#34;
+    sourcePath=&#34;/mnt/data&#34;
+
+combined with an associated VolumeMount on another container, would
+be one way to allow the main container to share some of its files
+(which may be just baked into the image, or provided by another storage
+system) with some other extraContainer for the task. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>sourcePath</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>The path in the container to be shared.
+This path may contain existing data to share, or it can simply
+not exist, and it will be created. </p></td>
                 </tr>
               
             </tbody>
@@ -3530,6 +3582,97 @@ state. Each job manager can introduce its own
                   <td><a href="#com.netflix.titus.TaskStatus.ContainerState.ContainerHealth">TaskStatus.ContainerState.ContainerHealth</a></td>
                   <td></td>
                   <td><p>Enum representing if the individual container is healthy </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.Volume">Volume</h3>
+        <p>Volumes define some sort of storage for a Task (pod) that is later referenced</p><p>by individual containers via VolumeMount declarations.</p><p>https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volume-v1-core</p><p>Note that Titus only supports a subset of storage drivers.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>(Required) the name of the volume. This is what is referenced by
+VolumeMount requests for individual containers. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>sharedContainerVolumeSource</td>
+                  <td><a href="#com.netflix.titus.SharedContainerVolumeSource">SharedContainerVolumeSource</a></td>
+                  <td></td>
+                  <td><p>(Optional) A SharedContainerVolumeSource is a volume that exists on the
+one container that is exported. Such a volume can be used later via a
+VolumeMount and shared with other containers in the task (pod) </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.VolumeMount">VolumeMount</h3>
+        <p>VolumeMounts are used to define how to mount a Volume in a container</p><p>Modeled after k8s volumeMounts:</p><p>https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>mountPath</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>(Required) mountPath is the location inside the container where the volume
+will be mounted </p></td>
+                </tr>
+              
+                <tr>
+                  <td>mountPropagation</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>mountPropagation determines how mounts are propagated from the host to
+container and the other way around. When not set, MountPropagationNone is
+used. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>volumeName</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>This must match the Name of a Volume. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>readOnly</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Mounted read-only if true, read-write otherwise (false or unspecified).
+Defaults to false. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>subPath</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Path within the volume from which the container&#39;s volume should be mounted.
+Defaults to &#34;&#34; (volume&#39;s root). </p></td>
                 </tr>
               
             </tbody>

@@ -62,11 +62,11 @@
     - [ObserveJobsQuery.FilteringCriteriaEntry](#com.netflix.titus.ObserveJobsQuery.FilteringCriteriaEntry)
     - [Owner](#com.netflix.titus.Owner)
     - [PlatformSidecar](#com.netflix.titus.PlatformSidecar)
-    - [PlatformSidecar.ArgumentsEntry](#com.netflix.titus.PlatformSidecar.ArgumentsEntry)
     - [SecurityProfile](#com.netflix.titus.SecurityProfile)
     - [SecurityProfile.AttributesEntry](#com.netflix.titus.SecurityProfile.AttributesEntry)
     - [ServiceJobSpec](#com.netflix.titus.ServiceJobSpec)
     - [ServiceJobSpec.ServiceJobProcesses](#com.netflix.titus.ServiceJobSpec.ServiceJobProcesses)
+    - [SharedContainerVolumeSource](#com.netflix.titus.SharedContainerVolumeSource)
     - [Task](#com.netflix.titus.Task)
     - [Task.AttributesEntry](#com.netflix.titus.Task.AttributesEntry)
     - [Task.TaskContextEntry](#com.netflix.titus.Task.TaskContextEntry)
@@ -83,6 +83,8 @@
     - [TaskQueryResult](#com.netflix.titus.TaskQueryResult)
     - [TaskStatus](#com.netflix.titus.TaskStatus)
     - [TaskStatus.ContainerState](#com.netflix.titus.TaskStatus.ContainerState)
+    - [Volume](#com.netflix.titus.Volume)
+    - [VolumeMount](#com.netflix.titus.VolumeMount)
   
     - [JobStatus.JobState](#com.netflix.titus.JobStatus.JobState)
     - [NetworkConfiguration.NetworkMode](#com.netflix.titus.NetworkConfiguration.NetworkMode)
@@ -119,6 +121,7 @@ Container message, not in a basic container.
 | entryPoint | [string](#string) | repeated | (Optional) Override the entrypoint of the image. If set, the command baked into the image (if any) is always ignored. Interactions between the entrypoint and command are the same as specified by Docker: https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact Note that, unlike the main container, no string splitting occurs. |
 | command | [string](#string) | repeated | (Optional) Additional parameters for the entrypoint defined either here or provided in the container image. Note that, unlike the main container, no string splitting occurs. |
 | env | [BasicContainer.EnvEntry](#com.netflix.titus.BasicContainer.EnvEntry) | repeated | (Optional) A collection of system environment variables passed to the container. |
+| volumeMounts | [VolumeMount](#com.netflix.titus.VolumeMount) | repeated | (Optional) An array of VolumeMounts. These VolumeMounts will be mounted in the container, and must reference one of the volumes declared for the Job. See the k8s docs https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core for more technical details. |
 
 
 
@@ -237,6 +240,7 @@ Container descriptor.
 | softConstraints | [Constraints](#com.netflix.titus.Constraints) |  | (Optional) Constraints that Titus will prefer to fulfill but are not required. These constraints apply to the whole task. |
 | hardConstraints | [Constraints](#com.netflix.titus.Constraints) |  | (Optional) Constraints that have to be met for a task to be scheduled on an agent. These constraints apply to the whole task. |
 | experimental | [google.protobuf.Any](#google.protobuf.Any) |  | (Optional) Experimental features |
+| volumeMounts | [VolumeMount](#com.netflix.titus.VolumeMount) | repeated | (Optional) An array of VolumeMounts. These VolumeMounts will be mounted in the container, and must reference one of the volumes declared for the Job. See the k8s docs https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core for more technical details. |
 
 
 
@@ -559,6 +563,7 @@ is used to run a job.
 | disruptionBudget | [JobDisruptionBudget](#com.netflix.titus.JobDisruptionBudget) |  | (Optional) Job disruption budget. If not defined, a job type specific (batch or service) default is set. |
 | networkConfiguration | [NetworkConfiguration](#com.netflix.titus.NetworkConfiguration) |  | (Optional) Networking configuration. If not defined, sane defaults are provided by the backend. |
 | extraContainers | [BasicContainer](#com.netflix.titus.BasicContainer) | repeated | (Optional) Extra Containers can be specificed to run alongside the main container in a &#34;pod&#34; (similar to k8s pods). Additional containers can be specified in this field, and they will be launched together with the main container, sharing its resources (network/ram/cpu/gpu/etc). Startup ordering happens in the following way: 1. Titus System Services 2. Platform Sidecars (configured below) 3A. extraContiners (this field) 3B. The main container (`container` field) |
+| volumes | [Volume](#com.netflix.titus.Volume) | repeated | (Optional) An array of Volumes to be used by one or more of the containers. See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volume-v1-core Note that Titus only supports a subset of storage drivers. |
 | platformSidecars | [PlatformSidecar](#com.netflix.titus.PlatformSidecar) | repeated | (Optional) Array of platform sidecars to launch alongside the task. These platform sidecars are always ordered *after* Titus System Services, and *before* any user container (main or extraContainers). |
 
 
@@ -1119,23 +1124,7 @@ intent.
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  | (Required) Name of the platform sidecar requested |
 | channel | [string](#string) |  | (Optional) Channel representing a pointer to releases of the sidecar |
-| arguments | [PlatformSidecar.ArgumentsEntry](#com.netflix.titus.PlatformSidecar.ArgumentsEntry) | repeated | (Optional) Arguments, KV pairs for configuring the sidecar |
-
-
-
-
-
-
-<a name="com.netflix.titus.PlatformSidecar.ArgumentsEntry"></a>
-
-### PlatformSidecar.ArgumentsEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| key | [string](#string) |  |  |
-| value | [string](#string) |  |  |
+| arguments | [google.protobuf.Struct](#google.protobuf.Struct) |  | (Optional) Arguments, KV pairs for configuring the sidecar |
 
 
 
@@ -1204,6 +1193,26 @@ Configuration of service job processes
 | ----- | ---- | ----- | ----------- |
 | disableIncreaseDesired | [bool](#bool) |  | Prevents increasing the Job&#39;s desired capacity. Existing tasks that exit such as the process exiting will still be replaced. |
 | disableDecreaseDesired | [bool](#bool) |  | Prevents decreasing the Job&#39;s desired capacity. Existing tasks that exit such as the process exiting will still be replaced. |
+
+
+
+
+
+
+<a name="com.netflix.titus.SharedContainerVolumeSource"></a>
+
+### SharedContainerVolumeSource
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| sourceContainer | [string](#string) |  | The sourceContainer is the name of the container with the path to be shared with other containers. For example:
+
+ sourceContainer=&#34;main&#34; sourcePath=&#34;/mnt/data&#34;
+
+combined with an associated VolumeMount on another container, would be one way to allow the main container to share some of its files (which may be just baked into the image, or provided by another storage system) with some other extraContainer for the task. |
+| sourcePath | [string](#string) |  | The path in the container to be shared. This path may contain existing data to share, or it can simply not exist, and it will be created. |
 
 
 
@@ -1473,6 +1482,46 @@ Finished jobs/tasks are not evaluated when the query is executed.
 | ----- | ---- | ----- | ----------- |
 | containerName | [string](#string) |  | Name of the container |
 | containerHealth | [TaskStatus.ContainerState.ContainerHealth](#com.netflix.titus.TaskStatus.ContainerState.ContainerHealth) |  | Enum representing if the individual container is healthy |
+
+
+
+
+
+
+<a name="com.netflix.titus.Volume"></a>
+
+### Volume
+Volumes define some sort of storage for a Task (pod) that is later referenced
+by individual containers via VolumeMount declarations.
+https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volume-v1-core
+Note that Titus only supports a subset of storage drivers.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  | (Required) the name of the volume. This is what is referenced by VolumeMount requests for individual containers. |
+| sharedContainerVolumeSource | [SharedContainerVolumeSource](#com.netflix.titus.SharedContainerVolumeSource) |  | (Optional) A SharedContainerVolumeSource is a volume that exists on the one container that is exported. Such a volume can be used later via a VolumeMount and shared with other containers in the task (pod) |
+
+
+
+
+
+
+<a name="com.netflix.titus.VolumeMount"></a>
+
+### VolumeMount
+VolumeMounts are used to define how to mount a Volume in a container
+Modeled after k8s volumeMounts:
+https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| mountPath | [string](#string) |  | (Required) mountPath is the location inside the container where the volume will be mounted |
+| mountPropagation | [string](#string) |  | mountPropagation determines how mounts are propagated from the host to container and the other way around. When not set, MountPropagationNone is used. |
+| volumeName | [string](#string) |  | This must match the Name of a Volume. |
+| readOnly | [bool](#bool) |  | Mounted read-only if true, read-write otherwise (false or unspecified). Defaults to false. |
+| subPath | [string](#string) |  | Path within the volume from which the container&#39;s volume should be mounted. Defaults to &#34;&#34; (volume&#39;s root). |
 
 
 

@@ -407,6 +407,14 @@
                 </li>
               
                 <li>
+                  <a href="#com.netflix.titus.PlatformSidecar"><span class="badge">M</span>PlatformSidecar</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.PlatformSidecar.ArgumentsEntry"><span class="badge">M</span>PlatformSidecar.ArgumentsEntry</a>
+                </li>
+              
+                <li>
                   <a href="#com.netflix.titus.SecurityProfile"><span class="badge">M</span>SecurityProfile</a>
                 </li>
               
@@ -1598,7 +1606,21 @@ provided by the backend. </p></td>
                   <td><p>(Optional) Extra Containers can be specificed to run alongside the main
 container in a &#34;pod&#34; (similar to k8s pods). Additional containers
 can be specified in this field, and they will be launched together with
-the main container, sharing its resources (network/ram/cpu/gpu/etc). </p></td>
+the main container, sharing its resources (network/ram/cpu/gpu/etc).
+Startup ordering happens in the following way:
+1. Titus System Services
+2. Platform Sidecars (configured below)
+3A. extraContiners (this field)
+3B. The main container (`container` field) </p></td>
+                </tr>
+              
+                <tr>
+                  <td>platformSidecars</td>
+                  <td><a href="#com.netflix.titus.PlatformSidecar">PlatformSidecar</a></td>
+                  <td>repeated</td>
+                  <td><p>(Optional) Array of platform sidecars to launch alongside the task.
+These platform sidecars are always ordered *after* Titus System Services,
+and *before* any user container (main or extraContainers). </p></td>
                 </tr>
               
             </tbody>
@@ -2623,6 +2645,75 @@ only jobs with tasks that require migration </p></td>
                   <td><a href="#string">string</a></td>
                   <td></td>
                   <td><p>(Required) An owner&#39;s email address. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.PlatformSidecar">PlatformSidecar</h3>
+        <p>Definition of a request to add a platform sidecar alongside a task</p><p>Note that this is *not* a user-defined sidecar, that is why it just has a</p><p>name. These platform-sidecars are attached a task start time, and the</p><p>definition of what the sidecar is is not baked into the job itself, just the</p><p>intent.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>(Required) Name of the platform sidecar requested </p></td>
+                </tr>
+              
+                <tr>
+                  <td>channel</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>(Optional) Channel representing a pointer to releases of the sidecar </p></td>
+                </tr>
+              
+                <tr>
+                  <td>arguments</td>
+                  <td><a href="#com.netflix.titus.PlatformSidecar.ArgumentsEntry">PlatformSidecar.ArgumentsEntry</a></td>
+                  <td>repeated</td>
+                  <td><p>(Optional) Arguments, KV pairs for configuring the sidecar </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.PlatformSidecar.ArgumentsEntry">PlatformSidecar.ArgumentsEntry</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>key</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
                 </tr>
               
             </tbody>

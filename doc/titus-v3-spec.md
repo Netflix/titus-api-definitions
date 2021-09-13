@@ -61,6 +61,8 @@
     - [ObserveJobsQuery](#com.netflix.titus.ObserveJobsQuery)
     - [ObserveJobsQuery.FilteringCriteriaEntry](#com.netflix.titus.ObserveJobsQuery.FilteringCriteriaEntry)
     - [Owner](#com.netflix.titus.Owner)
+    - [PlatformSidecar](#com.netflix.titus.PlatformSidecar)
+    - [PlatformSidecar.ArgumentsEntry](#com.netflix.titus.PlatformSidecar.ArgumentsEntry)
     - [SecurityProfile](#com.netflix.titus.SecurityProfile)
     - [SecurityProfile.AttributesEntry](#com.netflix.titus.SecurityProfile.AttributesEntry)
     - [ServiceJobSpec](#com.netflix.titus.ServiceJobSpec)
@@ -556,7 +558,8 @@ is used to run a job.
 | service | [ServiceJobSpec](#com.netflix.titus.ServiceJobSpec) |  | Service job specific descriptor. |
 | disruptionBudget | [JobDisruptionBudget](#com.netflix.titus.JobDisruptionBudget) |  | (Optional) Job disruption budget. If not defined, a job type specific (batch or service) default is set. |
 | networkConfiguration | [NetworkConfiguration](#com.netflix.titus.NetworkConfiguration) |  | (Optional) Networking configuration. If not defined, sane defaults are provided by the backend. |
-| extraContainers | [BasicContainer](#com.netflix.titus.BasicContainer) | repeated | (Optional) Extra Containers can be specificed to run alongside the main container in a &#34;pod&#34; (similar to k8s pods). Additional containers can be specified in this field, and they will be launched together with the main container, sharing its resources (network/ram/cpu/gpu/etc). |
+| extraContainers | [BasicContainer](#com.netflix.titus.BasicContainer) | repeated | (Optional) Extra Containers can be specificed to run alongside the main container in a &#34;pod&#34; (similar to k8s pods). Additional containers can be specified in this field, and they will be launched together with the main container, sharing its resources (network/ram/cpu/gpu/etc). Startup ordering happens in the following way: 1. Titus System Services 2. Platform Sidecars (configured below) 3A. extraContiners (this field) 3B. The main container (`container` field) |
+| platformSidecars | [PlatformSidecar](#com.netflix.titus.PlatformSidecar) | repeated | (Optional) Array of platform sidecars to launch alongside the task. These platform sidecars are always ordered *after* Titus System Services, and *before* any user container (main or extraContainers). |
 
 
 
@@ -1096,6 +1099,43 @@ An owner of a job.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | teamEmail | [string](#string) |  | (Required) An owner&#39;s email address. |
+
+
+
+
+
+
+<a name="com.netflix.titus.PlatformSidecar"></a>
+
+### PlatformSidecar
+Definition of a request to add a platform sidecar alongside a task
+Note that this is *not* a user-defined sidecar, that is why it just has a
+name. These platform-sidecars are attached a task start time, and the
+definition of what the sidecar is is not baked into the job itself, just the
+intent.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  | (Required) Name of the platform sidecar requested |
+| channel | [string](#string) |  | (Optional) Channel representing a pointer to releases of the sidecar |
+| arguments | [PlatformSidecar.ArgumentsEntry](#com.netflix.titus.PlatformSidecar.ArgumentsEntry) | repeated | (Optional) Arguments, KV pairs for configuring the sidecar |
+
+
+
+
+
+
+<a name="com.netflix.titus.PlatformSidecar.ArgumentsEntry"></a>
+
+### PlatformSidecar.ArgumentsEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
 
 
 

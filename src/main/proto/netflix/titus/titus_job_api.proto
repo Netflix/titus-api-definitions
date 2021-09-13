@@ -7,6 +7,7 @@ package com.netflix.titus;
 
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
 import "google/protobuf/wrappers.proto";
 import "netflix/titus/titus_base.proto";
 
@@ -81,6 +82,22 @@ message Image {
 
   // (Required if tag not set) Image digest.
   string digest = 3;
+}
+
+// Definition of a request to add a platform sidecar alongside a task
+// Note that this is *not* a user-defined sidecar, that is why it just has a
+// name. These platform-sidecars are attached a task start time, and the
+// definition of what the sidecar is is not baked into the job itself, just the
+// intent.
+message PlatformSidecar {
+  // (Required) Name of the platform sidecar requested
+  string name = 1;
+
+  // (Optional) Channel representing a pointer to releases of the sidecar
+  string channel = 2;
+
+  // (Optional) Arguments, KV pairs for configuring the sidecar
+  google.protobuf.Struct arguments = 3;
 }
 
 // Network settings for tasks launched by this job
@@ -579,6 +596,11 @@ message JobDescriptor {
   // container in a "pod" (similar to k8s pods). Additional containers
   // can be specified in this field, and they will be launched together with
   // the main container, sharing its resources (network/ram/cpu/gpu/etc).
+  // Startup ordering happens in the following way:
+  // 1. Titus System Services
+  // 2. Platform Sidecars (configured below)
+  // 3A. extraContiners (this field)
+  // 3B. The main container (`container` field)
   repeated BasicContainer extraContainers = 12;
 
   // (Optional) An array of Volumes to be used by one or more of the
@@ -587,6 +609,11 @@ message JobDescriptor {
   // https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volume-v1-core
   // Note that Titus only supports a subset of storage drivers.
   repeated Volume volumes = 13;
+
+  // (Optional) Array of platform sidecars to launch alongside the task.
+  // These platform sidecars are always ordered *after* Titus System Services,
+  // and *before* any user container (main or extraContainers).
+  repeated PlatformSidecar platformSidecars = 14;
 }
 
 // Composite data structure holding both job state information and the reason

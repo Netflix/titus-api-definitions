@@ -300,10 +300,12 @@ message Volume {
   // VolumeMount requests for individual containers.
   string name = 1;
 
-  // (Optional) A SharedContainerVolumeSource is a volume that exists on the
-  // one container that is exported. Such a volume can be used later via a
-  // VolumeMount and shared with other containers in the task (pod)
-  SharedContainerVolumeSource sharedContainerVolumeSource = 2;
+  oneof VolumeSource {
+    // (Optional) A SharedContainerVolumeSource is a volume that exists on the
+    // one container that is exported. Such a volume can be used later via a
+    // VolumeMount and shared with other containers in the task (pod)
+    SharedContainerVolumeSource sharedContainerVolumeSource = 2;
+  }
 }
 
 // VolumeMounts are used to define how to mount a Volume in a container

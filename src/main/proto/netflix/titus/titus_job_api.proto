@@ -316,10 +316,25 @@ message VolumeMount {
   // will be mounted
   string mountPath = 1;
 
+  enum MountPropagation {
+    // MountPropagationNone is the default and means that additional mounts
+    // inside a volumeMount will *not* be propagated.
+    MountPropagationNone = 0;
+
+    // MountPropagationHostToContainer specifies that mounts get propagated
+    // from the source mount to the destination ("rslave" in Linux).
+    MountPropagationHostToContainer = 1;
+
+    // MountPropagationBidirectional specifies that mounts get propagated from
+    // the and from the source container to the destination
+    // ("rshared" in Linux).
+    MountPropagationBidirectional = 2;
+  }
+
   // mountPropagation determines how mounts are propagated from the host to
   // container and the other way around. When not set, MountPropagationNone is
   // used.
-  string mountPropagation = 2;
+  MountPropagation mountPropagation = 2;
 
   // This must match the Name of a Volume.
   string volumeName = 3;

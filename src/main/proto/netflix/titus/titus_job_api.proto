@@ -10,6 +10,7 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 import "netflix/titus/titus_base.proto";
 import "netflix/titus/titus_volumes.proto";
+import "netflix/titus/titus_containers.proto";
 
 option java_multiple_files = true;
 option java_package = "com.netflix.titus.grpc.protogen";
@@ -63,6 +64,25 @@ message Constraints {
   // 'zoneBalance AND serverGroup == "mySG"'. Avalilable operators: <, <=, ==,
   // >, >=, in, like, AND, OR
   string expression = 2;
+}
+
+// To reference an image, a user has to provide an image name and a version. A
+// user may specify a version either with
+// a tag value (for example 'latest') or a digest. When submitting a job, a user
+// should provide either a tag or a digest value only (not both of them).
+//
+// For example, docker images can be referenced by {name=titus-examples,
+// tag=latest}. A user could also choose to provide only the digest without a
+// tag. In this case, the tag value would be empty.
+message Image {
+  // (Required) Image name.
+  string name = 1;
+
+  // (Required if digest not set) Image tag.
+  string tag = 2;
+
+  // (Required if tag not set) Image digest.
+  string digest = 3;
 }
 
 // Network settings for tasks launched by this job

@@ -7,9 +7,10 @@ package com.netflix.titus;
 
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
-import "google/protobuf/struct.proto";
 import "google/protobuf/wrappers.proto";
 import "netflix/titus/titus_base.proto";
+import "netflix/titus/titus_volumes.proto";
+import "netflix/titus/titus_containers.proto";
 
 option java_multiple_files = true;
 option java_package = "com.netflix.titus.grpc.protogen";
@@ -82,22 +83,6 @@ message Image {
 
   // (Required if tag not set) Image digest.
   string digest = 3;
-}
-
-// Definition of a request to add a platform sidecar alongside a task
-// Note that this is *not* a user-defined sidecar, that is why it just has a
-// name. These platform-sidecars are attached a task start time, and the
-// definition of what the sidecar is is not baked into the job itself, just the
-// intent.
-message PlatformSidecar {
-  // (Required) Name of the platform sidecar requested
-  string name = 1;
-
-  // (Optional) Channel representing a pointer to releases of the sidecar
-  string channel = 2;
-
-  // (Optional) Arguments, KV pairs for configuring the sidecar
-  google.protobuf.Struct arguments = 3;
 }
 
 // Network settings for tasks launched by this job
@@ -252,118 +237,6 @@ message Container {
   // https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core
   // for more technical details.
   repeated VolumeMount volumeMounts = 11;
-}
-
-// BasicContainer stores the minimal data required to declare extra containers
-// to a job. This is in contrast to the Container message, which has other data
-// that are not strictly tied to the main container. For example,
-// *resources* (ram/cpu/etc) for the whole *task* are declared in the main
-// Container message, not in a basic container.
-message BasicContainer {
-  // (Required) the Name of this container
-  string name = 1;
-
-  // (Required) Image reference.
-  Image image = 2;
-
-  // (Optional) Override the entrypoint of the image.
-  // If set, the command baked into the image (if any) is always ignored.
-  // Interactions between the entrypoint and command are the same as specified
-  // by Docker:
-  // https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact
-  // Note that, unlike the main container, no string splitting occurs.
-  repeated string entryPoint = 3;
-
-  // (Optional) Additional parameters for the entrypoint defined either here
-  // or provided in the container image.
-  // Note that, unlike the main container, no string splitting occurs.
-  repeated string command = 4;
-
-  // (Optional) A collection of system environment variables passed to the
-  // container.
-  map<string, string> env = 5;
-
-  // (Optional) An array of VolumeMounts. These VolumeMounts will be mounted in
-  // the container, and must reference one of the volumes declared for the Job.
-  // See the k8s docs
-  // https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core
-  // for more technical details.
-  repeated VolumeMount volumeMounts = 6;
-}
-
-// Volumes define some sort of storage for a Task (pod) that is later referenced
-// by individual containers via VolumeMount declarations.
-// https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volume-v1-core
-// Note that Titus only supports a subset of storage drivers.
-message Volume {
-  // (Required) the name of the volume. This is what is referenced by
-  // VolumeMount requests for individual containers.
-  string name = 1;
-
-  oneof VolumeSource {
-    // (Optional) A SharedContainerVolumeSource is a volume that exists on the
-    // one container that is exported. Such a volume can be used later via a
-    // VolumeMount and shared with other containers in the task (pod)
-    SharedContainerVolumeSource sharedContainerVolumeSource = 2;
-  }
-}
-
-// VolumeMounts are used to define how to mount a Volume in a container
-// Modeled after k8s volumeMounts:
-// https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core
-message VolumeMount {
-  // (Required) mountPath is the location inside the container where the volume
-  // will be mounted
-  string mountPath = 1;
-
-  enum MountPropagation {
-    // MountPropagationNone is the default and means that additional mounts
-    // inside a volumeMount will *not* be propagated.
-    MountPropagationNone = 0;
-
-    // MountPropagationHostToContainer specifies that mounts get propagated
-    // from the source mount to the destination ("rslave" in Linux).
-    MountPropagationHostToContainer = 1;
-
-    // MountPropagationBidirectional specifies that mounts get propagated from
-    // the and from the source container to the destination
-    // ("rshared" in Linux).
-    MountPropagationBidirectional = 2;
-  }
-
-  // mountPropagation determines how mounts are propagated from the host to
-  // container and the other way around. When not set, MountPropagationNone is
-  // used.
-  MountPropagation mountPropagation = 2;
-
-  // This must match the Name of a Volume.
-  string volumeName = 3;
-
-  // Mounted read-only if true, read-write otherwise (false or unspecified).
-  // Defaults to false.
-  bool readOnly = 4;
-
-  // Path within the volume from which the container's volume should be mounted.
-  // Defaults to "" (volume's root).
-  string subPath = 5;
-}
-
-message SharedContainerVolumeSource {
-  // The sourceContainer is the name of the container with the
-  // path to be shared with other containers. For example:
-  //
-  //     sourceContainer="main"
-  //     sourcePath="/mnt/data"
-  //
-  // combined with an associated VolumeMount on another container, would
-  // be one way to allow the main container to share some of its files
-  // (which may be just baked into the image, or provided by another storage
-  // system) with some other extraContainer for the task.
-  string sourceContainer = 1;
-  // The path in the container to be shared.
-  // This path may contain existing data to share, or it can simply
-  // not exist, and it will be created.
-  string sourcePath = 2;
 }
 
 // This data structure is associated with a service job and specifies the

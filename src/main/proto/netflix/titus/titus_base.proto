@@ -7,7 +7,6 @@ option java_package = "com.netflix.titus.grpc.protogen";
 option java_outer_classname = "TitusBase";
 
 option go_package = "./netflix/titus";
-import "google/protobuf/struct.proto";
 
 // ----------------------------------------------------------------------------
 // Supplementary data structures
@@ -373,20 +372,4 @@ message Version {
   // jobs and their tasks will have a single revision counter which is
   // incremented if some job or task entity is created/updated.
   // uint64 revision = 2;
-}
-
-// Definition of a request to add a platform sidecar alongside a task
-// Note that this is *not* a user-defined sidecar, that is why it just has a
-// name. These platform-sidecars are attached a task start time, and the
-// definition of what the sidecar is is not baked into the job itself, just the
-// intent.
-message PlatformSidecar {
-  // (Required) Name of the platform sidecar requested
-  string name = 1;
-
-  // (Optional) Channel representing a pointer to releases of the sidecar
-  string channel = 2;
-
-  // (Optional) Arguments, KV pairs for configuring the sidecar
-  google.protobuf.Struct arguments = 3;
 }

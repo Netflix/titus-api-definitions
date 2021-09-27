@@ -5,8 +5,9 @@ package com.netflix.titus;
 option java_multiple_files = true;
 option java_package = "com.netflix.titus.grpc.protogen";
 option java_outer_classname = "TitusBase";
-
 option go_package = "./netflix/titus";
+
+import "google/protobuf/struct.proto";
 import "netflix/titus/titus_volumes.proto";
 
 // BasicContainer stores the minimal data required to declare extra containers
@@ -63,4 +64,20 @@ message BasicImage {
 
   // (Required if tag not set) Image digest.
   string digest = 3;
+}
+
+// Definition of a request to add a platform sidecar alongside a task
+// Note that this is *not* a user-defined sidecar, that is why it just has a
+// name. These platform-sidecars are attached to a task start time, and the
+// definition of what the sidecar is is not baked into the job itself, just the
+// intent.
+message PlatformSidecar {
+  // (Required) Name of the platform sidecar requested
+  string name = 1;
+
+  // (Optional) Channel representing a pointer to releases of the sidecar
+  string channel = 2;
+
+  // (Optional) Arguments, KV pairs for configuring the sidecar
+  google.protobuf.Struct arguments = 3;
 }

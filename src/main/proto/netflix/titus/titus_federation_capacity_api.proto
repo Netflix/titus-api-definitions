@@ -26,12 +26,9 @@ message FederatedCapacityGroup {
   // a varying degree of guaranteed availability of the Compute capacity.
   string resourcePool = 4;
 
-  // (Optional) name of the scheduler to use for scheduling instances of the workloads referencing the capacity group.
-  optional string scheduler = 5;
-
   // A map containing Titus deployment cell name key and desired percent distribution value.
   // Sum of all distribution values should equal to 100%.
-  map<string, int32> cellPercentDist = 6;
+  map<string, uint32> cellPercentDist = 5;
 };
 
 message CreateFederatedCapacityGroupRequest {
@@ -60,11 +57,11 @@ message DeleteFederatedCapacityGroupResponse {
 
 message GetFederatedCapacityGroupRequest {
   // FederatedCapacityGroups to read by name. Unspecified field value will be interpreted as all existing resources.
-  repeated string capacityGroupName = 1;
+  repeated string capacityGroupNames = 1;
 };
 
 message GetFederatedCapacityGroupResponse {
-  repeated FederatedCapacityGroup federatedCapacityGroup = 1;
+  repeated FederatedCapacityGroup federatedCapacityGroups = 1;
 };
 
 service FederatedCapacityGroupService {

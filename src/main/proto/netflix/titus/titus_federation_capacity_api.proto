@@ -5,7 +5,7 @@ package com.netflix.titus;
 
 import "netflix/titus/titus_base.proto";
 
-option go_package = "titus";
+option go_package = "./netflix/titus";
 
 // An entity representing combined capacity requirement for a collection of
 // workloads referencing it. The capacity requirement is defined in the form of

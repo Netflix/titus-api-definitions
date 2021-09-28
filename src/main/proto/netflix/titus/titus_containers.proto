@@ -4,7 +4,7 @@ package com.netflix.titus;
 
 option java_multiple_files = true;
 option java_package = "com.netflix.titus.grpc.protogen";
-option java_outer_classname = "TitusBase";
+option java_outer_classname = "TitusContainers";
 option go_package = "./netflix/titus";
 
 import "google/protobuf/struct.proto";

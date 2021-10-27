@@ -772,6 +772,8 @@ message JobChangeNotification {
     JobUpdate jobUpdate = 1;
     TaskUpdate taskUpdate = 2;
     SnapshotEnd snapshotEnd = 3;
+    // Supported only by `ObserveJobsWithKeepAlive` event stream.
+    KeepAliveResponse keepAliveResponse = 5;
   }
 
   // Event creation timestamp.
@@ -898,6 +900,13 @@ message ObserveJobsQuery {
   // states (multiple, comma separated) needsMigration - if set to true, return
   // only jobs with tasks that require migration
   map<string, string> filteringCriteria = 1;
+}
+
+message ObserveJobsWithKeepAliveRequest {
+  oneof Kind {
+    ObserveJobsQuery query = 1;
+    KeepAliveRequest keepAliveRequest = 2;
+  }
 }
 
 message JobCapacityUpdate {
@@ -1077,6 +1086,11 @@ service JobManagementService {
   // Equivalent to ObserveJob, applied to all active jobs. This stream never
   // completes.
   rpc ObserveJobs(ObserveJobsQuery) returns (stream JobChangeNotification) {}
+
+  // `ObserveJobsWithKeepAlive` extends the `ObserveJobs` endpoint behavior by supporting keep alive mechanism
+  // in the channel. This stream never completes.
+  rpc ObserveJobsWithKeepAlive (stream ObserveJobsWithKeepAliveRequest) returns (stream JobChangeNotification) {
+  }
 
   // Terminate all running tasks of a job, and than terminate the job.
   rpc KillJob(JobId) returns (google.protobuf.Empty) {}

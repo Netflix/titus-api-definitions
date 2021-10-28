@@ -212,7 +212,7 @@ message GetBranchToTrunkENIMappingResponse {
 }
 
 message ResetSecurityGroupRequest {
-  string sgId = 1;
+  string securityGroupID = 1;
 }
 
 message ResetSecurityGroupResponse {

@@ -221,5 +221,8 @@ message ResetSecurityGroupResponse {
 service TitusAgentVPCInformationService {
   rpc ListBranchToTrunkENIMapping(GetBranchToTrunkENIMappingRequest)
       returns (GetBranchToTrunkENIMappingResponse);
+}
+
+service TitusAgentSecurityGroupService {
   rpc ResetSecurityGroup(ResetSecurityGroupRequest) returns (ResetSecurityGroupResponse);
 }

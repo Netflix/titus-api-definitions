@@ -22,7 +22,6 @@ sourceSets {
     main {
         resources {
             srcDir 'src/main/proto'
-            srcDir 'src/main/swagger'
         }
     }
 }

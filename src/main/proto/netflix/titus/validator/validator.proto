@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package com.netflix.compute.validator;
 
+import "netflix/titus/titus_containers.proto";
+
 option java_multiple_files = false;
 option java_package = "com.netflix.compute.validator.protogen";
 option java_outer_classname = "ComputeValidator";
@@ -39,6 +41,10 @@ service ValidationService {
   // Validates Entrypoint and Command
   rpc ValidateEntrypointCommand(EntrypointCommandValidationRequest)
       returns (EntrypointCommandValidationResponse) {}
+
+  // Validates platform sidecar usage
+  rpc ValidatePlatformSidecar(PlatformSidecarValidationRequest)
+      returns (PlatformSidecarValidationResponse) {}
 }
 
 // Information about cached data used in the validation process. Cache is also
@@ -250,4 +256,19 @@ message ImageValidationResponse {
   }
 
   CacheMetadata cacheMetadata = 3;
+}
+
+message PlatformSidecarValidationRequest {
+  netflix.titus.PlatformSidecar platformSidecar = 1;
+}
+
+message PlatformSidecarValidationResponse {
+
+  message Success {}
+
+  oneof Result {
+    Success success = 1;
+
+    ValidationFailures failures = 2;
+  }
 }

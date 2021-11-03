@@ -752,7 +752,11 @@ message JobChangeNotification {
 
   // Emitted when a new job is created or when any of the job's attributes
   // change.
-  message JobUpdate { Job job = 1; }
+  message JobUpdate {
+    Job job = 1;
+    // For internal usage only. Set to true if a job is finished and is moved to archive storage.
+    bool archived = 2;
+  }
 
   // Emitted when a task is created or its state has changed.
   message TaskUpdate {
@@ -762,6 +766,9 @@ message JobChangeNotification {
     //  task.jobId will be the destination job, and it will include a
     //  'task.movedFromJob' entry in its taskContext map with the source jobId.
     bool movedFromAnotherJob = 2;
+
+    // For internal usage only. Set to true if a task is finished and is moved to archive storage.
+    bool archived = 3;
   }
 
   // A notification marker that indicates that all known jobs were streamed to

@@ -907,6 +907,12 @@ message ObserveJobsQuery {
   // states (multiple, comma separated) needsMigration - if set to true, return
   // only jobs with tasks that require migration
   map<string, string> filteringCriteria = 1;
+
+  // (Optional) If set, only job field values explicitly given in this parameter will be returned
+  repeated string jobFields = 2;
+
+  // (Optional) If set, only task field values explicitly given in this parameter will be returned
+  repeated string taskFields = 3;
 }
 
 message ObserveJobsWithKeepAliveRequest {

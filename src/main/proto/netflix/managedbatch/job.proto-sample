@@ -24,10 +24,10 @@ service JobService {
   // ------------------------------
 
   // Create a new job.
-  rpc CreateJob(JobDefinition) returns (Job) {}
+  rpc CreateJob(JobDefinition) returns(Job) {}
 
   // Terminate a specific running job by ID.
-  rpc TerminateJob(JobId) returns (google.protobuf.Empty) {}
+  rpc TerminateJob(JobId) returns(google.protobuf.Empty) {}
 
   // Find jobs that match the query request. Only active data set is searched,
   // which includes all running jobs, and
@@ -49,7 +49,7 @@ service JobService {
   //  "key1,key2:value2;k3:value3") attributes.op - logical 'and' or 'or'
   //  operators, which should be applied when attributes specified in the query.
   //  Defaults to 'and'. tenantPath - A tenant pathname prefix
-  rpc FindJobs(QueryRequest) returns (JobQueryResponse) {}
+  rpc FindJobs(QueryRequest) returns(JobQueryResponse) {}
 
   // Find tasks that match the query request. Only active data set is searched,
   // which includes all running jobs, and
@@ -67,7 +67,7 @@ service JobService {
   //  jobGroupDetail - job group details
   //  jobGroupSequence - job group sequence
   //  tenantPath - A tenant pathname prefix
-  rpc FindTasks(QueryRequest) returns (TaskQueryResponse) {}
+  rpc FindTasks(QueryRequest) returns(TaskQueryResponse) {}
 
   // Find jobs and tasks that match the query request. Only active data set is
   // searched, which includes all running jobs, and
@@ -84,28 +84,28 @@ service JobService {
   //  jobGroupStack - job group stack
   //  jobGroupDetail - job group details
   //  jobGroupSequence - job group sequence
-  rpc FindJobsAndTasks(QueryRequest) returns (JobsAndTasksQueryResponse) {}
+  rpc FindJobsAndTasks(QueryRequest) returns(JobsAndTasksQueryResponse) {}
 
   // Get a job by id.
-  rpc GetJobById(JobByIdQuery) returns (Job) {}
+  rpc GetJobById(JobByIdQuery) returns(Job) {}
 
   // Get a task by id.
-  rpc GetTaskById(TaskByIdQuery) returns (Task) {}
+  rpc GetTaskById(TaskByIdQuery) returns(Task) {}
 
   // Get a job by Id.
   //  Returns JobWithTasks data structure that combines job definition with each
   //  of its task information
-  rpc GetJobWithTasks(JobByIdQuery) returns (JobWithTasks) {}
+  rpc GetJobWithTasks(JobByIdQuery) returns(JobWithTasks) {}
 
   // Get tasks of a job with the given id.
-  rpc GetTasksForJob(JobByIdQuery) returns (Tasks) {}
+  rpc GetTasksForJob(JobByIdQuery) returns(Tasks) {}
 
   // Emit job events. This stream never completes unless the connection is
   // terminated.
   //
   //  Filterable query fields include all of those supported by the `FindJobs`
   //  and `FindTasks` APIs.
-  rpc Events(EventsQueryRequest) returns (stream JobEvent) {}
+  rpc Events(EventsQueryRequest) returns(stream JobEvent) {}
 }
 
 // ----------------------------------------------------------------------------
@@ -489,11 +489,7 @@ message JobStatus {
 
 message TaskStatus {
   enum TaskState {
-    Created = 0;
-    Queued = 1;
-    Starting = 2;
-    Running = 3;
-    Stopping = 4;
+    Created = 0; Queued = 1; Starting = 2; Running = 3; Stopping = 4;
     Stopped = 5;
     Expired = 6;
     Failed = 7;
@@ -518,11 +514,7 @@ message JobWithTasks {
 
 message JobEvent {
 
-  enum EventKind {
-    CREATED = 0;
-    UPDATED = 1;
-    REMOVED = 2;
-  }
+  enum EventKind { CREATED = 0; UPDATED = 1; REMOVED = 2; }
 
   message SnapshotMarker {}
 

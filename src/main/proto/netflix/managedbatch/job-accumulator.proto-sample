@@ -19,23 +19,23 @@ service JobAccumulatorService {
 
   // Creates a new job accumulator.
   rpc CreateJobAccumulator(CreateJobAccumulatorRequest)
-      returns (JobAccumulator) {}
+      returns(JobAccumulator) {}
 
   // Changes the job accumulator target by the provided amount.
   rpc UpdateJobAccumulatorTarget(UpdateJobAccumulatorTargetRequest)
-      returns (JobAccumulator) {}
+      returns(JobAccumulator) {}
 
   // Closes an accumulator. This does not affect CMB jobs created by this
   // accumulator.
-  rpc CloseJobAccumulator(JobAccumulatorId) returns (JobAccumulator) {}
+  rpc CloseJobAccumulator(JobAccumulatorId) returns(JobAccumulator) {}
 
-  rpc GetJobAccumulator(JobAccumulatorByIdQuery) returns (JobAccumulator) {}
+  rpc GetJobAccumulator(JobAccumulatorByIdQuery) returns(JobAccumulator) {}
 
   rpc GetJobAccumulatorExecution(GetJobAccumulatorExecutionRequest)
-      returns (JobAccumulatorExecution) {}
+      returns(JobAccumulatorExecution) {}
 
   rpc GetJobAccumulatorWithExecution(GetJobAccumulatorExecutionRequest)
-      returns (JobAccumulatorWithExecution) {}
+      returns(JobAccumulatorWithExecution) {}
 
   // Find job accumulators that match the query request. Only active data set
   // is searched, which includes all
@@ -52,20 +52,19 @@ service JobAccumulatorService {
   //  jobGroupStack - job group stack
   //  jobGroupDetail - job group details
   //  jobGroupSequence - job group sequence
-  rpc FindJobAccumulators(QueryRequest) returns (JobAccumulatorsQueryResponse) {
-  }
+  rpc FindJobAccumulators(QueryRequest) returns(JobAccumulatorsQueryResponse) {}
 
   // For query fields documentation see `FindJobAccumulators`
   rpc FindJobAccumulatorExecutions(JobAccumulatorExecutionQueryRequest)
-      returns (JobAccumulatorExecutionsQueryResponse) {}
+      returns(JobAccumulatorExecutionsQueryResponse) {}
 
   // For query fields documentation see `FindJobAccumulators`
   rpc FindJobAccumulatorsWithExecutions(JobAccumulatorExecutionQueryRequest)
-      returns (JobAccumulatorsWithExecutionsQueryResponse) {}
+      returns(JobAccumulatorsWithExecutionsQueryResponse) {}
 
   // Emit job accumulator events. This stream never completes unless the
   // connection is terminated.
-  rpc Events(EventsQueryRequest) returns (stream JobAccumulatorEvent) {}
+  rpc Events(EventsQueryRequest) returns(stream JobAccumulatorEvent) {}
 }
 
 // ----------------------------------------------------------------------------
@@ -235,11 +234,7 @@ message JobAccumulatorExecution {
 
 message JobAccumulatorEvent {
 
-  enum EventKind {
-    CREATED = 0;
-    UPDATED = 1;
-    REMOVED = 2;
-  }
+  enum EventKind { CREATED = 0; UPDATED = 1; REMOVED = 2; }
 
   message SnapshotMarker {}
 

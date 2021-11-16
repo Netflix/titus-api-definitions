@@ -295,6 +295,14 @@
                 </li>
               
                 <li>
+                  <a href="#com.netflix.titus.ResetSecurityGroupRequest"><span class="badge">M</span>ResetSecurityGroupRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.ResetSecurityGroupResponse"><span class="badge">M</span>ResetSecurityGroupResponse</a>
+                </li>
+              
+                <li>
                   <a href="#com.netflix.titus.SetPoolRequest"><span class="badge">M</span>SetPoolRequest</a>
                 </li>
               
@@ -335,6 +343,10 @@
               
                 <li>
                   <a href="#com.netflix.titus.IPService"><span class="badge">S</span>IPService</a>
+                </li>
+              
+                <li>
+                  <a href="#com.netflix.titus.TitusAgentSecurityGroupService"><span class="badge">S</span>TitusAgentSecurityGroupService</a>
                 </li>
               
                 <li>
@@ -1217,6 +1229,37 @@ implies a validation success </p></td>
 
         
       
+        <h3 id="com.netflix.titus.ResetSecurityGroupRequest">ResetSecurityGroupRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>securityGroupID</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="com.netflix.titus.ResetSecurityGroupResponse">ResetSecurityGroupResponse</h3>
+        <p></p>
+
+        
+
+        
+      
         <h3 id="com.netflix.titus.SetPoolRequest">SetPoolRequest</h3>
         <p></p>
 
@@ -1511,6 +1554,25 @@ protobuf</p></td>
                 <td>GetStaticIPAddresses</td>
                 <td><a href="#com.netflix.titus.GetStaticIPAddressesRequest">GetStaticIPAddressesRequest</a></td>
                 <td><a href="#com.netflix.titus.GetStaticIPAddressesResponse">GetStaticIPAddressesResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+        <h3 id="com.netflix.titus.TitusAgentSecurityGroupService">TitusAgentSecurityGroupService</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ResetSecurityGroup</td>
+                <td><a href="#com.netflix.titus.ResetSecurityGroupRequest">ResetSecurityGroupRequest</a></td>
+                <td><a href="#com.netflix.titus.ResetSecurityGroupResponse">ResetSecurityGroupResponse</a></td>
                 <td><p></p></td>
               </tr>
             

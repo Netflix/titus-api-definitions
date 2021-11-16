@@ -33,6 +33,8 @@
     - [ParametersValidationResponse.SubnetsTooDiverse](#com.netflix.titus.ParametersValidationResponse.SubnetsTooDiverse)
     - [ParametersValidationResponse.UnknownFailure](#com.netflix.titus.ParametersValidationResponse.UnknownFailure)
     - [ParametersValidationResponse.ValidationFailure](#com.netflix.titus.ParametersValidationResponse.ValidationFailure)
+    - [ResetSecurityGroupRequest](#com.netflix.titus.ResetSecurityGroupRequest)
+    - [ResetSecurityGroupResponse](#com.netflix.titus.ResetSecurityGroupResponse)
     - [SetPoolRequest](#com.netflix.titus.SetPoolRequest)
     - [SetPoolResponse](#com.netflix.titus.SetPoolResponse)
     - [StaticIPAddress](#com.netflix.titus.StaticIPAddress)
@@ -45,6 +47,7 @@
     - [Family](#com.netflix.titus.Family)
   
     - [IPService](#com.netflix.titus.IPService)
+    - [TitusAgentSecurityGroupService](#com.netflix.titus.TitusAgentSecurityGroupService)
     - [TitusAgentVPCInformationService](#com.netflix.titus.TitusAgentVPCInformationService)
     - [UserIPService](#com.netflix.titus.UserIPService)
     - [ValidatorIPService](#com.netflix.titus.ValidatorIPService)
@@ -509,6 +512,31 @@ This is really only meant to be used by (the) control plane(s)
 
 
 
+<a name="com.netflix.titus.ResetSecurityGroupRequest"></a>
+
+### ResetSecurityGroupRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| securityGroupID | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="com.netflix.titus.ResetSecurityGroupResponse"></a>
+
+### ResetSecurityGroupResponse
+
+
+
+
+
+
+
 <a name="com.netflix.titus.SetPoolRequest"></a>
 
 ### SetPoolRequest
@@ -656,6 +684,16 @@ If the tag is unset, then do not set it
 | UpdateTag | [UpdateTagRequest](#com.netflix.titus.UpdateTagRequest) | [UpdateTagResponse](#com.netflix.titus.UpdateTagResponse) |  |
 | GetStaticIPAddress | [GetStaticIPAddressRequest](#com.netflix.titus.GetStaticIPAddressRequest) | [GetStaticIPAddressResponse](#com.netflix.titus.GetStaticIPAddressResponse) |  |
 | GetStaticIPAddresses | [GetStaticIPAddressesRequest](#com.netflix.titus.GetStaticIPAddressesRequest) | [GetStaticIPAddressesResponse](#com.netflix.titus.GetStaticIPAddressesResponse) |  |
+
+
+<a name="com.netflix.titus.TitusAgentSecurityGroupService"></a>
+
+### TitusAgentSecurityGroupService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ResetSecurityGroup | [ResetSecurityGroupRequest](#com.netflix.titus.ResetSecurityGroupRequest) | [ResetSecurityGroupResponse](#com.netflix.titus.ResetSecurityGroupResponse) |  |
 
 
 <a name="com.netflix.titus.TitusAgentVPCInformationService"></a>

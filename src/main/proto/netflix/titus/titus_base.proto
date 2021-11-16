@@ -48,7 +48,7 @@ message CallMetadata {
   // of the id may be different. For example a user's id could be their email
   // address, and application's id its name.
   //  (Deprecated) Use 'caller' field instead.
-  string callerId = 1 [deprecated = true];
+  string callerId = 1 [ deprecated = true ];
 
   // The first item in the list is the original caller, followed by a sequence
   // of intermediaries via which the
@@ -60,7 +60,7 @@ message CallMetadata {
 
   // (Optional) The list of intermediaries via which a call was relayed.
   //  (Deprecated) Use 'caller' field instead.
-  repeated string callPath = 3 [deprecated = true];
+  repeated string callPath = 3 [ deprecated = true ];
 
   // (Optional) If set to true, a diagnostic information is provided if a
   // request fails.
@@ -74,7 +74,7 @@ message Page {
   // (Optional) Requested page number, starting from 0 (defaults to 0 if not
   // specified).
   //  (Deprecated) Use cursor-based pagination instead.
-  int32 pageNumber = 1 [deprecated = true];
+  int32 pageNumber = 1 [ deprecated = true ];
 
   // (Required) Requested page size (if not specified, default size is
   // operation specific).
@@ -100,7 +100,7 @@ message Pagination {
   bool hasMore = 2;
 
   // (Deprecated) Use cursor-based pagination instead. Total number of pages.
-  int32 totalPages = 3 [deprecated = true];
+  int32 totalPages = 3 [ deprecated = true ];
 
   // Total number of items.
   int32 totalItems = 4;
@@ -325,7 +325,7 @@ message SignedAddressAllocation {
   AddressAllocation addressAllocation = 1;
 
   // This is an x509v3 signed version of the address allocation.
-  bytes signedAddressAllocation = 2 [deprecated = true];
+  bytes signedAddressAllocation = 2 [ deprecated = true ];
 
   // authoritative publicKey is the key that came from the database
   bytes authoritativePublicKey = 3;
@@ -374,10 +374,11 @@ message Version {
   // uint64 revision = 2;
 }
 
-// `KeepAliveRequest` and KeepAliveResponse can be used to measure data propagation latency in an event stream and
-// for data checkpointing.
+// `KeepAliveRequest` and KeepAliveResponse can be used to measure data
+// propagation latency in an event stream and for data checkpointing.
 message KeepAliveRequest {
-  // A unique identifier that should be returned in the corresponding `KeepAliveResponse` message.
+  // A unique identifier that should be returned in the corresponding
+  // `KeepAliveResponse` message.
   uint64 requestId = 1;
 
   // Client side time at which the keep alive request was created.

@@ -22,14 +22,14 @@ service TenantService {
   // ------------------------------
 
   // Create a new tenant.
-  rpc CreateTenant(TenantDefinition) returns (Tenant) {}
+  rpc CreateTenant(TenantDefinition) returns(Tenant) {}
 
   // Get a tenant with a specific ID.
   // (Deprecated) Use GetTenantById instead.
-  rpc GetTenant(TenantId) returns (Tenant) { option deprecated = true; }
+  rpc GetTenant(TenantId) returns(Tenant) { option deprecated = true; }
 
   // Get a tenant with a specific ID.
-  rpc GetTenantById(TenantByIdQuery) returns (Tenant) {}
+  rpc GetTenantById(TenantByIdQuery) returns(Tenant) {}
 
   // Find tenants that match the query request. Only active tenants are
   // searched.
@@ -39,37 +39,37 @@ service TenantService {
   //  tenantNames - A comma separated list of tenant names
   //  tenantParentIds - A comma separated list of tenant parent IDs
   //  tenantPath - A tenant pathname prefix. The pathname uses '/' delimiters.
-  rpc FindTenants(QueryRequest) returns (TenantQueryResponse) {}
+  rpc FindTenants(QueryRequest) returns(TenantQueryResponse) {}
 
   // Remove an existing tenant. The tenant will be marked for removal and
   // removed when all work is completed.
-  rpc RemoveTenant(TenantId) returns (google.protobuf.Empty) {}
+  rpc RemoveTenant(TenantId) returns(google.protobuf.Empty) {}
 
   // Create a new tenant capacity request. The request will be pending
   // administrator review and approval.
-  rpc CreateTenantCapacity(CreateCapacityRequest) returns (TenantCapacityId) {}
+  rpc CreateTenantCapacity(CreateCapacityRequest) returns(TenantCapacityId) {}
 
   // Get the currently configured capacity for an existing tenant.
-  rpc GetTenantCapacity(TenantId) returns (TenantCapacity) {}
+  rpc GetTenantCapacity(TenantId) returns(TenantCapacity) {}
 
   // Cancels a pending tenant capacity request. An already applied request
   // cannot be cancelled.
   rpc CancelPendingTenantCapacity(RemoveCapacityRequest)
-      returns (google.protobuf.Empty) {}
+      returns(google.protobuf.Empty) {}
 
   // Get a specific capacity request by capacity ID.
   // (Deprecated) Use GetCapacityRequestById instead.
-  rpc GetCapacityStatus(TenantCapacityId) returns (CapacityRequest) {
+  rpc GetCapacityStatus(TenantCapacityId) returns(CapacityRequest) {
     option deprecated = true;
   }
 
   // Get a specific capacity request by capacity ID.
   rpc GetCapacityRequestById(CapacityRequestByIdQuery)
-      returns (CapacityRequest) {}
+      returns(CapacityRequest) {}
 
   // Approve a pending tenant capacity request. This endpoint is secured and
   // only meant to be called by operators.
-  rpc ApproveTenantCapacity(TenantCapacityId) returns (google.protobuf.Empty) {}
+  rpc ApproveTenantCapacity(TenantCapacityId) returns(google.protobuf.Empty) {}
 }
 
 // ----------------------------------------------------------------------------
@@ -220,7 +220,7 @@ message TenantDefinition {
   string parentTenantId = 5;
 
   // (Deprecated) Use tenantAttributes instead. This field is ignored.
-  map<string, string> attributes = 6 [ deprecated = true ];
+  map<string, string> attributes = 6 [deprecated = true];
 
   // (Optional) Attributes to be associated with the tenant.
   TenantAttributes tenantAttributes = 7;

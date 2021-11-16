@@ -211,12 +211,9 @@ message GetBranchToTrunkENIMappingResponse {
   map<string, string> branchENIMapping = 1;
 }
 
-message ResetSecurityGroupRequest {
-  string securityGroupID = 1;
-}
+message ResetSecurityGroupRequest { string securityGroupID = 1; }
 
-message ResetSecurityGroupResponse {
-}
+message ResetSecurityGroupResponse {}
 
 service TitusAgentVPCInformationService {
   rpc ListBranchToTrunkENIMapping(GetBranchToTrunkENIMappingRequest)
@@ -224,5 +221,6 @@ service TitusAgentVPCInformationService {
 }
 
 service TitusAgentSecurityGroupService {
-  rpc ResetSecurityGroup(ResetSecurityGroupRequest) returns (ResetSecurityGroupResponse);
+  rpc ResetSecurityGroup(ResetSecurityGroupRequest)
+      returns (ResetSecurityGroupResponse);
 }

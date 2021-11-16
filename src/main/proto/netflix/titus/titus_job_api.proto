@@ -754,7 +754,8 @@ message JobChangeNotification {
   // change.
   message JobUpdate {
     Job job = 1;
-    // For internal usage only. Set to true if a job is finished and is moved to archive storage.
+    // For internal usage only. Set to true if a job is finished and is moved to
+    // archive storage.
     bool archived = 2;
   }
 
@@ -767,7 +768,8 @@ message JobChangeNotification {
     //  'task.movedFromJob' entry in its taskContext map with the source jobId.
     bool movedFromAnotherJob = 2;
 
-    // For internal usage only. Set to true if a task is finished and is moved to archive storage.
+    // For internal usage only. Set to true if a task is finished and is moved
+    // to archive storage.
     bool archived = 3;
   }
 
@@ -908,10 +910,12 @@ message ObserveJobsQuery {
   // only jobs with tasks that require migration
   map<string, string> filteringCriteria = 1;
 
-  // (Optional) If set, only job field values explicitly given in this parameter will be returned
+  // (Optional) If set, only job field values explicitly given in this parameter
+  // will be returned
   repeated string jobFields = 2;
 
-  // (Optional) If set, only task field values explicitly given in this parameter will be returned
+  // (Optional) If set, only task field values explicitly given in this
+  // parameter will be returned
   repeated string taskFields = 3;
 }
 
@@ -1100,10 +1104,11 @@ service JobManagementService {
   // completes.
   rpc ObserveJobs(ObserveJobsQuery) returns (stream JobChangeNotification) {}
 
-  // `ObserveJobsWithKeepAlive` extends the `ObserveJobs` endpoint behavior by supporting keep alive mechanism
-  // in the channel. This stream never completes.
-  rpc ObserveJobsWithKeepAlive (stream ObserveJobsWithKeepAliveRequest) returns (stream JobChangeNotification) {
-  }
+  // `ObserveJobsWithKeepAlive` extends the `ObserveJobs` endpoint behavior by
+  // supporting keep alive mechanism in the channel. This stream never
+  // completes.
+  rpc ObserveJobsWithKeepAlive(stream ObserveJobsWithKeepAliveRequest)
+      returns (stream JobChangeNotification) {}
 
   // Terminate all running tasks of a job, and than terminate the job.
   rpc KillJob(JobId) returns (google.protobuf.Empty) {}

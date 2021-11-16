@@ -179,14 +179,6 @@
             <ul>
               
                 <li>
-                  <a href="#com.netflix.titus.BasicContainer"><span class="badge">M</span>BasicContainer</a>
-                </li>
-              
-                <li>
-                  <a href="#com.netflix.titus.BasicContainer.EnvEntry"><span class="badge">M</span>BasicContainer.EnvEntry</a>
-                </li>
-              
-                <li>
                   <a href="#com.netflix.titus.BatchJobSpec"><span class="badge">M</span>BatchJobSpec</a>
                 </li>
               
@@ -403,11 +395,11 @@
                 </li>
               
                 <li>
-                  <a href="#com.netflix.titus.Owner"><span class="badge">M</span>Owner</a>
+                  <a href="#com.netflix.titus.ObserveJobsWithKeepAliveRequest"><span class="badge">M</span>ObserveJobsWithKeepAliveRequest</a>
                 </li>
               
                 <li>
-                  <a href="#com.netflix.titus.PlatformSidecar"><span class="badge">M</span>PlatformSidecar</a>
+                  <a href="#com.netflix.titus.Owner"><span class="badge">M</span>Owner</a>
                 </li>
               
                 <li>
@@ -424,10 +416,6 @@
               
                 <li>
                   <a href="#com.netflix.titus.ServiceJobSpec.ServiceJobProcesses"><span class="badge">M</span>ServiceJobSpec.ServiceJobProcesses</a>
-                </li>
-              
-                <li>
-                  <a href="#com.netflix.titus.SharedContainerVolumeSource"><span class="badge">M</span>SharedContainerVolumeSource</a>
                 </li>
               
                 <li>
@@ -494,14 +482,6 @@
                   <a href="#com.netflix.titus.TaskStatus.ContainerState"><span class="badge">M</span>TaskStatus.ContainerState</a>
                 </li>
               
-                <li>
-                  <a href="#com.netflix.titus.Volume"><span class="badge">M</span>Volume</a>
-                </li>
-              
-                <li>
-                  <a href="#com.netflix.titus.VolumeMount"><span class="badge">M</span>VolumeMount</a>
-                </li>
-              
               
                 <li>
                   <a href="#com.netflix.titus.JobStatus.JobState"><span class="badge">E</span>JobStatus.JobState</a>
@@ -539,108 +519,6 @@
       </div>
       <p></p>
 
-      
-        <h3 id="com.netflix.titus.BasicContainer">BasicContainer</h3>
-        <p>BasicContainer stores the minimal data required to declare extra containers</p><p>to a job. This is in contrast to the Container message, which has other data</p><p>that are not strictly tied to the main container. For example,</p><p>*resources* (ram/cpu/etc) for the whole *task* are declared in the main</p><p>Container message, not in a basic container.</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>name</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>(Required) the Name of this container </p></td>
-                </tr>
-              
-                <tr>
-                  <td>image</td>
-                  <td><a href="#com.netflix.titus.Image">Image</a></td>
-                  <td></td>
-                  <td><p>(Required) Image reference. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>entryPoint</td>
-                  <td><a href="#string">string</a></td>
-                  <td>repeated</td>
-                  <td><p>(Optional) Override the entrypoint of the image.
-If set, the command baked into the image (if any) is always ignored.
-Interactions between the entrypoint and command are the same as specified
-by Docker:
-https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact
-Note that, unlike the main container, no string splitting occurs. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>command</td>
-                  <td><a href="#string">string</a></td>
-                  <td>repeated</td>
-                  <td><p>(Optional) Additional parameters for the entrypoint defined either here
-or provided in the container image.
-Note that, unlike the main container, no string splitting occurs. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>env</td>
-                  <td><a href="#com.netflix.titus.BasicContainer.EnvEntry">BasicContainer.EnvEntry</a></td>
-                  <td>repeated</td>
-                  <td><p>(Optional) A collection of system environment variables passed to the
-container. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>volumeMounts</td>
-                  <td><a href="#com.netflix.titus.VolumeMount">VolumeMount</a></td>
-                  <td>repeated</td>
-                  <td><p>(Optional) An array of VolumeMounts. These VolumeMounts will be mounted in
-the container, and must reference one of the volumes declared for the Job.
-See the k8s docs
-https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core
-for more technical details. </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="com.netflix.titus.BasicContainer.EnvEntry">BasicContainer.EnvEntry</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>key</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>value</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
       
         <h3 id="com.netflix.titus.BatchJobSpec">BatchJobSpec</h3>
         <p>Batch job specification.</p>
@@ -1433,6 +1311,13 @@ from the same ordered number generator. </p></td>
                 </tr>
               
                 <tr>
+                  <td>keepAliveResponse</td>
+                  <td><a href="#com.netflix.titus.KeepAliveResponse">KeepAliveResponse</a></td>
+                  <td></td>
+                  <td><p>Supported only by `ObserveJobsWithKeepAlive` event stream. </p></td>
+                </tr>
+              
+                <tr>
                   <td>timestamp</td>
                   <td><a href="#uint64">uint64</a></td>
                   <td></td>
@@ -1461,6 +1346,13 @@ from the same ordered number generator. </p></td>
                   <td><a href="#com.netflix.titus.Job">Job</a></td>
                   <td></td>
                   <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>archived</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>For internal usage only. Set to true if a job is finished and is moved to archive storage. </p></td>
                 </tr>
               
             </tbody>
@@ -1502,6 +1394,13 @@ from the same ordered number generator. </p></td>
 after a task is moved between jobs.
  task.jobId will be the destination job, and it will include a
  &#39;task.movedFromJob&#39; entry in its taskContext map with the source jobId. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>archived</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>For internal usage only. Set to true if a task is finished and is moved to archive storage. </p></td>
                 </tr>
               
             </tbody>
@@ -2633,6 +2532,20 @@ states (multiple, comma separated) needsMigration - if set to true, return
 only jobs with tasks that require migration </p></td>
                 </tr>
               
+                <tr>
+                  <td>jobFields</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p>(Optional) If set, only job field values explicitly given in this parameter will be returned </p></td>
+                </tr>
+              
+                <tr>
+                  <td>taskFields</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p>(Optional) If set, only task field values explicitly given in this parameter will be returned </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -2671,6 +2584,37 @@ only jobs with tasks that require migration </p></td>
 
         
       
+        <h3 id="com.netflix.titus.ObserveJobsWithKeepAliveRequest">ObserveJobsWithKeepAliveRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>query</td>
+                  <td><a href="#com.netflix.titus.ObserveJobsQuery">ObserveJobsQuery</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>keepAliveRequest</td>
+                  <td><a href="#com.netflix.titus.KeepAliveRequest">KeepAliveRequest</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="com.netflix.titus.Owner">Owner</h3>
         <p>An owner of a job.</p>
 
@@ -2686,44 +2630,6 @@ only jobs with tasks that require migration </p></td>
                   <td><a href="#string">string</a></td>
                   <td></td>
                   <td><p>(Required) An owner&#39;s email address. </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="com.netflix.titus.PlatformSidecar">PlatformSidecar</h3>
-        <p>Definition of a request to add a platform sidecar alongside a task</p><p>Note that this is *not* a user-defined sidecar, that is why it just has a</p><p>name. These platform-sidecars are attached a task start time, and the</p><p>definition of what the sidecar is is not baked into the job itself, just the</p><p>intent.</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>name</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>(Required) Name of the platform sidecar requested </p></td>
-                </tr>
-              
-                <tr>
-                  <td>channel</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>(Optional) Channel representing a pointer to releases of the sidecar </p></td>
-                </tr>
-              
-                <tr>
-                  <td>arguments</td>
-                  <td><a href="#google.protobuf.Struct">google.protobuf.Struct</a></td>
-                  <td></td>
-                  <td><p>(Optional) Arguments, KV pairs for configuring the sidecar </p></td>
                 </tr>
               
             </tbody>
@@ -2885,48 +2791,6 @@ such as the process exiting will still be replaced. </p></td>
                   <td></td>
                   <td><p>Prevents decreasing the Job&#39;s desired capacity. Existing tasks that exit
 such as the process exiting will still be replaced. </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="com.netflix.titus.SharedContainerVolumeSource">SharedContainerVolumeSource</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>sourceContainer</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>The sourceContainer is the name of the container with the
-path to be shared with other containers. For example:
-
-    sourceContainer=&#34;main&#34;
-    sourcePath=&#34;/mnt/data&#34;
-
-combined with an associated VolumeMount on another container, would
-be one way to allow the main container to share some of its files
-(which may be just baked into the image, or provided by another storage
-system) with some other extraContainer for the task. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>sourcePath</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>The path in the container to be shared.
-This path may contain existing data to share, or it can simply
-not exist, and it will be created. </p></td>
                 </tr>
               
             </tbody>
@@ -3591,97 +3455,6 @@ state. Each job manager can introduce its own
 
         
       
-        <h3 id="com.netflix.titus.Volume">Volume</h3>
-        <p>Volumes define some sort of storage for a Task (pod) that is later referenced</p><p>by individual containers via VolumeMount declarations.</p><p>https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volume-v1-core</p><p>Note that Titus only supports a subset of storage drivers.</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>name</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>(Required) the name of the volume. This is what is referenced by
-VolumeMount requests for individual containers. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>sharedContainerVolumeSource</td>
-                  <td><a href="#com.netflix.titus.SharedContainerVolumeSource">SharedContainerVolumeSource</a></td>
-                  <td></td>
-                  <td><p>(Optional) A SharedContainerVolumeSource is a volume that exists on the
-one container that is exported. Such a volume can be used later via a
-VolumeMount and shared with other containers in the task (pod) </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="com.netflix.titus.VolumeMount">VolumeMount</h3>
-        <p>VolumeMounts are used to define how to mount a Volume in a container</p><p>Modeled after k8s volumeMounts:</p><p>https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>mountPath</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>(Required) mountPath is the location inside the container where the volume
-will be mounted </p></td>
-                </tr>
-              
-                <tr>
-                  <td>mountPropagation</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>mountPropagation determines how mounts are propagated from the host to
-container and the other way around. When not set, MountPropagationNone is
-used. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>volumeName</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>This must match the Name of a Volume. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>readOnly</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p>Mounted read-only if true, read-write otherwise (false or unspecified).
-Defaults to false. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>subPath</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>Path within the volume from which the container&#39;s volume should be mounted.
-Defaults to &#34;&#34; (volume&#39;s root). </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
 
       
         <h3 id="com.netflix.titus.JobStatus.JobState">JobStatus.JobState</h3>
@@ -3938,6 +3711,14 @@ notification is delivered.</p></td>
                 <td><a href="#com.netflix.titus.JobChangeNotification">JobChangeNotification</a> stream</td>
                 <td><p>Equivalent to ObserveJob, applied to all active jobs. This stream never
 completes.</p></td>
+              </tr>
+            
+              <tr>
+                <td>ObserveJobsWithKeepAlive</td>
+                <td><a href="#com.netflix.titus.ObserveJobsWithKeepAliveRequest">ObserveJobsWithKeepAliveRequest</a> stream</td>
+                <td><a href="#com.netflix.titus.JobChangeNotification">JobChangeNotification</a> stream</td>
+                <td><p>`ObserveJobsWithKeepAlive` extends the `ObserveJobs` endpoint behavior by supporting keep alive mechanism
+in the channel. This stream never completes.</p></td>
               </tr>
             
               <tr>

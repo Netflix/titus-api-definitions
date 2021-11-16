@@ -4,8 +4,6 @@
 ## Table of Contents
 
 - [src/main/proto/netflix/titus/titus_job_api.proto](#src/main/proto/netflix/titus/titus_job_api.proto)
-    - [BasicContainer](#com.netflix.titus.BasicContainer)
-    - [BasicContainer.EnvEntry](#com.netflix.titus.BasicContainer.EnvEntry)
     - [BatchJobSpec](#com.netflix.titus.BatchJobSpec)
     - [Capacity](#com.netflix.titus.Capacity)
     - [Constraints](#com.netflix.titus.Constraints)
@@ -60,13 +58,12 @@
     - [NetworkConfiguration](#com.netflix.titus.NetworkConfiguration)
     - [ObserveJobsQuery](#com.netflix.titus.ObserveJobsQuery)
     - [ObserveJobsQuery.FilteringCriteriaEntry](#com.netflix.titus.ObserveJobsQuery.FilteringCriteriaEntry)
+    - [ObserveJobsWithKeepAliveRequest](#com.netflix.titus.ObserveJobsWithKeepAliveRequest)
     - [Owner](#com.netflix.titus.Owner)
-    - [PlatformSidecar](#com.netflix.titus.PlatformSidecar)
     - [SecurityProfile](#com.netflix.titus.SecurityProfile)
     - [SecurityProfile.AttributesEntry](#com.netflix.titus.SecurityProfile.AttributesEntry)
     - [ServiceJobSpec](#com.netflix.titus.ServiceJobSpec)
     - [ServiceJobSpec.ServiceJobProcesses](#com.netflix.titus.ServiceJobSpec.ServiceJobProcesses)
-    - [SharedContainerVolumeSource](#com.netflix.titus.SharedContainerVolumeSource)
     - [Task](#com.netflix.titus.Task)
     - [Task.AttributesEntry](#com.netflix.titus.Task.AttributesEntry)
     - [Task.TaskContextEntry](#com.netflix.titus.Task.TaskContextEntry)
@@ -83,8 +80,6 @@
     - [TaskQueryResult](#com.netflix.titus.TaskQueryResult)
     - [TaskStatus](#com.netflix.titus.TaskStatus)
     - [TaskStatus.ContainerState](#com.netflix.titus.TaskStatus.ContainerState)
-    - [Volume](#com.netflix.titus.Volume)
-    - [VolumeMount](#com.netflix.titus.VolumeMount)
   
     - [JobStatus.JobState](#com.netflix.titus.JobStatus.JobState)
     - [NetworkConfiguration.NetworkMode](#com.netflix.titus.NetworkConfiguration.NetworkMode)
@@ -101,46 +96,6 @@
 <p align="right"><a href="#top">Top</a></p>
 
 ## src/main/proto/netflix/titus/titus_job_api.proto
-
-
-
-<a name="com.netflix.titus.BasicContainer"></a>
-
-### BasicContainer
-BasicContainer stores the minimal data required to declare extra containers
-to a job. This is in contrast to the Container message, which has other data
-that are not strictly tied to the main container. For example,
-*resources* (ram/cpu/etc) for the whole *task* are declared in the main
-Container message, not in a basic container.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  | (Required) the Name of this container |
-| image | [Image](#com.netflix.titus.Image) |  | (Required) Image reference. |
-| entryPoint | [string](#string) | repeated | (Optional) Override the entrypoint of the image. If set, the command baked into the image (if any) is always ignored. Interactions between the entrypoint and command are the same as specified by Docker: https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact Note that, unlike the main container, no string splitting occurs. |
-| command | [string](#string) | repeated | (Optional) Additional parameters for the entrypoint defined either here or provided in the container image. Note that, unlike the main container, no string splitting occurs. |
-| env | [BasicContainer.EnvEntry](#com.netflix.titus.BasicContainer.EnvEntry) | repeated | (Optional) A collection of system environment variables passed to the container. |
-| volumeMounts | [VolumeMount](#com.netflix.titus.VolumeMount) | repeated | (Optional) An array of VolumeMounts. These VolumeMounts will be mounted in the container, and must reference one of the volumes declared for the Job. See the k8s docs https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core for more technical details. |
-
-
-
-
-
-
-<a name="com.netflix.titus.BasicContainer.EnvEntry"></a>
-
-### BasicContainer.EnvEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| key | [string](#string) |  |  |
-| value | [string](#string) |  |  |
-
-
-
 
 
 
@@ -477,6 +432,7 @@ the current state (a job and its tasks) is
 | jobUpdate | [JobChangeNotification.JobUpdate](#com.netflix.titus.JobChangeNotification.JobUpdate) |  |  |
 | taskUpdate | [JobChangeNotification.TaskUpdate](#com.netflix.titus.JobChangeNotification.TaskUpdate) |  |  |
 | snapshotEnd | [JobChangeNotification.SnapshotEnd](#com.netflix.titus.JobChangeNotification.SnapshotEnd) |  |  |
+| keepAliveResponse | [KeepAliveResponse](#com.netflix.titus.KeepAliveResponse) |  | Supported only by `ObserveJobsWithKeepAlive` event stream. |
 | timestamp | [uint64](#uint64) |  | Event creation timestamp. |
 
 
@@ -494,6 +450,7 @@ change.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | job | [Job](#com.netflix.titus.Job) |  |  |
+| archived | [bool](#bool) |  | For internal usage only. Set to true if a job is finished and is moved to archive storage. |
 
 
 
@@ -521,6 +478,7 @@ Emitted when a task is created or its state has changed.
 | ----- | ---- | ----- | ----------- |
 | task | [Task](#com.netflix.titus.Task) |  |  |
 | movedFromAnotherJob | [bool](#bool) |  | movedFromAnotherJob will be true on the first event for the target Job after a task is moved between jobs. task.jobId will be the destination job, and it will include a &#39;task.movedFromJob&#39; entry in its taskContext map with the source jobId. |
+| archived | [bool](#bool) |  | For internal usage only. Set to true if a task is finished and is moved to archive storage. |
 
 
 
@@ -1073,6 +1031,8 @@ Filtering criteria
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | filteringCriteria | [ObserveJobsQuery.FilteringCriteriaEntry](#com.netflix.titus.ObserveJobsQuery.FilteringCriteriaEntry) | repeated | (Optional) Collection of fields and their values for a filter. Available query criteria: jobIds - list of comma separated job ids taskIds - list of comma separated task ids owner - job owner applicationName - job application name imageName - image name imageTag - image tag capacityGroup - job assigned capacity group jobGroupStack - job group stack jobGroupDetail - job group details jobGroupSequence - job group sequence jobType - job type (batch or service) attributes - comma separated job attribute key/value pairs. The same key may occur multiple times, with different values (any value matches the filter). A value may be omitted, in which case if the key occurs only once, only presence of the key is checked, without value comparison (otherwise the value is an empty string). Example filters: * &#39;key1&#39; - matches, if the key is present * &#39;key2:value2&#39; - matches if the attributes contain key &#39;key2&#39; with value &#39;value2&#39; * &#39;key3,key3:value3a,key3:value3b&#39; - matches if the attributes contain key &#39;key3&#39; with value &#39;&#39; or &#39;value3a&#39; or &#39;value3b&#39; All the above can be passed together as &#39;key1,key2:value2,key3,key3:value3a,key3:value3b&#39; attributes.op - logical &#39;and&#39; or &#39;or&#39; operators, which should be applied to multiple attributes specified in the query jobState - job state (one) taskStates - task states (multiple, comma separated). Empty value is the same as no value set. taskStateReasons - reasons associated with task states (multiple, comma separated) needsMigration - if set to true, return only jobs with tasks that require migration |
+| jobFields | [string](#string) | repeated | (Optional) If set, only job field values explicitly given in this parameter will be returned |
+| taskFields | [string](#string) | repeated | (Optional) If set, only task field values explicitly given in this parameter will be returned |
 
 
 
@@ -1095,6 +1055,22 @@ Filtering criteria
 
 
 
+<a name="com.netflix.titus.ObserveJobsWithKeepAliveRequest"></a>
+
+### ObserveJobsWithKeepAliveRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| query | [ObserveJobsQuery](#com.netflix.titus.ObserveJobsQuery) |  |  |
+| keepAliveRequest | [KeepAliveRequest](#com.netflix.titus.KeepAliveRequest) |  |  |
+
+
+
+
+
+
 <a name="com.netflix.titus.Owner"></a>
 
 ### Owner
@@ -1104,27 +1080,6 @@ An owner of a job.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | teamEmail | [string](#string) |  | (Required) An owner&#39;s email address. |
-
-
-
-
-
-
-<a name="com.netflix.titus.PlatformSidecar"></a>
-
-### PlatformSidecar
-Definition of a request to add a platform sidecar alongside a task
-Note that this is *not* a user-defined sidecar, that is why it just has a
-name. These platform-sidecars are attached a task start time, and the
-definition of what the sidecar is is not baked into the job itself, just the
-intent.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  | (Required) Name of the platform sidecar requested |
-| channel | [string](#string) |  | (Optional) Channel representing a pointer to releases of the sidecar |
-| arguments | [google.protobuf.Struct](#google.protobuf.Struct) |  | (Optional) Arguments, KV pairs for configuring the sidecar |
 
 
 
@@ -1193,26 +1148,6 @@ Configuration of service job processes
 | ----- | ---- | ----- | ----------- |
 | disableIncreaseDesired | [bool](#bool) |  | Prevents increasing the Job&#39;s desired capacity. Existing tasks that exit such as the process exiting will still be replaced. |
 | disableDecreaseDesired | [bool](#bool) |  | Prevents decreasing the Job&#39;s desired capacity. Existing tasks that exit such as the process exiting will still be replaced. |
-
-
-
-
-
-
-<a name="com.netflix.titus.SharedContainerVolumeSource"></a>
-
-### SharedContainerVolumeSource
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| sourceContainer | [string](#string) |  | The sourceContainer is the name of the container with the path to be shared with other containers. For example:
-
- sourceContainer=&#34;main&#34; sourcePath=&#34;/mnt/data&#34;
-
-combined with an associated VolumeMount on another container, would be one way to allow the main container to share some of its files (which may be just baked into the image, or provided by another storage system) with some other extraContainer for the task. |
-| sourcePath | [string](#string) |  | The path in the container to be shared. This path may contain existing data to share, or it can simply not exist, and it will be created. |
 
 
 
@@ -1487,46 +1422,6 @@ Finished jobs/tasks are not evaluated when the query is executed.
 
 
 
-
-<a name="com.netflix.titus.Volume"></a>
-
-### Volume
-Volumes define some sort of storage for a Task (pod) that is later referenced
-by individual containers via VolumeMount declarations.
-https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volume-v1-core
-Note that Titus only supports a subset of storage drivers.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  | (Required) the name of the volume. This is what is referenced by VolumeMount requests for individual containers. |
-| sharedContainerVolumeSource | [SharedContainerVolumeSource](#com.netflix.titus.SharedContainerVolumeSource) |  | (Optional) A SharedContainerVolumeSource is a volume that exists on the one container that is exported. Such a volume can be used later via a VolumeMount and shared with other containers in the task (pod) |
-
-
-
-
-
-
-<a name="com.netflix.titus.VolumeMount"></a>
-
-### VolumeMount
-VolumeMounts are used to define how to mount a Volume in a container
-Modeled after k8s volumeMounts:
-https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| mountPath | [string](#string) |  | (Required) mountPath is the location inside the container where the volume will be mounted |
-| mountPropagation | [string](#string) |  | mountPropagation determines how mounts are propagated from the host to container and the other way around. When not set, MountPropagationNone is used. |
-| volumeName | [string](#string) |  | This must match the Name of a Volume. |
-| readOnly | [bool](#bool) |  | Mounted read-only if true, read-write otherwise (false or unspecified). Defaults to false. |
-| subPath | [string](#string) |  | Path within the volume from which the container&#39;s volume should be mounted. Defaults to &#34;&#34; (volume&#39;s root). |
-
-
-
-
-
  
 
 
@@ -1609,6 +1504,7 @@ State information associated with a task.
 | FindJob | [JobId](#com.netflix.titus.JobId) | [Job](#com.netflix.titus.Job) | Return a job with given id. |
 | ObserveJob | [JobId](#com.netflix.titus.JobId) | [JobChangeNotification](#com.netflix.titus.JobChangeNotification) stream | On subscription, sends complete job (definition and active tasks). Next, send distinct job definition or task state chage notifications. The stream is closed by the server only when the job is finished, which happens after the &#39;JobFinished&#39; notification is delivered. |
 | ObserveJobs | [ObserveJobsQuery](#com.netflix.titus.ObserveJobsQuery) | [JobChangeNotification](#com.netflix.titus.JobChangeNotification) stream | Equivalent to ObserveJob, applied to all active jobs. This stream never completes. |
+| ObserveJobsWithKeepAlive | [ObserveJobsWithKeepAliveRequest](#com.netflix.titus.ObserveJobsWithKeepAliveRequest) stream | [JobChangeNotification](#com.netflix.titus.JobChangeNotification) stream | `ObserveJobsWithKeepAlive` extends the `ObserveJobs` endpoint behavior by supporting keep alive mechanism in the channel. This stream never completes. |
 | KillJob | [JobId](#com.netflix.titus.JobId) | [.google.protobuf.Empty](#google.protobuf.Empty) | Terminate all running tasks of a job, and than terminate the job. |
 | UpdateJobAttributes | [JobAttributesUpdate](#com.netflix.titus.JobAttributesUpdate) | [.google.protobuf.Empty](#google.protobuf.Empty) | Update the attributes of a job. This will either create new attributes or replace existing ones with the same key. |
 | DeleteJobAttributes | [JobAttributesDeleteRequest](#com.netflix.titus.JobAttributesDeleteRequest) | [.google.protobuf.Empty](#google.protobuf.Empty) | Delete the attributes of a job. |

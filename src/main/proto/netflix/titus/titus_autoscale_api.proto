@@ -54,7 +54,7 @@ message AlarmConfiguration {
   // The statistic for the metric associated with the alarm, other than
   // percentile.
   oneof statisticOneof { Statistic statistic = 8; }
-
+  // The dimensions for the metric specified in MetricName.
   repeated MetricDimension metricDimensions = 9;
 }
 

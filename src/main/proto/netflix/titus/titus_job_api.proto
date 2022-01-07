@@ -104,6 +104,12 @@ message NetworkConfiguration {
     Ipv6AndIpv4Fallback = 3;
     // IPv6 Only is for true believers, no IPv4 connectivity is provided.
     Ipv6Only = 4;
+    // HighScale is a special mode, which applies opinionated network settings
+    // to the workload for maximum scalability for the network.
+    // Enabling this mode *removes* the option for the user to select which
+    // subnets or security groups in use by the workload.
+    // Instead, special HighScale subnets and security groups are chosen.
+    HighScale = 5;
   }
   // Sets the overall network mode for all containers for a Task launched by
   // this job

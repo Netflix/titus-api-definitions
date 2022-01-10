@@ -1352,7 +1352,8 @@ from the same ordered number generator. </p></td>
                   <td>archived</td>
                   <td><a href="#bool">bool</a></td>
                   <td></td>
-                  <td><p>For internal usage only. Set to true if a job is finished and is moved to archive storage. </p></td>
+                  <td><p>For internal usage only. Set to true if a job is finished and is moved to
+archive storage. </p></td>
                 </tr>
               
             </tbody>
@@ -1400,7 +1401,8 @@ after a task is moved between jobs.
                   <td>archived</td>
                   <td><a href="#bool">bool</a></td>
                   <td></td>
-                  <td><p>For internal usage only. Set to true if a task is finished and is moved to archive storage. </p></td>
+                  <td><p>For internal usage only. Set to true if a task is finished and is moved
+to archive storage. </p></td>
                 </tr>
               
             </tbody>
@@ -2536,14 +2538,16 @@ only jobs with tasks that require migration </p></td>
                   <td>jobFields</td>
                   <td><a href="#string">string</a></td>
                   <td>repeated</td>
-                  <td><p>(Optional) If set, only job field values explicitly given in this parameter will be returned </p></td>
+                  <td><p>(Optional) If set, only job field values explicitly given in this parameter
+will be returned </p></td>
                 </tr>
               
                 <tr>
                   <td>taskFields</td>
                   <td><a href="#string">string</a></td>
                   <td>repeated</td>
-                  <td><p>(Optional) If set, only task field values explicitly given in this parameter will be returned </p></td>
+                  <td><p>(Optional) If set, only task field values explicitly given in this
+parameter will be returned </p></td>
                 </tr>
               
             </tbody>
@@ -3533,6 +3537,16 @@ allocated to the task.</p></td>
                 <td><p>IPv6 Only is for true believers, no IPv4 connectivity is provided.</p></td>
               </tr>
             
+              <tr>
+                <td>HighScale</td>
+                <td>5</td>
+                <td><p>HighScale is a special mode, which applies opinionated network settings
+to the workload for maximum scalability for the network.
+Enabling this mode *removes* the option for the user to select which
+subnets or security groups in use by the workload.
+Instead, special HighScale subnets and security groups are chosen.</p></td>
+              </tr>
+            
           </tbody>
         </table>
       
@@ -3717,8 +3731,9 @@ completes.</p></td>
                 <td>ObserveJobsWithKeepAlive</td>
                 <td><a href="#com.netflix.titus.ObserveJobsWithKeepAliveRequest">ObserveJobsWithKeepAliveRequest</a> stream</td>
                 <td><a href="#com.netflix.titus.JobChangeNotification">JobChangeNotification</a> stream</td>
-                <td><p>`ObserveJobsWithKeepAlive` extends the `ObserveJobs` endpoint behavior by supporting keep alive mechanism
-in the channel. This stream never completes.</p></td>
+                <td><p>`ObserveJobsWithKeepAlive` extends the `ObserveJobs` endpoint behavior by
+supporting keep alive mechanism in the channel. This stream never
+completes.</p></td>
               </tr>
             
               <tr>

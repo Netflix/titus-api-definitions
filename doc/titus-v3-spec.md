@@ -1450,6 +1450,7 @@ State information associated with a job.
 | Ipv6AndIpv4 | 2 | IPv6 And IPv4 (True Dual Stack), each task gets a unique v6 and v4 address. |
 | Ipv6AndIpv4Fallback | 3 | IPv6 and IPv4 Fallback uses the Titus IPv4 &#34;transition mechanism&#34; to give v4 connectivity transparently without providing every container their own IPv4 address. From a spinnaker/task perspective, only an IPv6 address is allocated to the task. |
 | Ipv6Only | 4 | IPv6 Only is for true believers, no IPv4 connectivity is provided. |
+| HighScale | 5 | HighScale is a special mode, which applies opinionated network settings to the workload for maximum scalability for the network. Enabling this mode *removes* the option for the user to select which subnets or security groups in use by the workload. Instead, special HighScale subnets and security groups are chosen. |
 
 
 

@@ -92,16 +92,16 @@ strings
 | ----- | ---- | ----- | ----------- |
 | imageName | [string](#string) | optional |  |
 | command | [string](#string) | optional | deprecated. replaced by entrypointCmd. |
-| containerPorts | [string](#string) | optional |  |
+| containerPorts | [string](#string) | optional | **Deprecated.**  |
 | version | [string](#string) | optional |  Default: latest |
-| environmentVariable | [ContainerInfo.EnvironmentVariable](#messages.ContainerInfo.EnvironmentVariable) | repeated | deprecated: use userProvidedEnv and titusProvidedEnv instead |
+| environmentVariable | [ContainerInfo.EnvironmentVariable](#messages.ContainerInfo.EnvironmentVariable) | repeated | **Deprecated.** deprecated: use userProvidedEnv and titusProvidedEnv instead |
 | jobId | [string](#string) | optional |  |
 | logUploadRegexp | [string](#string) | optional |  |
-| maxHealthFailures | [uint32](#uint32) | optional |  |
-| healthCheckCmd | [string](#string) | repeated |  |
-| snapshotPolicy | [ContainerInfo.SnapshotPolicy](#messages.ContainerInfo.SnapshotPolicy) | optional |  |
-| entrypointCmd | [string](#string) | repeated | deprecated: Use process instead |
-| entrypointStr | [string](#string) | optional | deprecated: Use process instead |
+| maxHealthFailures | [uint32](#uint32) | optional | **Deprecated.**  |
+| healthCheckCmd | [string](#string) | repeated | **Deprecated.**  |
+| snapshotPolicy | [ContainerInfo.SnapshotPolicy](#messages.ContainerInfo.SnapshotPolicy) | optional | **Deprecated.**  |
+| entrypointCmd | [string](#string) | repeated | **Deprecated.** deprecated: Use process instead |
+| entrypointStr | [string](#string) | optional | **Deprecated.** deprecated: Use process instead |
 | appName | [string](#string) | optional |  |
 | jobGroupStack | [string](#string) | optional |  |
 | jobGroupDetail | [string](#string) | optional |  |
@@ -215,7 +215,7 @@ deprecated: use userProvidedEnv and titusProvidedEnv instead
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| eniLablel | [string](#string) | required | deprecated: use eniLabel instead |
+| eniLablel | [string](#string) | required | **Deprecated.** deprecated: use eniLabel instead |
 | eniLabel | [string](#string) | optional | this should be required, but it was added later (typo fix) and is optional for backwards compatibility |
 | securityGroups | [string](#string) | repeated |  |
 | bandwidthLimitMbps | [uint32](#uint32) | optional | In Mbps |

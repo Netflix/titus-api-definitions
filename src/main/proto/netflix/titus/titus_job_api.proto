@@ -631,6 +631,9 @@ message TaskStatus {
 
     // Enum representing if the individual container is healthy
     ContainerHealth containerHealth = 2;
+
+    // Struct containing image information about the container
+    BasicImage containerImage = 3;
   }
 
   // An array of ContainerStates, reporting the health of individual containers

@@ -1417,6 +1417,7 @@ Finished jobs/tasks are not evaluated when the query is executed.
 | ----- | ---- | ----- | ----------- |
 | containerName | [string](#string) |  | Name of the container |
 | containerHealth | [TaskStatus.ContainerState.ContainerHealth](#com.netflix.titus.TaskStatus.ContainerState.ContainerHealth) |  | Enum representing if the individual container is healthy |
+| containerImage | [BasicImage](#com.netflix.titus.BasicImage) |  | Struct containing image information about the container |
 
 
 

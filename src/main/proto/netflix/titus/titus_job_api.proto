@@ -634,6 +634,9 @@ message TaskStatus {
 
     // Struct containing image information about the container
     BasicImage containerImage = 3;
+
+    // String representing the Platform Sidecar (if any) that added the container.
+    string platformSidecar = 4;
   }
 
   // An array of ContainerStates, reporting the health of individual containers

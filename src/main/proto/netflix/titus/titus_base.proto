@@ -311,6 +311,10 @@ message AddressAllocation {
   // (Required) The VPC IP address. The address must be unset when requesting
   // an allocation from the VPC service.
   string address = 3;
+
+  // (Required) The VPC IPv6 address. The address must be unset when requesting
+  // an allocation from the VPC service.
+  string ipv6Address = 4;
 };
 
 message StaticIPAddressIDs {

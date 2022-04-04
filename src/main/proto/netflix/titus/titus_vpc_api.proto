@@ -28,6 +28,7 @@ message GetAllocationRequest {
   oneof searchParameter {
     string address = 1;
     string uuid = 2;
+    string ipv6Address = 3;
   }
 };
 

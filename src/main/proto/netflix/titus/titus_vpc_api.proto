@@ -4,7 +4,7 @@ package com.netflix.titus;
 import "netflix/titus/titus_base.proto";
 import "google/protobuf/empty.proto";
 
-option go_package = "titus";
+option go_package = "./netflix/titus";
 
 enum Family {
   // Default should never really be used, but we're required to have one due to

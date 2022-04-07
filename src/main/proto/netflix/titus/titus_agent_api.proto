@@ -12,7 +12,7 @@ option java_multiple_files = true;
 option java_package = "com.netflix.titus.grpc.protogen";
 option java_outer_classname = "AgentProto";
 
-option go_package = "titus";
+option go_package = "./netflix/titus";
 
 // ----------------------------------------------------------------------------
 // Agent cluster management data structures

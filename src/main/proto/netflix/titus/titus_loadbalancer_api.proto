@@ -12,6 +12,8 @@ import "netflix/titus/titus_base.proto";
 option java_multiple_files = true;
 option java_package = "com.netflix.titus.grpc.protogen";
 
+option go_package = "./netflix/titus";
+
 // Message that identifies a single load balancer association.
 // For ALB integration this ID will be the AWS ARN of the IP Target Group,
 // not a load balancer specifically.

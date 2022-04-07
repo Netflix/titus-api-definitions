@@ -12,7 +12,7 @@ import "google/protobuf/wrappers.proto";
 option java_multiple_files = true;
 option java_package = "com.netflix.titus.grpc.protogen";
 
-option go_package = "titus";
+option go_package = "./netflix/titus";
 
 // Describes an alarm configuration.
 //  Note that this is currently only use for step scaling.

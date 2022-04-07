@@ -16,7 +16,7 @@ option java_multiple_files = true;
 option java_package = "com.netflix.titus.grpc.protogen";
 option java_outer_classname = "TitusMasterProto";
 
-option go_package = "titus";
+option go_package = "./netflix/titus";
 
 // ----------------------------------------------------------------------------
 // Titus supervisor data model.

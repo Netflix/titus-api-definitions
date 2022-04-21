@@ -37,10 +37,17 @@ message GetAllocationResponse {
   SignedAddressAllocation signedAddressAllocation = 2;
 };
 
+message DeallocateAddressRequest {
+  string uuid = 1;
+}
+
+message DeallocateAddressResponse {}
+
 service UserIPService {
   // Static IP Address flow
   rpc AllocateAddress(AllocateAddressRequest) returns (AllocateAddressResponse);
   rpc GetAllocation(GetAllocationRequest) returns (GetAllocationResponse);
+  rpc DeallocateAddress(DeallocateAddressRequest) returns (DeallocateAddressResponse);
 };
 
 message ValidationRequest {

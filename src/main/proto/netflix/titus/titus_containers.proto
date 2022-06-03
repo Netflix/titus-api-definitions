@@ -45,6 +45,10 @@ message BasicContainer {
   // https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core
   // for more technical details.
   repeated VolumeMount volumeMounts = 6;
+
+  // (Optional) additional capabilities for the container to have to enable
+  // certain advanced features
+  ContainerCapabilities containerCapabilities = 12;
 }
 
 // To reference an image, a user has to provide an image name and a version. A
@@ -80,4 +84,17 @@ message PlatformSidecar {
 
   // (Optional) Arguments, KV pairs for configuring the sidecar
   google.protobuf.Struct arguments = 3;
+}
+
+enum ContainerCapabilities {
+  // ContainerCapabiltilesDefault is the default capability set
+  ContainerCapabiltilesDefault = 0;
+
+  // ContainerCapabiltilesFUSE gives a container the capability to mount
+  // FUSE mounts (usually into /mnt-shared/)
+  ContainerCapabiltilesFUSE = 1;
+
+  // ContainerCapabiltilesImageBuilding sets up a container for the ability to build
+  // container images *inside* the container itself
+  ContainerCapabiltilesImageBuilding = 2;
 }

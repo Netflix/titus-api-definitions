@@ -243,6 +243,10 @@ message Container {
   // https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#volumemount-v1-core
   // for more technical details.
   repeated VolumeMount volumeMounts = 11;
+
+  // (Optional) additional capabilities for the container to have to enable
+  // certain advanced features
+  ContainerCapabilities containerCapabilities = 12;
 }
 
 // This data structure is associated with a service job and specifies the
